@@ -88,40 +88,47 @@ public abstract class Construct
     this.conflags = flags;
   }
   
-  public String _read_stream( InputStream stream, int length )
+//  public String _read_stream( InputStream stream, int length )
+  public String _read_stream( String stream, int length )
   {
     if( length < 0 )
         throw new FieldError("length must be >= 0 " + length); 
-    try
+//    try
     {
-      byte[] data = new byte[length];
-      int len = stream.read( data, 0, length );
+//      byte[] data = new byte[length];
+//      int len = stream.read( data, 0, length );
+      byte[] data = stream.getBytes();
+      int len = stream.length();
       if( len != length )
         throw new FieldError( "expected " + length + " found " + len );
       return new String( data );
-    } catch( IOException e )
-    {
-      throw new FieldError( e.getMessage() );
-    }
+    } 
+//    catch( IOException e )
+//    {
+//      throw new FieldError( e.getMessage() );
+//    }
     
 //        len(data) != length:
 //        raise FieldError("expected %d, found %d" % (length, len(data)))
   }
   
-  public void _write_stream( OutputStream stream, int length, byte[] data)
+//  public void _write_stream( OutputStream stream, int length, byte[] data)
+  public void _write_stream( StringBuilder stream, int length, byte[] data)
   {
     if( length < 0 )
         throw new FieldError( "length must be >= 0 " + length );
     if( data.length != length )
       throw new FieldError( "expected " + length + " found " + data.length );
     
-    try
+//    try
     {
-      stream.write(data);
-    } catch( IOException e )
-    {
-      throw new FieldError( e.getMessage() );
-    }
+//      stream.write(data);
+      stream.append( new String(data) );
+    } 
+//    catch( IOException e )
+//    {
+//      throw new FieldError( e.getMessage() );
+//    }
   };
 
   /**
@@ -131,9 +138,10 @@ public abstract class Construct
     parsed with this method.
    * @param data
    */
-  public String parse( String data )
+  public Object parse( String data )
   {
-    return parse_stream( new ByteArrayInputStream(data.getBytes()) );
+//    return parse_stream( new ByteArrayInputStream(data.getBytes()) );
+    return parse_stream( data );
   }
 
   /**
@@ -142,12 +150,14 @@ public abstract class Construct
     Files, pipes, sockets, and other streaming sources of data are handled
     by this method.
    */
-  public String parse_stream( InputStream stream )
+//  public String parse_stream( InputStream stream )
+  public Object parse_stream( String stream )
   {
     return _parse( stream, new Container());
   }
   
-  abstract public String _parse( InputStream stream, Container context );
+//  abstract public String _parse( InputStream stream, Container context );
+  abstract public Object _parse( String stream, Container context );
   
   /**
    * Build an object in memory.
@@ -156,10 +166,13 @@ public abstract class Construct
    */
   public String build( String obj )
   {
-    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    StringBuilder stream = new StringBuilder();
+    //    build_stream( obj, stream );
     build_stream( obj, stream );
     
-    return new String( stream.toByteArray() );
+//    return new String( stream.toByteArray() );
+    return stream.toString();
   }
 
   /**
@@ -167,12 +180,14 @@ public abstract class Construct
    * @param obj
    * @param stream
    */
-  public void build_stream( String obj, OutputStream stream)
+//  public void build_stream( String obj, OutputStream stream)
+  public void build_stream( String obj, StringBuilder stream)
   {
     _build(obj, stream, new Container());
   }
   
-  abstract void _build( String obj, OutputStream stream, Container context);
+//  abstract void _build( String obj, OutputStream stream, Container context);
+  abstract void _build( String obj, StringBuilder stream, Container context);
 
     /**
      *     Calculate the size of this object, optionally using a context.

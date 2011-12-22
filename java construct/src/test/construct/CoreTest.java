@@ -5,6 +5,8 @@ package construct;
 //from construct import FieldError, SizeofError
 
 import static org.junit.Assert.*;
+
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -39,7 +41,7 @@ public class CoreTest
   @Test
   public void testFormatField(){
 
-    FormatField ff = new FormatField("formatfield", '<', 'L');
+    FormatField ff = new FormatField("formatfield", '<', "L");
 
     assertEquals( 0x78563412, ff.parse("\\x12\\x34\\x56\\x78") );
 
