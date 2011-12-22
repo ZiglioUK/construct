@@ -6,6 +6,9 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import javax.management.RuntimeErrorException;
 
@@ -68,7 +71,7 @@ import construct.lib.Container;
  */
 public abstract class Construct
 {
-  char[] conflags;
+  byte[] conflags;
   public String name;
 
   public Construct( String name ) 
@@ -79,7 +82,7 @@ public abstract class Construct
     this.name = name;
   }
 
-  public Construct( String name, char[] flags ) 
+  public Construct( String name, byte[] flags ) 
   {
     if( name.equals( "_" ) || name.startsWith("<") )
       throw new FieldError( "reserved name " + name ); //  raise ValueError
@@ -158,13 +161,17 @@ public abstract class Construct
   
 //  abstract public String _parse( InputStream stream, Container context );
   abstract public Object _parse( String stream, Container context );
-  
+
+  public String build( String str )
+  {
+    return build( str.getBytes());
+  }
   /**
    * Build an object in memory.
    * @param obj
    * @return
    */
-  public String build( String obj )
+  public String build( byte[] obj )
   {
 //    ByteArrayOutputStream stream = new ByteArrayOutputStream();
     StringBuilder stream = new StringBuilder();
@@ -181,13 +188,13 @@ public abstract class Construct
    * @param stream
    */
 //  public void build_stream( String obj, OutputStream stream)
-  public void build_stream( String obj, StringBuilder stream)
+  public void build_stream( byte[] obj, StringBuilder stream)
   {
     _build(obj, stream, new Container());
   }
   
 //  abstract void _build( String obj, OutputStream stream, Container context);
-  abstract void _build( String obj, StringBuilder stream, Container context);
+  abstract void _build( byte[] obj, StringBuilder stream, Container context);
 
     /**
      *     Calculate the size of this object, optionally using a context.

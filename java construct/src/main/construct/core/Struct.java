@@ -33,14 +33,14 @@ public class Struct extends Construct
   }
 
   @Override
-  public String _parse( InputStream stream, Container context )
+  public Object _parse( String stream, Container context )
   {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  void _build( String obj, OutputStream stream, Container context )
+  void _build( byte[] obj, StringBuilder stream, Container context )
   {
     // TODO Auto-generated method stub
     

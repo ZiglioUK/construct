@@ -5,6 +5,7 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -63,9 +64,9 @@ public class StaticField extends Construct
 
     @Override
 //    void _build( String obj, OutputStream stream, Container context)
-    void _build( String obj, StringBuilder stream, Container context)
+    void _build( byte[] obj, StringBuilder stream, Container context)
     {
-        _write_stream( stream, length, obj.getBytes() );
+        _write_stream( stream, length, obj );
     }
 
     @Override

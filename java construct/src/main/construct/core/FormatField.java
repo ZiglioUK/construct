@@ -6,6 +6,8 @@ import java.io.DataInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import construct.exception.FieldError;
 import construct.exception.SizeofError;
@@ -60,13 +62,19 @@ public class FormatField extends StaticField
 
     @Override
 //    void _build( String obj, OutputStream stream, Container context)
-    void _build( String obj, String stream, Container context)
+    void _build( byte[] obj, StringBuilder stream, Container context)
     {
-        _write_stream( stream, length, obj.getBytes() );
+        _write_stream( stream, length, obj );
 //        def _build(self, obj, stream, context):
 //          try:
 //              _write_stream(stream, self.length, self.packer.pack(obj))
 //          except Exception, ex:
 //              raise FieldError(ex)
     }
+
+    public byte[] build( Object... args )
+    {
+      return packer.pack( args );
+   }
+    
 }

@@ -1,7 +1,10 @@
 package construct.core;
 
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -433,75 +436,44 @@ public FormatMode getmode()
       return data[index:index+size]
 
   */
-  /**
+  /*
   """pack(fmt, v1, v2, ...) -> string
      Return string containing values v1, v2, ... packed according to fmt.
      See struct.__doc__ for more on format strings."""
- * @param fmt
- * @param args
- * @return
- */
-/*
-public String pack( String fmt, Object... args )
-{
-  formatdef,endianness,i = getmode(fmt);
-  args = list(args)
-  n_args = len(args)
-  result = []
-  while i<len(fmt):
-      num,i = getNum(fmt,i)
-      cur = fmt[i]
-      try:
-          format = formatdef[cur]
-      except KeyError:
-          raise StructError,"%s is not a valid format"%cur
-      if num == None :
-          num_s = 0
-          num = 1
-      else:
-          num_s = num
-
-      if cur == 'x':
-          #result += ['\0'*num]
-          result.extend(["".ljust(num, '\0')])
-      elif cur == 's':
-          if isinstance(args[0], str):
-              padding = num - len(args[0])
-              #result += [args[0][:num] + '\0'*padding]
-              result.extend([args[0][:num] + "".ljust(padding, '\0')])
-              args.pop(0)
-          else:
-              raise StructError,"arg for string format not a string"
-      elif cur == 'p':
-          if isinstance(args[0], str):
-              padding = num - len(args[0]) - 1
-
-              if padding > 0:
-                  #result += [chr(len(args[0])) + args[0][:num-1] + '\0'*padding]
-                  result.extend([chr(len(args[0])) + args[0][:num-1] + "".ljust(padding, '\0')])
-              else:
-                  if num<255:
-                      #result += [chr(num-1) + args[0][:num-1]]
-                      result.extend([chr(num-1) + args[0][:num-1]])
-                  else:
-                      #result += [chr(255) + args[0][:num-1]]
-                      result.extend([chr(255) + args[0][:num-1]])
-              args.pop(0)
-          else:
-              raise StructError,"arg for string format not a string"
-
-      else:
-          if len(args) < num:
-              raise StructError,"insufficient arguments to pack"
-          for var in args[:num]:
-              #result += [format['pack'](var,format['size'],endianness)]
-              result.extend([format['pack'](var,format['size'],endianness)])
-          args=args[num:]
-      num = None
-      i += 1
-  if len(args) != 0:
-      raise StructError,"too many arguments for pack format"
-  return ''.join(result)
-*/
-
+   * @param fmt
+   * @param args
+   * @return
+   */
+  public byte[] pack( Object... args )
+  {
+    ByteBuffer b = ByteBuffer.allocate( 2048 );
+    
+    if( endianity == '>' )
+      b.order( ByteOrder.BIG_ENDIAN ); // optional, the initial order of a byte buffer is always BIG_ENDIAN.
+    else if( endianity == '<' )
+      b.order( ByteOrder.LITTLE_ENDIAN ); 
+    else if( endianity == '=' )
+      b.order( ByteOrder.nativeOrder() ); 
+    
+  //  'L':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
+    for( int i = 0; i < args.length; i++ )
+    {
+      if( args[i] instanceof Byte )
+        b.put( (Byte)args[i] );
+      else if( args[i] instanceof Character )
+        b.putChar( (Character)args[i] );
+      else if( args[i] instanceof Double )
+        b.putDouble( (Double)args[i] );
+      else if( args[i] instanceof Float )
+        b.putFloat( (Float)args[i] );
+      else if( args[i] instanceof Integer )
+        b.putInt( (Integer)args[i] );
+      else if( args[i] instanceof Long )
+        b.putLong( (Long)args[i] );
+      else if( args[i] instanceof Short )
+        b.putShort( (Short)args[i] );
+      else throw new RuntimeException( "type not supported " + args[i] );
+    }
+    return Arrays.copyOf( b.array(), b.position() );
+  }
 }
