@@ -5,5 +5,4 @@ package construct.lib;
  */
 public class Container
 {
-
 }
