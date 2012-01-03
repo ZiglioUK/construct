@@ -4,18 +4,19 @@ package construct;
 //from construct import Container, Byte
 //from construct import FieldError, SizeofError
 
-import static org.junit.Assert.*;
+import static construct.lib.Binary.bin_to_int;
+import static construct.lib.Binary.decode_bin;
+import static construct.lib.Binary.encode_bin;
+import static construct.lib.Binary.int_to_bin;
+import static construct.lib.Binary.swap_bytes;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import construct.core.FormatField;
-import construct.core.StaticField;
-import construct.exception.FieldError;
-import junit.framework.TestCase;
-import static construct.lib.Binary.*;
+import construct.exception.ValueError;
 
 public class LibTest  
 {
@@ -65,12 +66,10 @@ public class LibTest
 			                        		 0, 0, 1, 0}));
   }
 
-//def test_decode_bin(self):
-//self.assertEqual(decode_bin(
-//    "\x00\x01\x01\x00\x00\x00\x00\x01\x00\x01\x01\x00\x00\x00\x01\x00"),
-//    "ab")
-//
-//def test_decode_bin_length(self):
-//self.assertRaises(ValueError, decode_bin, "\x00")
-
+  @Test
+  public void test_decode_bin_length(){
+	  exception.expect( ValueError.class );
+	  decode_bin( new byte[]{0,0});
+  }
+  
 }
