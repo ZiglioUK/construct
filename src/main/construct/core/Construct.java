@@ -194,7 +194,7 @@ public abstract class Construct
   }
   
 //  abstract void _build( String obj, OutputStream stream, Container context);
-  abstract void _build( byte[] obj, StringBuilder stream, Container context);
+  protected abstract void _build( byte[] obj, StringBuilder stream, Container context);
 
     /**
      *     Calculate the size of this object, optionally using a context.
