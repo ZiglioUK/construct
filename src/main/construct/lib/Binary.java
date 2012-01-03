@@ -1,7 +1,5 @@
 package construct.lib;
 
-import java.util.ArrayList;
-
 import construct.exception.ValueError;
 
 public class Binary {
