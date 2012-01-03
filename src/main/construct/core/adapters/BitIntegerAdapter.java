@@ -4,6 +4,8 @@ import construct.core.Adapter;
 import construct.core.Construct;
 import construct.lib.Container;
 
+import static construct.lib.Binary.*;
+
 /**
 	    """
 	    Adapter for bit-integers (converts bitstrings to integers, and vice versa).
@@ -43,21 +45,21 @@ public class BitIntegerAdapter extends Adapter {
         this.bytesize = bytesize;
 	}
 	
-    protected byte[] _encode( int obj, Container context) { 
+    public byte[] _encode( int obj, Container context) { 
 	    if( obj < 0 && !signed ){
 	        throw new BitIntegerError("object is negative, but field is not signed " + obj );
 	    }
-	    obj2 = int_to_bin( obj, width );
+	    byte[] obj2 = int_to_bin( obj, width );
 	    if( swapped ){
 	        obj2 = swap_bytes( obj2, bytesize );
 	    }
 	    return obj2;
 	}
 	
-	protected Object[] _decode( Object obj, Container context) {
+    public int _decode( byte[] obj, Container context) {
 		if( swapped ){
-            obj = swap_bytes(obj, bytesize = self.bytesize)
+            obj = swap_bytes( obj, bytesize );
 		}
-        return bin_to_int(obj, signed = self.signed)
+        return bin_to_int(obj, signed );
 	}
 }

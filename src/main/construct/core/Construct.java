@@ -160,7 +160,7 @@ public abstract class Construct
   }
   
 //  abstract public String _parse( InputStream stream, Container context );
-  abstract public Object _parse( String stream, Container context );
+  abstract public byte[] _parse( String stream, Container context );
 
   public String build( String str )
   {

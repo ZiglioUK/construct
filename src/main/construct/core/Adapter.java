@@ -23,10 +23,10 @@ public abstract class Adapter extends Subconstruct {
         return _decode( subcon._parse(stream, context), context);
 	}
 
-	public void _build( Object obj, StringBuilder stream, Container context) {
+	public void _build( int obj, StringBuilder stream, Container context) {
         subcon._build( _encode(obj, context), stream, context );
 	}
 
-    abstract Object[] _decode( Object obj, Container context);
-    abstract byte[] _encode( Object obj, Container context);
+    abstract public int _decode( byte[] obj, Container context);
+    abstract public byte[] _encode( int obj, Container context);
 }
