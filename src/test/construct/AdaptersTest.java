@@ -29,20 +29,28 @@ public class AdaptersTest
   @Rule
   public ExpectedException exception = ExpectedException.none();
 
-//  [BitIntegerAdapter(Field("bitintegeradapter", 8), 8).parse, "\x01" * 8, 255, None],
-//  [BitIntegerAdapter(Field("bitintegeradapter", 8), 8, signed = True).parse, "\x01" * 8, -1, None],
-//  [BitIntegerAdapter(Field("bitintegeradapter", 8), 8, swapped = True, bytesize = 4).parse, 
-//      "\x01" * 4 + "\x00" * 4, 0x0f, None],
+  @Test
+  public void BitIntegerAdapterTest() {
+    Adapter ba;
+
+    ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8 );
+    assertEquals( 255, ba.parse( new byte[]{1,1,1,1,1,1,1,1} ));
+
+    ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8, false, true );
+    assertEquals( -1, ba.parse( new byte[]{1,1,1,1,1,1,1,1} ));
+
+    ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8, true, false, 4 );
+    assertEquals( 0x0f, ba.parse( new byte[]{1,1,1,1,0,0,0,0} ));
+
+    ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8 );
+    assertArrayEquals( new byte[]{1,1,1,1,1,1,1,1}, ba.build(255) );
+
 //  [BitIntegerAdapter(Field("bitintegeradapter", 8), 8).build, 255, "\x01" * 8, None],
 //  [BitIntegerAdapter(Field("bitintegeradapter", 8), 8).build, -1, None, BitIntegerError],
 //  [BitIntegerAdapter(Field("bitintegeradapter", 8), 8, signed = True).build, -1, "\x01" * 8, None],
 //  [BitIntegerAdapter(Field("bitintegeradapter", 8), 8, swapped = True, bytesize = 4).build, 
 //      0x0f, "\x01" * 4 + "\x00" * 4, None],
 
-  @Test
-  public void BitIntegerAdapterTest() {
-    Adapter ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8 );
-    assertEquals( 255, ba.parse( new byte[]{1,1,1,1,1,1,1,1} ));
     
 //    StaticField sf = new StaticField("staticfield", 2);
 //    

@@ -32,7 +32,11 @@ public class Adapters
   static public Adapter BitIntegerAdapter( Construct subcon, final int width ) {
     return BitIntegerAdapter( subcon, width, false, false, 8 );
   }
-  
+
+  static public Adapter BitIntegerAdapter( Construct subcon, final int width, final boolean swapped, final boolean signed ) {
+    return BitIntegerAdapter( subcon, width, swapped, signed, 8 );
+  }
+
   static public Adapter BitIntegerAdapter( Construct subcon, final int width, final boolean swapped, final boolean signed, final int bytesize ) {
       
       return new Adapter(subcon)
