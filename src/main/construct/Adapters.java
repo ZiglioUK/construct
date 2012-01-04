@@ -41,22 +41,24 @@ public class Adapters
       
       return new Adapter(subcon)
       {
-        public byte[] _encode( int obj, Container context) { 
-          if( obj < 0 && !signed ){
-              throw new BitIntegerError("object is negative, but field is not signed " + obj );
+        public Object _encode( Object obj, Container context) {
+        	int intobj = (Integer)obj; 
+          if( intobj < 0 && !signed ){
+              throw new BitIntegerError("object is negative, but field is not signed " + intobj );
           }
-          byte[] obj2 = int_to_bin( obj, width );
+          byte[] obj2 = int_to_bin( intobj, width );
           if( swapped ){
               obj2 = swap_bytes( obj2, bytesize );
           }
           return obj2;
         }
 
-        public int _decode( byte[] obj, Container context) {
-          if( swapped ){
-            obj = swap_bytes( obj, bytesize );
+        public Object _decode( Object obj, Container context) {
+          byte[] ba = (byte[])obj;
+        	if( swapped ){
+            ba = swap_bytes( ba, bytesize );
           }
-          return bin_to_int(obj, signed );
+          return bin_to_int(ba, signed );
         }
       };
   }

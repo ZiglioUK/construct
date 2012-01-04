@@ -18,7 +18,14 @@ import junit.framework.TestCase;
 public class CoreTest  
 {
   @Rule
-  public ExpectedException exception = ExpectedException.none();
+  static public ExpectedException exception = ExpectedException.none();
+
+  @Test 
+  public void testDataLength(){
+  	assertEquals( 2, Construct.getDataLength("ab"));
+  	assertEquals( 3, Construct.getDataLength( new byte[]{1,2,3}));
+  	assertEquals( 4, Construct.getDataLength( 0x01ABCDEF ));
+  }
 
   @Test
   public void testStaticField() {
@@ -26,7 +33,7 @@ public class CoreTest
     
     assertEquals( "ab", new String((byte[])sf.parse("ab")) );
 
-    assertEquals( "ab", sf.build("ab") );
+    assertArrayEquals( new byte[]{ 'a','b' }, sf.build("ab") );
 
     exception.expect( FieldError.class );
     sf.parse("a");

@@ -67,23 +67,5 @@ public class AdaptersTest
 //    assertEquals( 2, sf.sizeof() );
   }
 
-  @Test
-  public void testFormatField(){
-
-    FormatField ff = new FormatField("formatfield", '<', 'L');
-
-    assertEquals( 0x78563412, ff.parse( new byte[]{ 0x12, 0x34, 0x56, 0x78 }));
-
-    assertArrayEquals( new byte[]{0x12, 0x34, 0x56, 0x78}, ff.build(0x78563412) );
-
-//    exception.expect( FieldError.class );
-//    ff.parse( "\\x12\\x34\\x56" );
-//
-//    def test_build_too_long(self):
-//        self.assertRaises(FieldError, self.ff.build, 9e9999)
-//
-//    def test_sizeof(self):
-//        self.assertEqual(self.ff.sizeof(), 4)
-  }
 }
 

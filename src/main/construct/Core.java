@@ -1,5 +1,8 @@
 package construct;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import construct.exception.FieldError;
 import construct.exception.SizeofError;
 import construct.exception.ValueError;
@@ -87,46 +90,46 @@ public class Core {
 			this.conflags = flags;
 		}
 
-		// public String _read_stream( InputStream stream, int length )
 		public byte[] _read_stream(byte[] stream, int length) {
 			if (length < 0)
 				throw new FieldError("length must be >= 0 " + length);
-			// try
 			{
-				// byte[] data = new byte[length];
-				// int len = stream.read( data, 0, length );
-				// byte[] data = stream.getBytes();
 				int len = stream.length;
 				if (len != length)
 					throw new FieldError("expected " + length + " found " + len);
 				return stream;
 			}
-			// catch( IOException e )
-			// {
-			// throw new FieldError( e.getMessage() );
-			// }
-
-			// len(data) != length:
-			// raise FieldError("expected %d, found %d" % (length, len(data)))
 		}
 
-		// public void _write_stream( OutputStream stream, int length, byte[]
-		// data)
-		public void _write_stream(StringBuilder stream, int length, byte[] data) {
+		static public int getDataLength( Object data ){
+			if( data instanceof String)
+				return ((String)data).length();
+			else if( data instanceof Integer )
+				return Integer.SIZE/8;
+			else if( data instanceof byte[] )
+				return ((byte[])data).length;
+			else return -1;
+		}
+
+		static public void appendDataStream( StringBuilder stream, Object data ){
+			if( data instanceof String)
+				stream.append((String)data);
+			else if( data instanceof Integer )
+				stream.append((Integer)data);
+			else if( data instanceof byte[] )
+				stream.append( new String((byte[])data));
+			else throw new ValueError( "Can't append data " + data);
+		}
+		
+		public void _write_stream( StringBuilder stream, int length, Object data) {
 			if (length < 0)
 				throw new FieldError("length must be >= 0 " + length);
-			if (data.length != length)
-				throw new FieldError("expected " + length + " found " + data.length);
 
-			// try
-			{
-				// stream.write(data);
-				stream.append(new String(data));
-			}
-			// catch( IOException e )
-			// {
-			// throw new FieldError( e.getMessage() );
-			// }
+			int datalength = getDataLength( data );
+			if ( length != datalength )
+				throw new FieldError("expected " + length + " found " + datalength);
+
+			appendDataStream( stream, data );
 		};
 
 		/**
@@ -137,7 +140,6 @@ public class Core {
 		 * @param data
 		 */
 		public Object parse(byte[] data) {
-			// return parse_stream( new ByteArrayInputStream(data.getBytes()) );
 			return parse_stream(data);
 		}
 
@@ -150,18 +152,11 @@ public class Core {
 		 * 
 		 * Files, pipes, sockets, and other streaming sources of data are handled by this method.
 		 */
-		// public String parse_stream( InputStream stream )
 		public Object parse_stream(byte[] stream) {
 			return _parse(stream, new Container());
 		}
 
-		// abstract public String _parse( InputStream stream, Container context
-		// );
 		abstract public Object _parse(byte[] stream, Container context);
-
-		public String build(String str) {
-			return build(str.getBytes());
-		}
 
 		/**
 		 * Build an object in memory.
@@ -169,14 +164,11 @@ public class Core {
 		 * @param obj
 		 * @return
 		 */
-		public String build(byte[] obj) {
-			// ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		public byte[] build( Object obj) {
 			StringBuilder stream = new StringBuilder();
-			// build_stream( obj, stream );
 			build_stream(obj, stream);
 
-			// return new String( stream.toByteArray() );
-			return stream.toString();
+			return stream.toString().getBytes();
 		}
 
 		/**
@@ -185,14 +177,13 @@ public class Core {
 		 * @param obj
 		 * @param stream
 		 */
-		// public void build_stream( String obj, OutputStream stream)
-		public void build_stream(byte[] obj, StringBuilder stream) {
+		public void build_stream( Object obj, StringBuilder stream) {
 			_build(obj, stream, new Container());
 		}
 
 		// abstract void _build( String obj, OutputStream stream, Container
 		// context);
-		protected abstract void _build(byte[] obj, StringBuilder stream, Container context);
+		protected abstract void _build( Object obj, StringBuilder stream, Container context);
 
 		/**
 		 * Calculate the size of this object, optionally using a context. Some constructs have no fixed size and can only know their size for a given hunk of data;
@@ -246,7 +237,7 @@ public class Core {
 		}
 
 		@Override
-		protected void _build(byte[] obj, StringBuilder stream, Container context) {
+		protected void _build( Object obj, StringBuilder stream, Container context) {
 			subcon._build(obj, stream, context);
 		}
 
@@ -273,13 +264,12 @@ public class Core {
 			return _decode((byte[]) subcon._parse(stream, context), context);
 		}
 
-		public void _build(int obj, StringBuilder stream, Container context) {
+		public void _build(Object obj, StringBuilder stream, Container context) {
 			subcon._build(_encode(obj, context), stream, context);
 		}
 
-		abstract public int _decode(byte[] obj, Container context);
-
-		abstract public byte[] _encode(int obj, Container context);
+		abstract public Object _decode(Object obj, Container context);
+		abstract public Object _encode(Object obj, Container context);
 	}
 
 	/*
@@ -311,9 +301,11 @@ public class Core {
 		}
 
 		@Override
-		protected void _build(byte[] obj, StringBuilder stream, Container context) {
+		protected void _build( Object obj, StringBuilder stream, Container context) {
 			_write_stream(stream, length, obj);
-		}/*
+		}
+		
+		/*
 		  * public int _sizeof( Container context ){ return length; }
 		  */
 	}
@@ -361,13 +353,8 @@ public class Core {
 
 		@Override
 		// void _build( String obj, OutputStream stream, Container context)
-		public void _build(byte[] obj, StringBuilder stream, Container context) {
+		public void _build( Object obj, StringBuilder stream, Container context) {
 			_write_stream(stream, length, obj);
-			// def _build(self, obj, stream, context):
-			// try:
-			// _write_stream(stream, self.length, self.packer.pack(obj))
-			// except Exception, ex:
-			// raise FieldError(ex)
 		}
 
 		public byte[] build(Object... args) {
