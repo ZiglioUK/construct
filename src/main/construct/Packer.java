@@ -1,6 +1,5 @@
-package construct.core;
+package construct;
 
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -8,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+
 
 /*
 
@@ -164,6 +164,11 @@ Whitespace between formats is ignored.
 The variable struct.error is an exception raised on errors. *
  */
 
+/**
+ * a port of Python's Struct, based on  java.nio.ByteBuffer
+ * @author zigliolie - Copyright Sirtrack Ltd.
+ *
+ */
 public class Packer {
  /* big_endian_format = {
       'x':{ 'size' : 1, 'alignment' : 0, 'pack' : None, 'unpack' : None},
@@ -221,12 +226,12 @@ public Map<Character, FormatMode> formatmode = new HashMap<Character, FormatMode
     put( '@', new FormatMode( defaultFormat, Endianness.sys ));
   }};
 
-String fmt;
+char fmt;
 char endianity;
 //FormatString[] fsa;
 
 //  public Packer( String name )
-public Packer( char endianity, String fmt )
+public Packer( char endianity, char fmt )
 {
   this.endianity = endianity;
   this.fmt = fmt;
@@ -294,11 +299,9 @@ while i<len(fmt):
     i += 1
 return result
 */
-Scanner sc;
-
 public int length()
 {
-  return fmt.length();
+  return 1;
 }
 
 public FormatMode getmode()
@@ -320,6 +323,8 @@ public FormatMode getmode()
 //  public Object[] unpack( InputStream data )
   public Object[] unpack( String data )
   {
+      Scanner sc;
+
 //    FormatMode formatdef = getmode();
       ArrayList result = new ArrayList<Object>();
       Object obj;
@@ -379,6 +384,50 @@ public FormatMode getmode()
       }
       return result.toArray();
   }
+
+  public Object[] unpack( byte[] stream )
+  {
+//    FormatMode formatdef = getmode();
+      ArrayList result = new ArrayList<Object>();
+      Object obj;
+      
+      ByteBuffer buf = ByteBuffer.wrap(stream);
+      if( endianity == '>' )
+        buf.order( ByteOrder.BIG_ENDIAN ); // optional, the initial order of a byte buffer is always BIG_ENDIAN.
+      else if( endianity == '<' )
+        buf.order( ByteOrder.LITTLE_ENDIAN ); 
+      else if( endianity == '=' )
+        buf.order( ByteOrder.nativeOrder() ); 
+  
+
+      while( buf.hasRemaining() ){
+      	switch( fmt ){
+      		case 'L':
+      			int num = buf.getInt();
+            result.add( num );
+      		break;
+//        'x':{ 'size' : 1, 'alignment' : 0, 'pack' : None, 'unpack' : None},
+//        'b':{ 'size' : 1, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
+//        'B':{ 'size' : 1, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
+//        'c':{ 'size' : 1, 'alignment' : 0, 'pack' : pack_char, 'unpack' : unpack_char},
+//        's':{ 'size' : 1, 'alignment' : 0, 'pack' : None, 'unpack' : None},
+//        'p':{ 'size' : 1, 'alignment' : 0, 'pack' : None, 'unpack' : None},
+//        'h':{ 'size' : 2, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
+//        'H':{ 'size' : 2, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
+//        'i':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
+//        'I':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
+//        'l':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
+//        'L':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
+//        'q':{ 'size' : 8, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
+//        'Q':{ 'size' : 8, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
+//        'f':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_float, 'unpack' : unpack_float},
+//        'd':{ 'size' : 8, 'alignment' : 0, 'pack' : pack_float, 'unpack' : unpack_float},
+
+       }
+      }
+     return result.toArray();
+  }
+
   /*
   public int unpack_int(data,index,size,le)
   {

@@ -1,7 +1,24 @@
 package construct;
-import construct.core.FormatField;
+import static construct.Core.*;
+import static construct.Adapters.*;
 
 public class Macros {
+
+  /**
+  A field consisting of a specified number of bytes.
+   * @param name the name of the field
+   * @param length the length of the field. the length can be either an integer
+    (StaticField), or a function that takes the context as an argument and
+    returns the length (MetaField)
+   * @return
+   */
+  static public StaticField Field( String name, int length ){
+    
+  //  if callable(length):
+  //      return MetaField(name, length)
+  //  else:
+        return new StaticField(name, length);
+  }
 
 	/**
 	    """
@@ -45,14 +62,22 @@ public class Macros {
 	 * @param bytesize
 	 * @return
 	 */
-	static BitIntegerAdapter BitField( String name, int length, boolean swapped, boolean signed, int bytesize ) {
-	    return new BitIntegerAdapter( Field(name, length),
-	        length,
-	        swapped,
-	        signed,
-	        bytesize
-	    );
-	}
+//	static BitIntegerAdapter BitField( String name, int length, boolean swapped, boolean signed, int bytesize ) {
+//	    return new BitIntegerAdapter( Field(name, length),
+//	        length,
+//	        swapped,
+//	        signed,
+//	        bytesize
+//	    );
+//	}
+  static public Adapter BitField( final String name, final int length, boolean swapped, boolean signed, int bytesize ) {
+   return BitIntegerAdapter( Field(name, length),
+        length,
+        swapped,
+        signed,
+        bytesize
+    );
+}
 	
 	/**
 //	    """unsigned, big endian 16-bit integer"""
@@ -60,6 +85,6 @@ public class Macros {
 	 * @return
 	 */
 	static FormatField UBInt16(String name){
-	    return new FormatField( name, '>', "H" );
+	    return new FormatField( name, '>', 'H' );
 	}
 }

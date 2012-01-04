@@ -11,8 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import construct.core.FormatField;
-import construct.core.StaticField;
+import static construct.Core.*;
 import construct.exception.FieldError;
 import junit.framework.TestCase;
 
@@ -25,7 +24,7 @@ public class CoreTest
   public void testStaticField() {
     StaticField sf = new StaticField("staticfield", 2);
     
-    assertEquals( "ab", sf._parse("ab") );
+    assertEquals( "ab", new String((byte[])sf.parse("ab")) );
 
     assertEquals( "ab", sf.build("ab") );
 
@@ -41,9 +40,9 @@ public class CoreTest
   @Test
   public void testFormatField(){
 
-    FormatField ff = new FormatField("formatfield", '<', "L");
+    FormatField ff = new FormatField("formatfield", '<', 'L');
 
-    assertEquals( 0x78563412, ff.parse("\\x12\\x34\\x56\\x78") );
+    assertEquals( new Integer(0x78563412), (Integer)ff.parse(new byte[]{0x12, 0x34, 0x56, 0x78}) );
 
     assertArrayEquals( new byte[]{0x12, 0x34, 0x56, 0x78}, ff.build(0x78563412) );
 
