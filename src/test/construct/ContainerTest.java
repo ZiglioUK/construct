@@ -32,7 +32,7 @@ public class ContainerTest
 
   @Test
   public void test_getattr() {
-      Container c = new Container( p("a",1) );
+      Container c = new Container( P("a",1) );
       assertEquals( 1, c.get("a") );
   }
   @Test
@@ -43,21 +43,21 @@ public class ContainerTest
   }
   @Test
   public void test_delattr() {
-      Container c = new Container( p("a",1) );
+      Container c = new Container( P("a",1) );
       c.del("a");
       assertFalse( c.contains("a") );
   }
   @Test
   public void test_update() {
-      Container c = new Container( p("a",1) );
+      Container c = new Container( P("a",1) );
       Container d = new Container();
       d.update(c);
       assertEquals( 1, d.get("a") );
   }
   @Test
   public void test_eq_eq() {
-      Container c = new Container( p("a",1) );
-      Container d = new Container( p("a",1) );
+      Container c = new Container( P("a",1) );
+      Container d = new Container( P("a",1) );
       assertTrue( c.equals(d) );
   }
       /*
@@ -68,19 +68,19 @@ public class ContainerTest
 */
   @Test
   public void test_ne_wrong_key() {
-      Container c = new Container( p("a",1) );
-      Container d = new Container( p("b",1) );
+      Container c = new Container( P("a",1) );
+      Container d = new Container( P("b",1) );
       assertFalse( c.equals(d) );
   }
   @Test
   public void test_ne_wrong_value() {
-      Container c = new Container( p("a",1) );
-      Container d = new Container( p("a",2) );
+      Container c = new Container( P("a",1) );
+      Container d = new Container( P("a",2) );
       assertFalse( c.equals(d) );
   }
   @Test
   public void test_copy() {
-      Container c = new Container( p("a",1) );
+      Container c = new Container( P("a",1) );
       Container d = c.clone();
       assertTrue( c.equals(d) );
       assertNotSame( c, d );
@@ -96,7 +96,7 @@ public class ContainerTest
 */
   @Test
   public void test_in() {
-      Container c = new Container( p("a",1) );
+      Container c = new Container( P("a",1) );
       assertTrue( c.contains("a") );
   }
   @Test

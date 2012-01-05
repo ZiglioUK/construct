@@ -57,7 +57,7 @@ public class ContstructTest
   public void structTest1() {
   	  Struct struct = Struct( "struct", UBInt8("a"), UBInt16("b") );
   	  Container ca = (Container)struct.parse( new byte[]{1,0,2} );
-  	  Container cb = Container( p("a", 1), p("b", 2) );
+  	  Container cb = Container( P("a", 1), P("b", 2) );
       assertTrue( ca.equals(cb) );
   }
 
@@ -66,12 +66,11 @@ public class ContstructTest
   	  Struct struct = Struct( "struct", UBInt8("a"), UBInt16("b"), 
   	  									Struct( "foo", UBInt8("c"), UBInt8("d") ));
   	  Container ca = (Container)struct.parse( new byte[]{1,0,2,3,4} );
-  	  Container cb = Container( p("a",1), p("b",2), p("foo", Container( p("c",3), p("d",4))));
+  	  Container cb = Container( P("a",1), P("b",2), P("foo", Container( P("c",3), P("d",4))));
       assertTrue( ca.equals(cb) );
   }
 
   /*
-    [Struct("struct", UBInt8("a"), UBInt16("b"), Struct("foo", UBInt8("c"), UBInt8("d"))).parse, "\x01\x00\x02\x03\x04", Container(a=1,b=2,foo=Container(c=3,d=4)), None],
     [Struct("struct", UBInt8("a"), UBInt16("b"), Embedded(Struct("foo", UBInt8("c"), UBInt8("d")))).parse, "\x01\x00\x02\x03\x04", Container(a=1,b=2,c=3,d=4), None],
     [Struct("struct", UBInt8("a"), UBInt16("b")).build, Container(a=1,b=2), "\x01\x00\x02", None],
     [Struct("struct", UBInt8("a"), UBInt16("b"), Struct("foo", UBInt8("c"), UBInt8("d"))).build, Container(a=1,b=2,foo=Container(c=3,d=4)), "\x01\x00\x02\x03\x04", None],

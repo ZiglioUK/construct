@@ -443,7 +443,7 @@ public class Core {
 			} else{
 				obj = new Container();
 				if( nested ){
-					context = new Container( p("_", context) );
+					context = new Container( P("_", context) );
 				}
 			}
 

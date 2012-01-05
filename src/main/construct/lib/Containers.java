@@ -19,7 +19,7 @@ public class Containers
 		}
 	}
 
-	static public Pair p( final String s, final Object o ){
+	static public Pair P( final String s, final Object o ){
 		return new Pair( s, o);
 	}
 	
@@ -71,8 +71,12 @@ public class Containers
 			return dict.containsKey(name);
 		}
 		
-		public boolean equals( Container o ){
-			return dict.equals(o.dict);
+		@Override
+		public boolean equals( Object o ){
+			if( o instanceof Container)
+				return dict.equals(((Container)o).dict);
+			else
+				return false;
 		}
     
 		public Container clone(){
