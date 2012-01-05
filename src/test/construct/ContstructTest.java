@@ -79,9 +79,16 @@ public class ContstructTest
   	  byte[] ba = struct.build( Container( P("a",1), P("b", 2)));
   	  assertArrayEquals( new byte[]{1,0,2}, ba );
   }
-   
-   /*[Struct("struct", UBInt8("a"), UBInt16("b")).build, Container(a=1,b=2), "\x01\x00\x02", None],
-    [Struct("struct", UBInt8("a"), UBInt16("b"), Struct("foo", UBInt8("c"), UBInt8("d"))).build, Container(a=1,b=2,foo=Container(c=3,d=4)), "\x01\x00\x02\x03\x04", None],
+
+  @Test
+  public void structTest5() {
+  	  Struct foo = Struct( "foo", UBInt8("c"), UBInt8("d") );
+  	  Struct struct = Struct( "struct", UBInt8("a"), UBInt16("b"), foo );
+  	  byte[] ba = struct.build( Container( P("a",1), P("b", 2), P("foo", Container(P("c", 3), P("d",4)))));
+  	  assertArrayEquals( new byte[]{1,0,2,3,4}, ba );
+  }
+ 
+   /*
     [Struct("struct", UBInt8("a"), UBInt16("b"), Embedded(Struct("foo", UBInt8("c"), UBInt8("d")))).build, Container(a=1,b=2,c=3,d=4), "\x01\x00\x02\x03\x04", None],
     
     [Sequence("sequence", UBInt8("a"), UBInt16("b")).parse, "\x01\x00\x02", [1,2], None],
