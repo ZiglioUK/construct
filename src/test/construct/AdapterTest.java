@@ -24,7 +24,7 @@ import org.junit.rules.ExpectedException;
 
 import construct.exception.ValueError;
 
-public class AdaptersTest  
+public class AdapterTest  
 {
   @Rule
   public ExpectedException exception = ExpectedException.none();

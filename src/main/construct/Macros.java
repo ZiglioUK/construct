@@ -1,6 +1,7 @@
 package construct;
 import static construct.Core.*;
 import static construct.Adapters.*;
+import construct.Core.Construct;
 
 public class Macros {
 
@@ -249,10 +250,20 @@ public class Macros {
 #===============================================================================
 */
 	  
-/*
-def Bitwise(subcon):
+	  /**
     """converts the stream to bits, and passes the bitstream to subcon
     * subcon - a bitwise construct (usually BitField)
+	   */
+	  static public class Bitwise extends Subconstruct{
+
+			public Bitwise(Construct subcon) {
+	      super(subcon);
+	      // TODO Auto-generated constructor stub
+      }
+	  	
+	  }
+/*
+def Bitwise(subcon):
     """
     # subcons larger than MAX_BUFFER will be wrapped by Restream instead
     # of Buffered. implementation details, don't stick your nose in :)

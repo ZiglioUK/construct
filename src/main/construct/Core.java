@@ -1,5 +1,7 @@
 package construct;
 
+import java.nio.ByteBuffer;
+
 import construct.exception.FieldError;
 import construct.exception.SizeofError;
 import construct.exception.ValueError;
@@ -67,18 +69,20 @@ public class Core {
   the context for each iteration, which is necessary for OnDemand parsing.
 */
 	static public abstract class Construct {
-		byte[] conflags;
+		
+    public static final int FLAG_COPY_CONTEXT          = 0x0001;
+    public static final int FLAG_DYNAMIC               = 0x0002;
+    public static final int FLAG_EMBED                 = 0x0004;
+    public static final int FLAG_NESTING               = 0x0008;
+		
+		int conflags;
 		public String name;
 
 		public Construct(String name) {
-			if (name.equals("_") || name.startsWith("<"))
-				throw new FieldError("reserved name " + name); // raise
-			// ValueError
-
-			this.name = name;
+			this( name, 0 );
 		}
 
-		public Construct(String name, byte[] flags) {
+		public Construct(String name, int flags) {
 			if (name.equals("_") || name.startsWith("<"))
 				throw new FieldError("reserved name " + name); // raise
 			// ValueError
@@ -86,15 +90,51 @@ public class Core {
 			this.name = name;
 			this.conflags = flags;
 		}
+		
+		/**
+        Set the given flag or flags.
+		 * @param flag flag to set; may be OR'd combination of flags
+		 */
+		public void _set_flag(int flag){
+			conflags |= flag;
+		}
+		
+		/**
+        Clear the given flag or flags.
+		 * @param flag flag to clear; may be OR'd combination of flags
+		 */
+		public void _clear_flag( int flag ){
+			conflags &= ~flag;
+		}
+		
+		/**
+        Pull flags from subconstructs.
+		 */
+		public void _inherit_flags( Subconstruct... subcons ){
+			for( Subconstruct sc : subcons ){
+				_set_flag(sc.conflags);
+			}
+		}
+		
+		/**
+        Check whether a given flag is set.
+		 * @param flag flag to check
+		 * @return
+		 */
+		public boolean _is_flag( int flag ){
+			return (conflags & flag) == 0;
+		}
 
-		public byte[] _read_stream(byte[] stream, int length) {
+		public byte[] _read_stream( ByteBuffer stream, int length) {
 			if (length < 0)
 				throw new FieldError("length must be >= 0 " + length);
 			{
-				int len = stream.length;
-				if (len != length)
+				int len = stream.remaining();
+				if (len < length)
 					throw new FieldError("expected " + length + " found " + len);
-				return stream;
+				byte[] out = new byte[length];
+				stream.get(out, 0, length);
+				return out;
 			}
 		}
 
@@ -137,11 +177,11 @@ public class Core {
 		 * @param data
 		 */
 		public Object parse(byte[] data) {
-			return parse_stream(data);
+			return parse_stream( ByteBuffer.wrap( data ));
 		}
 
 		public Object parse(String text) {
-			return parse_stream(text.getBytes());
+			return parse_stream( ByteBuffer.wrap( text.getBytes() ));
 		}
 
 		/**
@@ -149,11 +189,11 @@ public class Core {
 		 * 
 		 * Files, pipes, sockets, and other streaming sources of data are handled by this method.
 		 */
-		public Object parse_stream(byte[] stream) {
+		public Object parse_stream( ByteBuffer stream) {
 			return _parse(stream, new Container());
 		}
 
-		abstract public Object _parse(byte[] stream, Container context);
+		abstract public Object _parse( ByteBuffer stream, Container context);
 
 		/**
 		 * Build an object in memory.
@@ -211,7 +251,7 @@ public class Core {
 	}
 
 	/**
-	 * """ Abstract subconstruct (wraps an inner construct, inheriting it's name and flags). """
+	 * """ Abstract subconstruct (wraps an inner construct, inheriting its name and flags). """
 	 * 
 	 */
 	public static abstract class Subconstruct extends Construct {
@@ -229,7 +269,7 @@ public class Core {
 		}
 
 		@Override
-		public Object _parse(byte[] stream, Container context) {
+		public Object _parse( ByteBuffer stream, Container context) {
 			return subcon._parse(stream, context);
 		}
 
@@ -257,8 +297,8 @@ public class Core {
 		}
 
 		@Override
-		public Object _parse(byte[] stream, Container context) {
-			return _decode((byte[]) subcon._parse(stream, context), context);
+		public Object _parse( ByteBuffer stream, Container context) {
+			return _decode((byte[]) subcon._parse( stream, context ), context);
 		}
 
 		public void _build(Object obj, StringBuilder stream, Container context) {
@@ -293,8 +333,8 @@ public class Core {
 		}
 
 		@Override
-		public Object _parse(byte[] stream, Container context) {
-			return _read_stream(stream, length);
+		public Object _parse( ByteBuffer stream, Container context) {
+			return _read_stream( stream, length);
 		}
 
 		@Override
@@ -338,9 +378,9 @@ public class Core {
 		}
 
 		@Override
-		public Object _parse( byte[] stream, Container context ) {
+		public Object _parse( ByteBuffer stream, Container context ) {
 			try {
-				return (packer.unpack(stream)[0]);
+				return packer.unpack(stream)[0];
 			} catch (Exception e) {
 				throw new FieldError(e);
 			}
@@ -376,12 +416,12 @@ public class Core {
 	 */
 	static public class Struct extends Construct{
 		public boolean nested = true;
-		Subconstruct[] subcons;
+		Construct[] subcons;
 		/**
 		 * @param name the name of the structure
 		 * @param subcons a sequence of subconstructs that make up this structure.
 		 */
-		public Struct(String name, Subconstruct... subcons) {
+		public Struct(String name, Construct... subcons) {
 	    super(name);
 	    this.subcons = subcons;
 /*
@@ -391,31 +431,32 @@ public class Core {
 	    }
 
 		@Override
-    public Object _parse(byte[] stream, Container context) {
-/*
-        if "<obj>" in context:
-            obj = context["<obj>"]
-            del context["<obj>"]
-        else:
-            obj = Container()
-            if self.nested:
-                context = Container(_ = context)
-                */
-			for( Subconstruct sc: subcons ){
-				/*
-        if sc.conflags & self.FLAG_EMBED:
-            context["<obj>"] = obj
-            sc._parse(stream, context)
-        else:
-            subobj = sc._parse(stream, context)
-            if sc.name is not None:
-                obj[sc.name] = subobj
-                context[sc.name] = subobj
-    		return obj
-				*/
-				sc._parse(stream, context);
+    public Object _parse( ByteBuffer stream, Container context) {
+			
+			Container obj;
+			if( context.contains("<obj>")){
+				obj = (Container)context.get("<obj>");
+				context.del("<obj>");
+			} else{
+				obj = new Container();
+				if( nested ){
+					context = new Container( p("_", context) );
+				}
 			}
-			return null;
+
+			for( Construct sc: subcons ){
+				if( (sc.conflags & FLAG_EMBED) != 0 ){
+					context.set("<obj>", obj);
+					sc._parse(stream, context);
+				} else {
+					Object subobj = sc._parse(stream, context);
+					if( sc.name != null ){
+						obj.set( sc.name, subobj );
+						context.set( sc.name, subobj );
+					}
+				}
+			}
+			return obj;
     }
 
 		@Override
