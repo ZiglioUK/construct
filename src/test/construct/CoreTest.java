@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 public class CoreTest  
 {
   @Rule
-  static public ExpectedException exception = ExpectedException.none();
+  public ExpectedException exception = ExpectedException.none();
 
   @Test 
   public void testDataLength(){

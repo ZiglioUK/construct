@@ -134,7 +134,7 @@ public class Core {
 				throw new FieldError("length must be >= 0 " + length);
 			{
 				int len = stream.remaining();
-				if (len < length)
+				if (len != length)
 					throw new FieldError("expected " + length + " found " + len);
 				byte[] out = new byte[length];
 				stream.get(out, 0, length);
@@ -174,7 +174,7 @@ public class Core {
 				throw new FieldError("length must be >= 0 " + length);
 
 			int datalength = getDataLength( data );
-			if ( length < datalength )
+			if ( length != datalength )
 				throw new FieldError("expected " + length + " found " + datalength);
 
 			appendDataStream( stream, data );
@@ -399,11 +399,7 @@ public class Core {
 
 		@Override
 		public void _build( Object obj, StringBuilder stream, Container context) {
-			_write_stream(stream, length, obj);
-		}
-
-		public byte[] build(Object... args) {
-			return packer.pack(args);
+			_write_stream(stream, length, packer.pack(obj));
 		}
 
 	}

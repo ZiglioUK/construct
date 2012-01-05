@@ -305,7 +305,50 @@ return result
 */
 public int length()
 {
-  return 1;
+	int len = 0;
+  switch( fmt ){
+	case 'b':
+	case 'B':
+	case 'C':
+	case 's':
+	case 'p':
+		len = 1;
+	break;
+
+	case 'h':
+	case 'H':
+		len = 2;
+	break;
+	
+	case 'i':
+	case 'I':
+	case 'l':
+	case 'L':
+		len = 4;
+	break;
+	default:
+		throw new StructError( "unrecognized fmt " + fmt);
+		//        'x':{ 'size' : 1, 'alignment' : 0, 'pack' : None, 'unpack' : None},
+//  'b':{ 'size' : 1, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
+//  'B':{ 'size' : 1, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
+//  'c':{ 'size' : 1, 'alignment' : 0, 'pack' : pack_char, 'unpack' : unpack_char},
+//  's':{ 'size' : 1, 'alignment' : 0, 'pack' : None, 'unpack' : None},
+//  'p':{ 'size' : 1, 'alignment' : 0, 'pack' : None, 'unpack' : None},
+
+//  'h':{ 'size' : 2, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
+//  'H':{ 'size' : 2, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
+
+//  'i':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
+//  'I':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
+//  'l':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
+//  'L':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
+
+//  'q':{ 'size' : 8, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
+//  'Q':{ 'size' : 8, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
+//  'f':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_float, 'unpack' : unpack_float},
+//  'd':{ 'size' : 8, 'alignment' : 0, 'pack' : pack_float, 'unpack' : unpack_float},
+}
+  return len;
 }
 
 public FormatMode getmode()
@@ -402,7 +445,7 @@ public FormatMode getmode()
       else if( endianity == '=' )
         buf.order( ByteOrder.nativeOrder() ); 
   
-      	switch( fmt ){
+      switch( fmt ){
       	case 'b':
       	case 'B':
       	case 'C':
@@ -505,6 +548,52 @@ public FormatMode getmode()
       return data[index:index+size]
 
   */
+  static public byte getByte( Object obj ){
+    if( obj instanceof Byte )
+    	return( (Byte)obj );
+    else if( obj instanceof Short && (Short)obj < 256 ){
+    	return (byte)((Short)obj & 0xFF);
+    }
+    else if( obj instanceof Integer && (Integer)obj < 256 ){
+    	return (byte)((Integer)obj & 0xFF);
+    }
+  //else if( obj instanceof Character )
+  //  b.putChar( (Character)obj );
+  //else if( obj instanceof Double )
+  //  b.putDouble( (Double)obj );
+  //else if( obj instanceof Float )
+  //  b.putFloat( (Float)obj );
+  //else if( obj instanceof Integer )
+  //  b.putInt( (Integer)obj );
+  //else if( obj instanceof Long )
+  //  b.putLong( (Long)obj );
+  //else if( obj instanceof Short )
+  //  b.putShort( (Short)obj );
+  	throw new RuntimeException( "type not supported " + obj );
+  }
+
+  static public short getShort( Object obj ){
+    if( obj instanceof Short ){
+    	return( (Short)obj );
+    }
+    else if( obj instanceof Integer && (Integer)obj < 65536 ){
+    	return (short)((Integer)obj & 0xFFFF );
+    }
+  //else if( obj instanceof Character )
+  //  b.putChar( (Character)obj );
+  //else if( obj instanceof Double )
+  //  b.putDouble( (Double)obj );
+  //else if( obj instanceof Float )
+  //  b.putFloat( (Float)obj );
+  //else if( obj instanceof Integer )
+  //  b.putInt( (Integer)obj );
+  //else if( obj instanceof Long )
+  //  b.putLong( (Long)obj );
+  //else if( obj instanceof Short )
+  //  b.putShort( (Short)obj );
+  	throw new RuntimeException( "type not supported " + obj );
+  }
+  
   /*
   """pack(fmt, v1, v2, ...) -> string
      Return string containing values v1, v2, ... packed according to fmt.
@@ -513,9 +602,9 @@ public FormatMode getmode()
    * @param args
    * @return
    */
-  public byte[] pack( Object... args )
+  public byte[] pack( Object obj )
   {
-    ByteBuffer b = ByteBuffer.allocate( 2048 );
+    ByteBuffer b = ByteBuffer.allocate( length() );
     
     if( endianity == '>' )
       b.order( ByteOrder.BIG_ENDIAN ); // optional, the initial order of a byte buffer is always BIG_ENDIAN.
@@ -524,49 +613,49 @@ public FormatMode getmode()
     else if( endianity == '=' )
       b.order( ByteOrder.nativeOrder() ); 
     
-  //  'L':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
-    for( int i = 0; i < args.length; i++ )
-    {
-//      if( args[i] instanceof Byte )
-//        b.put( (Byte)args[i] );
-//      else if( args[i] instanceof Character )
-//        b.putChar( (Character)args[i] );
-//      else if( args[i] instanceof Double )
-//        b.putDouble( (Double)args[i] );
-//      else if( args[i] instanceof Float )
-//        b.putFloat( (Float)args[i] );
-//      else if( args[i] instanceof Integer )
-//        b.putInt( (Integer)args[i] );
-//      else if( args[i] instanceof Long )
-//        b.putLong( (Long)args[i] );
-//      else if( args[i] instanceof Short )
-//        b.putShort( (Short)args[i] );
-//      else throw new RuntimeException( "type not supported " + args[i] );
-      	switch( fmt ){
-      		case 'L':
-          if( args[i] instanceof Integer )
-          	b.putInt( (Integer)args[i] );
-      		break;
-//        'x':{ 'size' : 1, 'alignment' : 0, 'pack' : None, 'unpack' : None},
-//        'b':{ 'size' : 1, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
-//        'B':{ 'size' : 1, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
-//        'c':{ 'size' : 1, 'alignment' : 0, 'pack' : pack_char, 'unpack' : unpack_char},
-//        's':{ 'size' : 1, 'alignment' : 0, 'pack' : None, 'unpack' : None},
-//        'p':{ 'size' : 1, 'alignment' : 0, 'pack' : None, 'unpack' : None},
-//        'h':{ 'size' : 2, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
-//        'H':{ 'size' : 2, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
-//        'i':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
-//        'I':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
-//        'l':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
-//        'L':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
-//        'q':{ 'size' : 8, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
-//        'Q':{ 'size' : 8, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
-//        'f':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_float, 'unpack' : unpack_float},
-//        'd':{ 'size' : 8, 'alignment' : 0, 'pack' : pack_float, 'unpack' : unpack_float},
-
-       }
-      }
+    switch( fmt ){
+    	case 'b':
+    	case 'B':
+    	case 'C':
+    	case 's':
+    	case 'p':
+    		b.put( getByte(obj) );
+    	break;
+  
+    	case 'h':
+    	case 'H':
+    		b.putShort( getShort(obj) );
+    	break;
+    	
+    	case 'i':
+    	case 'I':
+    	case 'l':
+    	case 'L':
+  //      if( obj instanceof Integer )
+        	b.putInt( (Integer)obj );
+   		break;
+   		default:
+    			throw new StructError( "unrecognized fmt " + fmt);
+  			//        'x':{ 'size' : 1, 'alignment' : 0, 'pack' : None, 'unpack' : None},
+  //    'b':{ 'size' : 1, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
+  //    'B':{ 'size' : 1, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
+  //    'c':{ 'size' : 1, 'alignment' : 0, 'pack' : pack_char, 'unpack' : unpack_char},
+  //    's':{ 'size' : 1, 'alignment' : 0, 'pack' : None, 'unpack' : None},
+  //    'p':{ 'size' : 1, 'alignment' : 0, 'pack' : None, 'unpack' : None},
+  
+  //    'h':{ 'size' : 2, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
+  //    'H':{ 'size' : 2, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
+  
+  //    'i':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
+  //    'I':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
+  //    'l':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
+  //    'L':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
+  
+  //    'q':{ 'size' : 8, 'alignment' : 0, 'pack' : pack_signed_int, 'unpack' : unpack_signed_int},
+  //    'Q':{ 'size' : 8, 'alignment' : 0, 'pack' : pack_unsigned_int, 'unpack' : unpack_int},
+  //    'f':{ 'size' : 4, 'alignment' : 0, 'pack' : pack_float, 'unpack' : unpack_float},
+  //    'd':{ 'size' : 8, 'alignment' : 0, 'pack' : pack_float, 'unpack' : unpack_float},
+    }
     return Arrays.copyOf( b.array(), b.position() );
-//    return b.array();
   }
 }
