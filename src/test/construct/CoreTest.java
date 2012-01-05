@@ -24,6 +24,8 @@ public class CoreTest
   public void testDataLength(){
   	assertEquals( 2, Construct.getDataLength("ab"));
   	assertEquals( 3, Construct.getDataLength( new byte[]{1,2,3}));
+  	assertEquals( 1, Construct.getDataLength( 255 ));
+  	assertEquals( 2, Construct.getDataLength( 256 ));
   	assertEquals( 4, Construct.getDataLength( 0x01ABCDEF ));
   }
 

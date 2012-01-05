@@ -91,6 +91,10 @@ public class Core {
 			this.conflags = flags;
 		}
 		
+		@Override
+		public String toString(){
+			return getClass().getName() + "(" + name + ")";
+		}
 		/**
         Set the given flag or flags.
 		 * @param flag flag to set; may be OR'd combination of flags
@@ -141,9 +145,16 @@ public class Core {
 		static public int getDataLength( Object data ){
 			if( data instanceof String)
 				return ((String)data).length();
-			else if( data instanceof Integer )
-				return Integer.SIZE/8;
-			else if( data instanceof byte[] )
+			else if( data instanceof Integer ){
+				int num = (Integer)data;
+				if( num < 256 )
+					return 1;
+				else if( num < 65536 )
+					return 2;
+  			else
+  				return 4;
+//  				return Integer.SIZE/8;
+			} else if( data instanceof byte[] )
 				return ((byte[])data).length;
 			else return -1;
 		}
@@ -163,7 +174,7 @@ public class Core {
 				throw new FieldError("length must be >= 0 " + length);
 
 			int datalength = getDataLength( data );
-			if ( length != datalength )
+			if ( length < datalength )
 				throw new FieldError("expected " + length + " found " + datalength);
 
 			appendDataStream( stream, data );
@@ -434,7 +445,7 @@ public class Core {
 	    }
 
 		@Override
-    public Object _parse( ByteBuffer stream, Container context) {
+		public Object _parse( ByteBuffer stream, Container context) {
 			
 			Container obj;
 			if( context.contains("<obj>")){
@@ -443,7 +454,7 @@ public class Core {
 			} else{
 				obj = new Container();
 				if( nested ){
-					context = new Container( P("_", context) );
+					context = Container( P("_", context) );
 				}
 			}
 
@@ -451,36 +462,39 @@ public class Core {
 				if( (sc.conflags & FLAG_EMBED) != 0 ){
 					context.set("<obj>", obj);
 					sc._parse(stream, context);
-				} else {
-					Object subobj = sc._parse(stream, context);
-					if( sc.name != null ){
+				} else if( sc.name != null ){
+					  Object subobj = sc._parse(stream, context);
 						obj.set( sc.name, subobj );
 						context.set( sc.name, subobj );
-					}
 				}
 			}
 			return obj;
     }
 
 		@Override
-    protected void _build(Object obj, StringBuilder stream, Container context) {
-/*
-        if "<unnested>" in context:
-            del context["<unnested>"]
-        elif self.nested:
-            context = Container(_ = context)
-        for sc in self.subcons:
-            if sc.conflags & self.FLAG_EMBED:
-                context["<unnested>"] = True
-                subobj = obj
-            elif sc.name is None:
-                subobj = None
-            else:
-                subobj = getattr(obj, sc.name)
-                context[sc.name] = subobj
-            sc._build(subobj, stream, context)
-
- * */    }
+    protected void _build( Object obj, StringBuilder stream, Container context ) {
+			if( context.contains("<unnested>")){
+				context.del("<unnested>");
+			} else if( nested ){
+				context = Container( P("_", context ));
+			}
+			for( Construct sc: subcons){
+				Object subobj;
+				if( (sc.conflags & FLAG_EMBED) != 0 ){
+					context.set( "<unnested>", true );
+					subobj = obj;
+				} else if( sc.name == null ){
+					subobj = null;
+				} else if( obj instanceof Container ){
+					Container container = (Container)obj;
+					subobj = container.get( sc.name );
+					context.set(sc.name, subobj);
+				} else
+						continue;
+				
+				sc._build(subobj, stream, context);
+			}
+    }
 /*
     def _sizeof(self, context):
         if self.nested:
