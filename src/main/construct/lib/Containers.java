@@ -28,9 +28,12 @@ public class Containers
 
     Containers are the common way to express parsed data.
 	 */
+	static public Container Container( Pair... dict ){
+		return new Container( dict );
+	}
 	static public class Container{
 		
-		Map<String, Object> dict = new HashMap<String, Object>();
+		HashMap<String, Object> dict = new HashMap<String, Object>();
 		
 		public Container( Pair... dict ){
 			for( Pair p : dict ){
@@ -75,6 +78,10 @@ public class Containers
 		public Container clone(){
 			return new Container( dict );
 		}
+
+    public final String toString() {
+      return dict.toString();
+  }
 
 	/*
     def iteritems(self):

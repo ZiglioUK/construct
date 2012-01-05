@@ -408,12 +408,12 @@ public FormatMode getmode()
       	case 'C':
       	case 's':
       	case 'p':
-      		obj = buf.get();
+      		obj = new Integer(buf.get());
       	break;
 
       	case 'h':
       	case 'H':
-      		obj = buf.getChar();
+      		obj = new Integer(buf.getShort());
       	break;
       	
       	case 'i':

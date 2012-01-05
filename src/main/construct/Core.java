@@ -414,6 +414,9 @@ public class Core {
         UBInt8("third_element"),
     )
 	 */
+	static public Struct Struct(String name, Construct... subcons){
+		return new Struct( name, subcons );
+	}
 	static public class Struct extends Construct{
 		public boolean nested = true;
 		Construct[] subcons;

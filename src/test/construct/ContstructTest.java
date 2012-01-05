@@ -54,15 +54,23 @@ public class ContstructTest
     [RepeatUntil(lambda obj, ctx: obj == 9, UBInt8("repeatuntil")).build, [2,3,8], None, ArrayError],
 */
   @Test
-  public void structTest() {
-  	  Struct struct = new Struct( "struct", UBInt8("a"), UBInt16("b") );
-  	  Container a = (Container)struct.parse( new byte[]{1,0,2} );
-  	  Container b = new Container( p("a", 1), p("b", 2) );
-      assertTrue( a.equals(b) );
+  public void structTest1() {
+  	  Struct struct = Struct( "struct", UBInt8("a"), UBInt16("b") );
+  	  Container ca = (Container)struct.parse( new byte[]{1,0,2} );
+  	  Container cb = Container( p("a", 1), p("b", 2) );
+      assertTrue( ca.equals(cb) );
+  }
+
+  @Test
+  public void structTest2() {
+  	  Struct struct = Struct( "struct", UBInt8("a"), UBInt16("b"), 
+  	  									Struct( "foo", UBInt8("c"), UBInt8("d") ));
+  	  Container ca = (Container)struct.parse( new byte[]{1,0,2,3,4} );
+  	  Container cb = Container( p("a",1), p("b",2), p("foo", Container( p("c",3), p("d",4))));
+      assertTrue( ca.equals(cb) );
   }
 
   /*
-    [Struct("struct", UBInt8("a"), UBInt16("b")).parse, "\x01\x00\x02", Container(a=1,b=2), None],
     [Struct("struct", UBInt8("a"), UBInt16("b"), Struct("foo", UBInt8("c"), UBInt8("d"))).parse, "\x01\x00\x02\x03\x04", Container(a=1,b=2,foo=Container(c=3,d=4)), None],
     [Struct("struct", UBInt8("a"), UBInt16("b"), Embedded(Struct("foo", UBInt8("c"), UBInt8("d")))).parse, "\x01\x00\x02\x03\x04", Container(a=1,b=2,c=3,d=4), None],
     [Struct("struct", UBInt8("a"), UBInt16("b")).build, Container(a=1,b=2), "\x01\x00\x02", None],
