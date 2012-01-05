@@ -1,20 +1,17 @@
 package construct;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import construct.exception.FieldError;
 import construct.exception.SizeofError;
 import construct.exception.ValueError;
-import construct.lib.Container;
+import static construct.lib.Containers.*;
 
 public class Core {
 
-	/*
-	 * #===============================================================================
-	 * # abstract constructs
-	 * #===============================================================================
-	 */
+/*
+ * #===============================================================================
+ * # abstract constructs
+ * #===============================================================================
+ */
 
 /**
   The mother of all constructs.
@@ -272,11 +269,11 @@ public class Core {
 		abstract public Object _encode(Object obj, Container context);
 	}
 
-	/*
-	 * ===============================================================================
-	 * * Fields
-	 * ===============================================================================
-	 */
+/*
+ * ===============================================================================
+ * * Fields
+ * ===============================================================================
+ */
 
 	/**
 	 * A fixed-size byte field.
@@ -341,10 +338,8 @@ public class Core {
 		}
 
 		@Override
-		// public String _parse( InputStream stream, Container context )
-		public Object _parse(byte[] stream, Container context) {
+		public Object _parse( byte[] stream, Container context ) {
 			try {
-				// return packer.unpack( _read_stream(stream, length) )[0];
 				return (packer.unpack(stream)[0]);
 			} catch (Exception e) {
 				throw new FieldError(e);
@@ -352,7 +347,6 @@ public class Core {
 		}
 
 		@Override
-		// void _build( String obj, OutputStream stream, Container context)
 		public void _build( Object obj, StringBuilder stream, Container context) {
 			_write_stream(stream, length, obj);
 		}
@@ -363,4 +357,91 @@ public class Core {
 
 	}
 
+/*
+ * #===============================================================================
+ * # structures and sequences
+ * #===============================================================================
+ */
+	/**
+    A sequence of named constructs, similar to structs in C. The elements are
+    parsed and built in the order they are defined.
+    See also Embedded.
+    Example:
+    Struct("foo",
+        UBInt8("first_element"),
+        UBInt16("second_element"),
+        Padding(2),
+        UBInt8("third_element"),
+    )
+	 */
+	static public class Struct extends Construct{
+		public boolean nested = true;
+		Subconstruct[] subcons;
+		/**
+		 * @param name the name of the structure
+		 * @param subcons a sequence of subconstructs that make up this structure.
+		 */
+		public Struct(String name, Subconstruct... subcons) {
+	    super(name);
+	    this.subcons = subcons;
+/*
+        self._inherit_flags(*subcons)
+        self._clear_flag(self.FLAG_EMBED)
+ * */
+	    }
+
+		@Override
+    public Object _parse(byte[] stream, Container context) {
+/*
+        if "<obj>" in context:
+            obj = context["<obj>"]
+            del context["<obj>"]
+        else:
+            obj = Container()
+            if self.nested:
+                context = Container(_ = context)
+                */
+			for( Subconstruct sc: subcons ){
+				/*
+        if sc.conflags & self.FLAG_EMBED:
+            context["<obj>"] = obj
+            sc._parse(stream, context)
+        else:
+            subobj = sc._parse(stream, context)
+            if sc.name is not None:
+                obj[sc.name] = subobj
+                context[sc.name] = subobj
+    		return obj
+				*/
+				sc._parse(stream, context);
+			}
+			return null;
+    }
+
+		@Override
+    protected void _build(Object obj, StringBuilder stream, Container context) {
+/*
+        if "<unnested>" in context:
+            del context["<unnested>"]
+        elif self.nested:
+            context = Container(_ = context)
+        for sc in self.subcons:
+            if sc.conflags & self.FLAG_EMBED:
+                context["<unnested>"] = True
+                subobj = obj
+            elif sc.name is None:
+                subobj = None
+            else:
+                subobj = getattr(obj, sc.name)
+                context[sc.name] = subobj
+            sc._build(subobj, stream, context)
+
+ * */    }
+/*
+    def _sizeof(self, context):
+        if self.nested:
+            context = Container(_ = context)
+        return sum(sc._sizeof(context) for sc in self.subcons)
+ */
+	}
 }

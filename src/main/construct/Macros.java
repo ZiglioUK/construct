@@ -106,141 +106,200 @@ public class Macros {
   /**
 	  * @return unsigned, big endian 16-bit integer
 	  */
-	  static FormatField UBInt16(String name){
+	  static public FormatField UBInt16(String name){
 	   	return new FormatField( name, '>', 'H' );
 	  }
   /**
 	  * @return unsigned, big endian 32-bit integer
 	  */
-	  static FormatField UBInt32(String name){
+	  static public FormatField UBInt32(String name){
 	   	return new FormatField( name, '>', 'L' );
 	  }
 
   /**
 	  * @return unsigned, big endian 64-bit integer
 	  */
-	  static FormatField UBInt64(String name){
+	  static public FormatField UBInt64(String name){
 	   	return new FormatField( name, '>', 'Q' );
 	  }
 
   /**
 	  * @return signed, big endian 8-bit integer
 	  */
-	  static FormatField SBInt8(String name){
+	  static public FormatField SBInt8(String name){
 	   	return new FormatField( name, '>', 'b' );
 	  }
   /**
 	  * @return signed, big endian 16-bit integer
 	  */
-	  static FormatField SBInt16(String name){
+	  static public FormatField SBInt16(String name){
 	   	return new FormatField( name, '>', 'h' );
 	  }
   /**
 	  * @return signed, big endian 32-bit integer
 	  */
-	  static FormatField SBInt32(String name){
+	  static public FormatField SBInt32(String name){
 	   	return new FormatField( name, '>', 'l' );
 	  }
   /**
 	  * @return signed, big endian 64-bit integer
 	  */
-	  static FormatField SBInt64(String name){
+	  static public FormatField SBInt64(String name){
 	   	return new FormatField( name, '>', 'q' );
 	  }
   /**
 	  * @return unsigned, little endian 8-bit integer
 	  */
-	  static FormatField ULInt8(String name){
+	  static public FormatField ULInt8(String name){
 	   	return new FormatField( name, '<', 'B' );
 	  }
   /**
 	  * @return unsigned, little endian 16-bit integer
 	  */
-	  static FormatField ULInt16(String name){
+	  static public FormatField ULInt16(String name){
 	   	return new FormatField( name, '<', 'H' );
 	  }
   /**
 	  * @return unsigned, little endian 32-bit integer
 	  */
-	  static FormatField ULInt32(String name){
+	  static public FormatField ULInt32(String name){
 	   	return new FormatField( name, '<', 'L' );
 	  }
   /**
 	  * @return unsigned, little endian 64-bit integer
 	  */
-	  static FormatField ULInt64(String name){
+	  static public FormatField ULInt64(String name){
 	   	return new FormatField( name, '<', 'Q' );
 	  }
   /**
 	  * @return signed, little endian 8-bit integer
 	  */
-	  static FormatField SLInt8(String name){
+	  static public FormatField SLInt8(String name){
 	   	return new FormatField( name, '<', 'b' );
 	  }
   /**
 	  * @return signed, little endian 16-bit integer
 	  */
-	  static FormatField SLInt16(String name){
+	  static public FormatField SLInt16(String name){
 	   	return new FormatField( name, '<', 'h' );
 	  }
   /**
 	  * @return signed, little endian 32-bit integer
 	  */
-	  static FormatField SLInt32(String name){
+	  static public FormatField SLInt32(String name){
 	   	return new FormatField( name, '<', 'l' );
 	  }
   /**
 	  * @return signed, little endian 64-bit integer
 	  */
-	  static FormatField SLInt64(String name){
+	  static public FormatField SLInt64(String name){
 	   	return new FormatField( name, '<', 'q' );
 	  }
   /**
 	  * @return unsigned, native endianity 8-bit integer
 	  */
-	  static FormatField UNInt8(String name){
+	  static public FormatField UNInt8(String name){
 	   	return new FormatField( name, '=', 'B' );
 	  }
   /**
 	  * @return unsigned, native endianity 16-bit integer
 	  */
-	  static FormatField UNInt16(String name){
+	  static public FormatField UNInt16(String name){
 	   	return new FormatField( name, '=', 'H' );
 	  }
   /**
 	  * @return unsigned, native endianity 32-bit integer
 	  */
-	  static FormatField UNInt32(String name){
+	  static public FormatField UNInt32(String name){
 	   	return new FormatField( name, '=', 'L' );
 	  }
   /**
 	  * @return unsigned, native endianity 64-bit integer
 	  */
-	  static FormatField UNInt64(String name){
+	  static public FormatField UNInt64(String name){
 	   	return new FormatField( name, '=', 'Q' );
 	  }
   /**
 	  * @return signed, native endianity 8-bit integer
 	  */
-	  static FormatField SNInt8(String name){
+	  static public FormatField SNInt8(String name){
 	   	return new FormatField( name, '=', 'b' );
 	  }
   /**
 	  * @return signed, native endianity 16-bit integer
 	  */
-	  static FormatField SNInt16(String name){
+	  static public FormatField SNInt16(String name){
 	   	return new FormatField( name, '=', 'h' );
 	  }
   /**
 	  * @return signed, native endianity 32-bit integer
 	  */
-	  static FormatField SNInt32(String name){
+	  static public FormatField SNInt32(String name){
 	   	return new FormatField( name, '=', 'l' );
 	  }
   /**
 	  * @return signed, native endianity 64-bit integer
 	  */
-	  static FormatField SNInt64(String name){
+	  static public FormatField SNInt64(String name){
 	   	return new FormatField( name, '=', 'q' );
 	  }
+/*
+#===============================================================================
+# subconstructs
+#===============================================================================
+*/
+	  
+/*
+def Bitwise(subcon):
+    """converts the stream to bits, and passes the bitstream to subcon
+    * subcon - a bitwise construct (usually BitField)
+    """
+    # subcons larger than MAX_BUFFER will be wrapped by Restream instead
+    # of Buffered. implementation details, don't stick your nose in :)
+    MAX_BUFFER = 1024 * 8
+    def resizer(length):
+        if length & 7:
+            raise SizeofError("size must be a multiple of 8", length)
+        return length >> 3
+    if not subcon._is_flag(subcon.FLAG_DYNAMIC) and subcon.sizeof() < MAX_BUFFER:
+        con = Buffered(subcon,
+            encoder = decode_bin,
+            decoder = encode_bin,
+            resizer = resizer
+        )
+    else:
+        con = Restream(subcon,
+            stream_reader = BitStreamReader,
+            stream_writer = BitStreamWriter,
+            resizer = resizer)
+    return con
+	   
+	   */
+/*
+	  #===============================================================================
+ 		# structs
+ 		#===============================================================================
+*/
+	  /*
+	  		def AlignedStruct(name, *subcons, **kw):
+	  		    """a struct of aligned fields
+	  		    * name - the name of the struct
+	  		    * subcons - the subcons that make up this structure
+	  		    * kw - keyword arguments to pass to Aligned: 'modulus' and 'pattern'
+	  		    """
+	  		    return Struct(name, *(Aligned(sc, **kw) for sc in subcons))
+
+	  		def BitStruct(name, *subcons):
+	  		    """a struct of bitwise fields
+	  		    * name - the name of the struct
+	  		    * subcons - the subcons that make up this structure
+	  		    """
+	  		    return Bitwise(Struct(name, *subcons))
+
+	  		def EmbeddedBitStruct(*subcons):
+	  		    """an embedded BitStruct. no name is necessary.
+	  		    * subcons - the subcons that make up this structure
+	  		    """
+	  		    return Bitwise(Embedded(Struct(None, *subcons)))
+*/
 }
