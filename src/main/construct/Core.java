@@ -561,19 +561,18 @@ public class Core {
 
 		@Override
 		protected void _build( Object obj, StringBuilder stream, Container context) {
-//      size = self._sizeof(context)
-//      stream2 = StringIO()
-//      self.subcon._build(obj, stream2, context)
-//      data = self.encoder(stream2.getvalue())
-//      assert len(data) == size
-//      _write_stream(stream, self._sizeof(context), data)
+			int size = _sizeof(context);
+			StringBuilder stream2 = new StringBuilder();
+			subcon._build(obj, stream2, context);
+			byte[] data = encoder.encode(stream2.toString());
+			if( data.length != size )
+				throw new RuntimeException( "Wrong data length: " + data.length );
+			_write_stream(stream, size, data);
 		}
 		@Override
     protected int _sizeof(Container context) {
 			return resizer.resize( subcon._sizeof(context));
     }
-
-		// def _sizeof(self, context):
 	}
 /*
 class Pointer(Subconstruct):
