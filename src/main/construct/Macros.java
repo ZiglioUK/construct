@@ -78,6 +78,46 @@ public class Macros {
      return BitField( name, length, false, false, 8 );
   }
 
+  /*
+ def Padding(length, pattern = "\x00", strict = False):
+    r"""a padding field (value is discarded)
+    * length - the length of the field. the length can be either an integer,
+      or a function that takes the context as an argument and returns the
+      length
+    * pattern - the padding pattern (character) to use. default is "\x00"
+    * strict - whether or not to raise an exception is the actual padding
+      pattern mismatches the desired pattern. default is False.
+    """
+    return PaddingAdapter(Field(None, length),
+        pattern = pattern,
+        strict = strict,
+    )
+
+def Flag(name, truth = 1, falsehood = 0, default = False):
+    """
+    A flag.
+
+    Flags are usually used to signify a Boolean value, and this construct
+    maps values onto the ``bool`` type.
+
+    .. note:: This construct works with both bit and byte contexts.
+
+    .. warning:: Flags default to False, not True. This is different from the
+        C and Python way of thinking about truth, and may be subject to change
+        in the future.
+
+    :param str name: field name
+    :param int truth: value of truth (default 1)
+    :param int falsehood: value of falsehood (default 0)
+    :param bool default: default value (default False)
+    """
+
+    return SymmetricMapping(Field(name, 1),
+        {True : chr(truth), False : chr(falsehood)},
+        default = default,
+    )
+
+   */
 /*
   #===============================================================================
 	# field shortcuts
@@ -289,10 +329,18 @@ static public Construct Bitwise(Construct subcon) {
     return con;
 }
 /*
-	  #===============================================================================
- 		# structs
- 		#===============================================================================
+#===============================================================================
+# structs
+#===============================================================================
 */
+/**
+ * @param name the name of the struct
+ * @param subcons the subcons that make up this structure
+ * @return a struct of bitwise fields
+ */
+static public Construct BitStruct( String name, Construct... subcons ){
+  return Bitwise(Struct(name, subcons));
+}
 	  /*
 	  		def AlignedStruct(name, *subcons, **kw):
 	  		    """a struct of aligned fields
@@ -301,13 +349,6 @@ static public Construct Bitwise(Construct subcon) {
 	  		    * kw - keyword arguments to pass to Aligned: 'modulus' and 'pattern'
 	  		    """
 	  		    return Struct(name, *(Aligned(sc, **kw) for sc in subcons))
-
-	  		def BitStruct(name, *subcons):
-	  		    """a struct of bitwise fields
-	  		    * name - the name of the struct
-	  		    * subcons - the subcons that make up this structure
-	  		    """
-	  		    return Bitwise(Struct(name, *subcons))
 
 	  		def EmbeddedBitStruct(*subcons):
 	  		    """an embedded BitStruct. no name is necessary.

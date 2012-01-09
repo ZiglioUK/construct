@@ -57,5 +57,17 @@ public class AdapterTest
 
   }
 
+  @Test
+  public void PaddingAdapterTest(){
+  	assertArrayEquals( "abcd".getBytes(), (byte[])PaddingAdapter( Field("paddingadapter", 4) ).parse("abcd"));
+
+    exception.expect( PaddingError.class );
+  	assertArrayEquals( "abcd".getBytes(), (byte[])PaddingAdapter( Field("paddingadapter", 4), (byte)0x00, true ).parse("abcd"));
+
+  	assertArrayEquals( new byte[]{0,0,0,0}, (byte[])PaddingAdapter( Field("paddingadapter", 4), (byte)0x00, true ).parse( new byte[]{0,0,0,0}));
+
+  	assertArrayEquals( new byte[]{0,0,0,0}, (byte[])PaddingAdapter( Field("paddingadapter", 4) ).build("abcd"));
+  	
+  }
 }
 

@@ -11,6 +11,11 @@ public class Adapters
       super(string);
     }
   }
+  public static class PaddingError extends RuntimeException {
+    public PaddingError(String string) {
+      super(string);
+    }
+  }
   
   /**
   """
@@ -62,4 +67,44 @@ public class Adapters
         }
       };
   }
+
+  static public Adapter PaddingAdapter( Construct subcon ) {
+  	return PaddingAdapter( subcon, (byte)0x00, false );
+  }
+
+  /**
+   * @param subcon the subcon to pad
+   * @param pattern the padding pattern (character). default is "\x00"
+   * @param strict whether or not to verify, during parsing, that the given 
+      padding matches the padding pattern. default is False (unstrict)
+   * @return Adapter for padding.
+   */
+  static public Adapter PaddingAdapter( Construct subcon, final byte pattern, final boolean strict ) {
+    
+    return new Adapter(subcon)
+    {
+      public Object _encode( Object obj, Container context) {
+      	byte[] out = new byte[_sizeof(context)];
+      	for( int i = 0; i<out.length; i++)
+      		out[i] = pattern;
+      	return out;
+      }
+
+      public Object _decode( Object obj, Container context) {
+        if( strict ){
+        	byte[] expected = new byte[_sizeof(context)];
+        	for( int i = 0; i<expected.length; i++)
+        		expected[i] = pattern;
+        	
+        	if( !obj.equals(expected))
+        		throw new PaddingError( "Expected " + expected + " found " + obj );
+        }
+        return obj;
+      }
+    };
+}
+  
+  /*
+    def _decode(self, obj, context):
+   */
 }
