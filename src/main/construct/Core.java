@@ -1,5 +1,6 @@
 package construct;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
 import construct.exception.FieldError;
@@ -169,8 +170,12 @@ public class Core {
 			else if( data instanceof Integer )
 				stream.append((Integer)data);
 			else if( data instanceof byte[] )
-				stream.append( new String((byte[])data));
-			else throw new ValueError( "Can't append data " + data);
+	      try {
+	        stream.append( new String((byte[])data, "ISO-8859-1"));
+        } catch (UnsupportedEncodingException e) {
+        	throw new ValueError( "Can't append data " + e.getMessage());
+        }
+      else throw new ValueError( "Can't append data " + data);
 		}
 		
 		public void _write_stream( StringBuilder stream, int length, Object data) {
@@ -313,7 +318,7 @@ public class Core {
 
 		@Override
 		public Object _parse( ByteBuffer stream, Container context) {
-			return _decode((byte[]) subcon._parse( stream, context ), context);
+			return _decode(subcon._parse( stream, context ), context);
 		}
 
 		public void _build(Object obj, StringBuilder stream, Container context) {
@@ -742,4 +747,58 @@ class Restream(Subconstruct):
     def _sizeof(self, context):
         return self.resizer(self.subcon._sizeof(context))
  */
+	
+/*
+#===============================================================================
+# miscellaneous
+#===============================================================================
+*/
+	
+	static public Pass Pass(){
+		return Pass.getInstance();
+	}
+	
+	/**
+    """
+    A do-nothing construct, useful as the default case for Switch, or
+    to indicate Enums.
+    See also Switch and Enum.
+
+    Notes:
+    * this construct is a singleton. do not try to instatiate it, as it
+      will not work...
+
+    Example:
+    Pass
+	 */
+	static public class Pass extends Construct{
+		private static Pass instance;
+		
+		private Pass(String name) {
+	    super(name);
+    }
+
+		public static synchronized construct.Core.Pass getInstance() {
+	    if( instance == null )
+	    	instance = new Pass("Pass"); // TODO should use a null name
+	    return instance;
+    }
+
+		@Override
+    public Object _parse(ByteBuffer stream, Container context) {
+	    return null;
+    }
+
+		@Override
+    protected void _build(Object obj, StringBuilder stream, Container context) {
+	    // assert obj is None
+    }
+
+		@Override
+    protected int _sizeof(Container context) {
+	    return 0;
+    }
+		
+		
+	}
 }
