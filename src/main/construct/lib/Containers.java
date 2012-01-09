@@ -10,19 +10,19 @@ import java.util.Set;
 public class Containers
 {
 	static public class Pair{
-		public String s;
+		public Object s;
 		public Object o;
 		
-		public Pair( String s, Object o){
+		public Pair( Object s, Object o){
 			this.s = s;
 			this.o = o;
 		}
 	}
 
-	static public Pair P( final String s, final Object o ){
-		return new Pair( s, o);
+	static public Pair P( final Object s, final Object o ){
+		return new Pair(s, o);
 	}
-	
+
 	/**
     A generic container of attributes.
 
@@ -33,7 +33,7 @@ public class Containers
 	}
 	static public class Container{
 		
-		HashMap<String, Object> dict = new HashMap<String, Object>();
+		HashMap<Object, Object> dict = new HashMap<Object, Object>();
 		
 		public Container( Pair... dict ){
 			for( Pair p : dict ){
@@ -41,33 +41,33 @@ public class Containers
 			}
 		}
 
-		public Container( Map<String, Object> dict ){
+		public Container( Map<Object, Object> dict ){
 			this.dict.putAll( dict );
 		}
 
-		public Object get( String name ){
+		public Object get( Object name ){
 			return dict.get(name);
 		}
 		
-		public void del( String name ){
+		public void del( Object name ){
 			dict.remove( name );
 		}
 		
-		public void set( String name, Object value ){
+		public void set( Object name, Object value ){
 			dict.put( name, value);
 		}
 		
-		public Set<String> keys(){
+		public Set<Object> keys(){
 			return dict.keySet();
 		}
 		
 		public void update( Container other ){
-			for( String s : other.keys() ){
+			for( Object s : other.keys() ){
 					set( s, other.get(s));
 			}
 		}
 		
-		public boolean contains( String name ){
+		public boolean contains( Object name ){
 			return dict.containsKey(name);
 		}
 		
