@@ -1,5 +1,7 @@
 package construct.lib;
 
+import java.io.UnsupportedEncodingException;
+
 import construct.exception.ValueError;
 
 public class Binary {
@@ -85,8 +87,13 @@ public class Binary {
 	public static Decoder BinaryDecoder(){
 		return new Decoder(){
       public String decode(byte[] data) {
-  	    byte[] out = encode_bin(new String(data));
-  	    return new String(out);
+  	    byte[] out;
+        try {
+	        out = encode_bin(new String(data, "ISO-8859-1"));
+	  	    return new String(out, "ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+	        throw new RuntimeException( "UnsupportedEncodingException: " + e.getMessage() );
+        }
       }
 		};
 	}
