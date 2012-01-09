@@ -78,20 +78,22 @@ public class Macros {
      return BitField( name, length, false, false, 8 );
   }
 
-  /*
- def Padding(length, pattern = "\x00", strict = False):
-    r"""a padding field (value is discarded)
-    * length - the length of the field. the length can be either an integer,
+  /**
+   * @param length the length of the field. the length can be either an integer,
       or a function that takes the context as an argument and returns the
       length
-    * pattern - the padding pattern (character) to use. default is "\x00"
-    * strict - whether or not to raise an exception is the actual padding
+   * @param pattern the padding pattern (character) to use. default is "\x00"
+   * @param strict whether or not to raise an exception is the actual padding
       pattern mismatches the desired pattern. default is False.
-    """
-    return PaddingAdapter(Field(None, length),
-        pattern = pattern,
-        strict = strict,
-    )
+   * @return a padding field (value is discarded)
+   */
+  static public Adapter Padding( int length, byte pattern, boolean strict ){
+  	return PaddingAdapter( Field( null, length ), pattern, strict );
+  }
+  static public Adapter Padding( int length  ){
+  	return Padding( length, (byte)0x00, false );
+  }
+  /*
 
 def Flag(name, truth = 1, falsehood = 0, default = False):
     """
