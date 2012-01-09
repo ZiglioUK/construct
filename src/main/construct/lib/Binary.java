@@ -75,6 +75,21 @@ public class Binary {
 	    return output;
 	}
 
+	public static Encoder BinaryEncoder(){
+		return new Encoder(){
+  		public byte[] encode(String data) {
+  	    return decode_bin(data.getBytes()).getBytes();
+      }
+		};
+	}
+	public static Decoder BinaryDecoder(){
+		return new Decoder(){
+      public String decode(byte[] data) {
+  	    byte[] out = encode_bin(new String(data));
+  	    return new String(out);
+      }
+		};
+	}
 	public static byte[] encode_bin( String data ) {
 		byte[] out = new byte[8 * data.length() ];
 		for( int i = 0; i < data.length(); i++ ){

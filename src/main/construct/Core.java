@@ -5,6 +5,10 @@ import java.nio.ByteBuffer;
 import construct.exception.FieldError;
 import construct.exception.SizeofError;
 import construct.exception.ValueError;
+import construct.lib.Containers.Container;
+import construct.lib.Decoder;
+import construct.lib.Encoder;
+import construct.lib.Resizer;
 import static construct.lib.Containers.*;
 
 public class Core {
@@ -126,7 +130,7 @@ public class Core {
 		 * @return
 		 */
 		public boolean _is_flag( int flag ){
-			return (conflags & flag) == 0;
+			return (conflags & flag) == flag;
 		}
 
 		public byte[] _read_stream( ByteBuffer stream, int length) {
@@ -256,9 +260,7 @@ public class Core {
 			return sizeof(null);
 		}
 
-		/* abstract */public int _sizeof(Container context) {
-			throw new SizeofError("Raw Constructs have no size!");
-		}
+		abstract protected int _sizeof(Container context);
 	}
 
 	/**
@@ -289,8 +291,10 @@ public class Core {
 			subcon._build(obj, stream, context);
 		}
 
-		// def _sizeof(self, context):
-		// return self.subcon._sizeof(context)
+		@Override
+		protected int _sizeof(Container context){
+			return subcon._sizeof(context);
+		}
 	}
 
 	/**
@@ -353,6 +357,11 @@ public class Core {
 			_write_stream(stream, length, obj);
 		}
 		
+		@Override
+    protected int _sizeof(Container context) {
+			return length;
+    }
+
 		/*
 		  * public int _sizeof( Container context ){ return length; }
 		  */
@@ -382,9 +391,7 @@ public class Core {
 				throw new ValueError("endianity must be be '=', '<', or '>' " + endianity);
 
 			packer = new Packer(endianity, format);
-
-			this.name = name;
-			this.length = packer.length();
+			super.length = packer.length();
 
 		}
 
@@ -399,7 +406,7 @@ public class Core {
 
 		@Override
 		public void _build( Object obj, StringBuilder stream, Container context) {
-			_write_stream(stream, length, packer.pack(obj));
+			_write_stream(stream, super.length, packer.pack(obj));
 		}
 
 	}
@@ -491,11 +498,249 @@ public class Core {
 				sc._build(subobj, stream, context);
 			}
     }
-/*
-    def _sizeof(self, context):
-        if self.nested:
-            context = Container(_ = context)
-        return sum(sc._sizeof(context) for sc in self.subcons)
- */
+
+		@Override
+    protected int _sizeof(Container context) {
+        int sum = 0;
+				if( nested )
+            context = Container( P("_", context) );
+        
+        for( Construct sc: subcons ){
+        	sum += sc._sizeof(context);
+        }
+        
+        return sum;
+    }
 	}
+
+/*
+#===============================================================================
+# stream manipulation
+#===============================================================================
+*/
+	/**
+    Creates an in-memory buffered stream, which can undergo encoding and
+    decoding prior to being passed on to the subconstruct.
+    See also Bitwise.
+
+    Note:
+    * Do not use pointers inside Buffered
+
+    Example:
+    Buffered(BitField("foo", 16),
+        encoder = decode_bin,
+        decoder = encode_bin,
+        resizer = lambda size: size / 8,
+    )
+	 */
+	static public class Buffered extends Subconstruct{
+		Encoder encoder;
+		Decoder decoder;
+		Resizer resizer;
+		/**
+		 * @param subcon the subcon which will operate on the buffer
+		 * @param encoder a function that takes a string and returns an encoded
+      string (used after building)
+		 * @param decoder a function that takes a string and returns a decoded
+      string (used before parsing)
+		 * @param resizer a function that takes the size of the subcon and "adjusts"
+      or "resizes" it according to the encoding/decoding process.
+		 */
+		public Buffered( Construct subcon, Encoder encoder, Decoder decoder, Resizer resizer ) {
+	    super(subcon);
+	    this.encoder = encoder;
+	    this.decoder = decoder;
+	    this.resizer = resizer;
+    }
+		@Override
+		public Object _parse( ByteBuffer stream, Container context) {
+      byte[] data = _read_stream(stream, _sizeof(context));
+      String stream2 = decoder.decode(data);
+			return subcon._parse(ByteBuffer.wrap( stream2.getBytes() ), context);
+		}
+
+		@Override
+		protected void _build( Object obj, StringBuilder stream, Container context) {
+//      size = self._sizeof(context)
+//      stream2 = StringIO()
+//      self.subcon._build(obj, stream2, context)
+//      data = self.encoder(stream2.getvalue())
+//      assert len(data) == size
+//      _write_stream(stream, self._sizeof(context), data)
+		}
+		@Override
+    protected int _sizeof(Container context) {
+			return resizer.resize( subcon._sizeof(context));
+    }
+
+		// def _sizeof(self, context):
+	}
+/*
+class Pointer(Subconstruct):
+    """
+    Changes the stream position to a given offset, where the construction
+    should take place, and restores the stream position when finished.
+    See also Anchor, OnDemand and OnDemandPointer.
+
+    Notes:
+    * requires a seekable stream.
+
+    Parameters:
+    * offsetfunc: a function that takes the context and returns an absolute
+      stream position, where the construction would take place
+    * subcon - the subcon to use at `offsetfunc()`
+
+    Example:
+    Struct("foo",
+        UBInt32("spam_pointer"),
+        Pointer(lambda ctx: ctx.spam_pointer,
+            Array(5, UBInt8("spam"))
+        )
+    )
+    """
+    __slots__ = ["offsetfunc"]
+    def __init__(self, offsetfunc, subcon):
+        Subconstruct.__init__(self, subcon)
+        self.offsetfunc = offsetfunc
+    def _parse(self, stream, context):
+        newpos = self.offsetfunc(context)
+        origpos = stream.tell()
+        stream.seek(newpos)
+        obj = self.subcon._parse(stream, context)
+        stream.seek(origpos)
+        return obj
+    def _build(self, obj, stream, context):
+        newpos = self.offsetfunc(context)
+        origpos = stream.tell()
+        stream.seek(newpos)
+        self.subcon._build(obj, stream, context)
+        stream.seek(origpos)
+    def _sizeof(self, context):
+        return 0
+
+class Peek(Subconstruct):
+    """
+    Peeks at the stream: parses without changing the stream position.
+    See also Union. If the end of the stream is reached when peeking,
+    returns None.
+
+    Notes:
+    * requires a seekable stream.
+
+    Parameters:
+    * subcon - the subcon to peek at
+    * perform_build - whether or not to perform building. by default this
+      parameter is set to False, meaning building is a no-op.
+
+    Example:
+    Peek(UBInt8("foo"))
+    """
+    __slots__ = ["perform_build"]
+    def __init__(self, subcon, perform_build = False):
+        Subconstruct.__init__(self, subcon)
+        self.perform_build = perform_build
+    def _parse(self, stream, context):
+        pos = stream.tell()
+        try:
+            return self.subcon._parse(stream, context)
+        except FieldError:
+            pass
+        finally:
+            stream.seek(pos)
+    def _build(self, obj, stream, context):
+        if self.perform_build:
+            self.subcon._build(obj, stream, context)
+    def _sizeof(self, context):
+        return 0
+
+class OnDemand(Subconstruct):
+    """
+    Allows for on-demand (lazy) parsing. When parsing, it will return a
+    LazyContainer that represents a pointer to the data, but does not actually
+    parses it from stream until it's "demanded".
+    By accessing the 'value' property of LazyContainers, you will demand the
+    data from the stream. The data will be parsed and cached for later use.
+    You can use the 'has_value' property to know whether the data has already
+    been demanded.
+    See also OnDemandPointer.
+
+    Notes:
+    * requires a seekable stream.
+
+    Parameters:
+    * subcon -
+    * advance_stream - whether or not to advance the stream position. by
+      default this is True, but if subcon is a pointer, this should be False.
+    * force_build - whether or not to force build. If set to False, and the
+      LazyContainer has not been demaned, building is a no-op.
+
+    Example:
+    OnDemand(Array(10000, UBInt8("foo"))
+    """
+    __slots__ = ["advance_stream", "force_build"]
+    def __init__(self, subcon, advance_stream = True, force_build = True):
+        Subconstruct.__init__(self, subcon)
+        self.advance_stream = advance_stream
+        self.force_build = force_build
+    def _parse(self, stream, context):
+        obj = LazyContainer(self.subcon, stream, stream.tell(), context)
+        if self.advance_stream:
+            stream.seek(self.subcon._sizeof(context), 1)
+        return obj
+    def _build(self, obj, stream, context):
+        if not isinstance(obj, LazyContainer):
+            self.subcon._build(obj, stream, context)
+        elif self.force_build or obj.has_value:
+            self.subcon._build(obj.value, stream, context)
+        elif self.advance_stream:
+            stream.seek(self.subcon._sizeof(context), 1)
+
+class Restream(Subconstruct):
+    """
+    Wraps the stream with a read-wrapper (for parsing) or a
+    write-wrapper (for building). The stream wrapper can buffer the data
+    internally, reading it from- or writing it to the underlying stream
+    as needed. For example, BitStreamReader reads whole bytes from the
+    underlying stream, but returns them as individual bits.
+    See also Bitwise.
+
+    When the parsing or building is done, the stream's close method
+    will be invoked. It can perform any finalization needed for the stream
+    wrapper, but it must not close the underlying stream.
+
+    Note:
+    * Do not use pointers inside Restream
+
+    Parameters:
+    * subcon - the subcon
+    * stream_reader - the read-wrapper
+    * stream_writer - the write wrapper
+    * resizer - a function that takes the size of the subcon and "adjusts"
+      or "resizes" it according to the encoding/decoding process.
+
+    Example:
+    Restream(BitField("foo", 16),
+        stream_reader = BitStreamReader,
+        stream_writer = BitStreamWriter,
+        resizer = lambda size: size / 8,
+    )
+    """
+    __slots__ = ["stream_reader", "stream_writer", "resizer"]
+    def __init__(self, subcon, stream_reader, stream_writer, resizer):
+        Subconstruct.__init__(self, subcon)
+        self.stream_reader = stream_reader
+        self.stream_writer = stream_writer
+        self.resizer = resizer
+    def _parse(self, stream, context):
+        stream2 = self.stream_reader(stream)
+        obj = self.subcon._parse(stream2, context)
+        stream2.close()
+        return obj
+    def _build(self, obj, stream, context):
+        stream2 = self.stream_writer(stream)
+        self.subcon._build(obj, stream2, context)
+        stream2.close()
+    def _sizeof(self, context):
+        return self.resizer(self.subcon._sizeof(context))
+ */
 }

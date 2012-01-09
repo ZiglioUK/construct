@@ -2,6 +2,9 @@ package construct;
 import static construct.Core.*;
 import static construct.Adapters.*;
 import construct.Core.Construct;
+import construct.exception.SizeofError;
+import construct.lib.Resizer;
+import static construct.lib.Binary.*;
 
 public class Macros {
 
@@ -18,7 +21,7 @@ public class Macros {
     returns the length (MetaField)
    * @return
    */
-  static public StaticField Field( String name, int length ){
+  static public Construct Field( String name, int length ){
     
   //  if callable(length):
   //      return MetaField(name, length)
@@ -250,42 +253,41 @@ public class Macros {
 #===============================================================================
 */
 	  
-	  /**
-    """converts the stream to bits, and passes the bitstream to subcon
-    * subcon - a bitwise construct (usually BitField)
-	   */
-	  static public class Bitwise extends Subconstruct{
-
-			public Bitwise(Construct subcon) {
-	      super(subcon);
-	      // TODO Auto-generated constructor stub
-      }
-	  	
-	  }
-/*
-def Bitwise(subcon):
-    """
+/**
+ * converts the stream to bits, and passes the bitstream to subcon
+ * @param subcon a bitwise construct (usually BitField)
+ * @return
+ */
+static public Construct Bitwise(Construct subcon) {
+	/*
     # subcons larger than MAX_BUFFER will be wrapped by Restream instead
-    # of Buffered. implementation details, don't stick your nose in :)
-    MAX_BUFFER = 1024 * 8
-    def resizer(length):
-        if length & 7:
-            raise SizeofError("size must be a multiple of 8", length)
-        return length >> 3
-    if not subcon._is_flag(subcon.FLAG_DYNAMIC) and subcon.sizeof() < MAX_BUFFER:
-        con = Buffered(subcon,
-            encoder = decode_bin,
-            decoder = encode_bin,
-            resizer = resizer
-        )
-    else:
-        con = Restream(subcon,
-            stream_reader = BitStreamReader,
-            stream_writer = BitStreamWriter,
-            resizer = resizer)
-    return con
-	   
-	   */
+    # of Buffered. implementation details, don't stick your nose in :)*/
+    final int MAX_BUFFER = 1024 * 8;
+
+    Construct con;
+    Resizer resizer = new Resizer(){
+			@Override
+      public int resize(int length) {
+          if( (length & 7) != 0 )
+            throw new SizeofError("size must be a multiple of 8 " + length );
+        return length >> 3;
+      }
+    };
+    if( !subcon._is_flag(subcon.FLAG_DYNAMIC) && subcon.sizeof() < MAX_BUFFER ){
+      con = new Buffered( subcon,
+              						BinaryEncoder(),
+              						BinaryDecoder(),
+              						resizer
+          							);
+    } else {
+    	throw new RuntimeException("unimplemented");
+//      con = Restream(subcon,
+//          stream_reader = BitStreamReader,
+//          stream_writer = BitStreamWriter,
+//          resizer = resizer)
+    }
+    return con;
+}
 /*
 	  #===============================================================================
  		# structs
