@@ -16,6 +16,11 @@ public class Adapters
       super(string);
     }
   }
+  public static class MappingError extends RuntimeException {
+    public MappingError(String string) {
+      super(string);
+    }
+  }
   
   /**
   """
@@ -68,6 +73,53 @@ public class Adapters
       };
   }
 
+  /**
+   * @param subcon the subcon to map
+   * @param decoding the decoding (parsing) mapping (a dict)
+   * @param encoding the encoding (building) mapping (a dict)
+   * @param decdefault the default return value when the object is not found
+      in the decoding mapping. if no object is given, an exception is raised.
+      if `Pass` is used, the unmapped object will be passed as-is
+   * @param encdefault the default return value when the object is not found
+      in the encoding mapping. if no object is given, an exception is raised.
+      if `Pass` is used, the unmapped object will be passed as-is
+   * @return Adapter that maps objects to other objects.
+    See SymmetricMapping and Enum.
+   */
+  static public Adapter MappingAdapter( Construct subcon, final Container decoding, final Container encoding, 
+  																			final Object decdefault, final Object encdefault ) {
+    return new Adapter(subcon)
+    {
+      public Object _encode( Object obj, Container context) {
+      	if( encoding.contains(obj) )
+      		return encoding.get(obj);
+      	else {
+      		if( encdefault == null )
+      			throw new MappingError("no encoding mapping for " + obj );
+      		if( encdefault == Pass() )
+      			return obj;
+      		return encdefault;
+      	}
+      }
+      public Object _decode( Object obj, Container context) {
+      	if( decoding.contains(obj) )
+      		return decoding.get(obj);
+      	else{
+      		if( decdefault == null )
+      			throw new MappingError("no encoding mapping for " + obj );
+      		if( decdefault == Pass() )
+      			return obj;
+      		return decdefault;
+      	}
+      }
+  };
+}
+  
+/*
+class MappingAdapter(Adapter):
+    def _encode(self, obj, context):
+    def _decode(self, obj, context):
+ */
   static public Adapter PaddingAdapter( Construct subcon ) {
   	return PaddingAdapter( subcon, (byte)0x00, false );
   }

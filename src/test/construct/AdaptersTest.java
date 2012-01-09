@@ -14,6 +14,7 @@ import org.junit.rules.ExpectedException;
 import static construct.Core.*;
 import static construct.Adapters.*;
 import static construct.Macros.*;
+import static construct.lib.Containers.*;
 import construct.exception.FieldError;
 import junit.framework.TestCase;
 
@@ -24,7 +25,7 @@ import org.junit.rules.ExpectedException;
 
 import construct.exception.ValueError;
 
-public class AdapterTest  
+public class AdaptersTest  
 {
   @Rule
   public ExpectedException exception = ExpectedException.none();
@@ -54,6 +55,38 @@ public class AdapterTest
 
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8, true, false, 4 );
     assertArrayEquals( new byte[]{1,1,1,1,0,0,0,0}, ba.build(0x0f) );
+
+  }
+
+  @Test
+  public void MappingAdapterTest(){
+  	Adapter ma;
+  	
+  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( P(2,"x"), P(3,"y")), Container( P("x",2), P("y",3)), null, null);
+  	assertEquals( "y", ma.parse(new byte[]{3}));
+  	
+  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( P(2,"x"), P(3,"y")), Container( P("x",2), P("y",3)), "foo", null );
+  	assertEquals( "foo", ma.parse(new byte[]{4}));
+
+  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( P(2,"x"), P(3,"y")), Container( P("x",2), P("y",3)), Pass(), null );
+  	assertEquals( 4, ma.parse(new byte[]{4}));
+
+  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( P(2,"x"), P(3,"y")), Container( P("x",2), P("y",3)), null, null);
+  	assertArrayEquals( new byte[]{3}, ma.build("y"));
+
+  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( P(2,"x"), P(3,"y")), Container( P("x",2), P("y",3)), null, 17);
+  	assertArrayEquals( new byte[]{17}, ma.build("foo"));
+
+  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( P(2,"x"), P(3,"y")), Container( P("x",2), P("y",3)), null, Pass());
+  	assertArrayEquals( new byte[]{4}, ma.build(4));
+  	
+  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( P(2,"x"), P(3,"y")), Container( P("x",2), P("y",3)), null, null);
+    exception.expect( MappingError.class );
+  	ma.build("z");
+
+  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( P(2,"x"), P(3,"y")), Container( P("x",2), P("y",3)), null, null);
+    exception.expect( MappingError.class );
+  	ma.parse(new byte[]{4});
 
   }
 
