@@ -80,47 +80,43 @@ public class Binary {
 	public static Encoder BinaryEncoder(){
 		return new Encoder(){
   		public byte[] encode(String data) {
-  	    return decode_bin(data.getBytes()).getBytes();
+  	    return decode_bin(data.getBytes());
       }
 		};
 	}
 	public static Decoder BinaryDecoder(){
 		return new Decoder(){
-      public String decode(byte[] data) {
-  	    byte[] out;
-        try {
-	        out = encode_bin(new String(data, "ISO-8859-1"));
-	  	    return new String(out, "ISO-8859-1");
-        } catch (UnsupportedEncodingException e) {
-	        throw new RuntimeException( "UnsupportedEncodingException: " + e.getMessage() );
-        }
+      public byte[] decode(byte[] data) {
+	        return encode_bin( data );
       }
 		};
 	}
-	public static byte[] encode_bin( String data ) {
-		byte[] out = new byte[8 * data.length() ];
-		for( int i = 0; i < data.length(); i++ ){
-			char ch = data.charAt(i);
-			byte[] conv = _char_to_bin[ ch ]; 
+	public static byte[] encode_bin( byte[] data ) {
+		byte[] out = new byte[8 * data.length ];
+		for( int i = 0; i < data.length; i++ ){
+			int ch = (int)data[i];
+			if(ch<0)
+				ch = 256 + ch;
+			byte[] conv = _char_to_bin[ ch ];
 			System.arraycopy(conv, 0, out, i*8, 8);
 		}
 		return out;
 	}
 	
-	public static String decode_bin( byte[] data ){
+	public static byte[] decode_bin( byte[] data ){
 		if( (data.length & 7) != 0 )
 			throw new ValueError("Data length must be a multiple of 8" );
-		StringBuilder sb = new StringBuilder();
+		byte[] sb = new byte[data.length/8];
 		
 		for( int i = 0; i< data.length; i+=8 ){
-			char ch = 0;
+			byte ch = 0;
 			for( int j = 0; j<8; j++){
-				ch = (char)(ch<<1);
+				ch = (byte)(ch<<1);
 				ch |= data[i+j];
 			}
-			sb.append(ch);
+			sb[i/8] = ch;
 		}
-		return sb.toString();
+		return sb;
 	}
 
 }

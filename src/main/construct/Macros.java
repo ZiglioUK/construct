@@ -89,7 +89,7 @@ public class Macros {
    * @return a padding field (value is discarded)
    */
   static public Adapter Padding( int length, byte pattern, boolean strict ){
-  	return PaddingAdapter( Field( null, length ), pattern, strict );
+  	return PaddingAdapter( Field( "", length ), pattern, strict ); // TODO should pass Field name null
   }
   static public Adapter Padding( int length  ){
   	return Padding( length, (byte)0x00, false );
@@ -302,13 +302,13 @@ public class Macros {
  * @param subcon a bitwise construct (usually BitField)
  * @return
  */
-static public Construct Bitwise(Construct subcon) {
+static public Subconstruct Bitwise(Construct subcon) {
 	/*
     # subcons larger than MAX_BUFFER will be wrapped by Restream instead
     # of Buffered. implementation details, don't stick your nose in :)*/
     final int MAX_BUFFER = 1024 * 8;
 
-    Construct con;
+    Subconstruct con;
     Resizer resizer = new Resizer(){
 			@Override
       public int resize(int length) {
@@ -361,7 +361,7 @@ static public Adapter SymmetricMapping( Construct subcon, final Container mappin
  * @param subcons the subcons that make up this structure
  * @return a struct of bitwise fields
  */
-static public Construct BitStruct( String name, Construct... subcons ){
+static public Construct BitStruct( String name, Subconstruct... subcons ){
   return Bitwise(Struct(name, subcons));
 }
 	  /*

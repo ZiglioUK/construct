@@ -14,6 +14,7 @@ import org.junit.rules.ExpectedException;
 import static construct.Core.*;
 import static construct.Adapters.*;
 import static construct.Macros.*;
+import static construct.lib.Containers.*;
 import construct.exception.FieldError;
 import junit.framework.TestCase;
 
@@ -31,21 +32,18 @@ public class BitTest
   
   @Test
   public void TestBitStruct() {
-  	Struct struct = BitStruct("foo",
-                      BitField("a", 3),
-                      Flag("b"),
-                      Padding(3),
-                      Nibble("c"),
-                      BitField("d", 5),
-  									);
+  	Construct struct = BitStruct("foo",
+                        BitField("a", 3),
+                        Flag("b"),
+                        Padding(3),
+                        Nibble("c"),
+                        BitField("d", 5)
+    									);
 
-  	Adapter ba;
-
-    ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8 );
-    assertEquals( 255, ba.parse( new byte[]{1,1,1,1,1,1,1,1} ));
+  	Object o = struct.parse(new byte[]{(byte)0xe1, 0x1f});
+  	assertTrue( Container( P("a", 7), P("b", false), P("c",8), P("d", 31 )).equals(o) );
+  	
     /*
-    class (unittest.TestCase):
-
         def test_parse(self):
             self.assertEqual(struct.parse("\xe1\x1f"),
                 Container(a=7, b=False, c=8, d=31))

@@ -46,16 +46,15 @@ public class AdaptersTest
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8 );
     assertArrayEquals( new byte[]{1,1,1,1,1,1,1,1}, ba.build(255) );
 
-    exception.expect( BitIntegerError.class );
-    ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8 );
-    assertEquals( null, ba.build(-1) );
-
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8, false, true );
     assertArrayEquals( new byte[]{1,1,1,1,1,1,1,1}, ba.build(-1) );
 
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8, true, false, 4 );
     assertArrayEquals( new byte[]{1,1,1,1,0,0,0,0}, ba.build(0x0f) );
 
+    exception.expect( BitIntegerError.class );
+    ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8 );
+    assertEquals( null, ba.build(-1) );
   }
 
   @Test

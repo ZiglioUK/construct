@@ -1,5 +1,7 @@
 package construct;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
@@ -139,7 +141,7 @@ public class Core {
 				throw new FieldError("length must be >= 0 " + length);
 			{
 				int len = stream.remaining();
-				if (len != length)
+				if (len < length)
 					throw new FieldError("expected " + length + " found " + len);
 				byte[] out = new byte[length];
 				stream.get(out, 0, length);
@@ -166,23 +168,27 @@ public class Core {
 			else return -1;
 		}
 
-		static public void appendDataStream( StringBuilder stream, Object data ){
+		static public void appendDataStream( ByteArrayOutputStream stream, Object data ){
 			if( data instanceof String)
-				stream.append((String)data);
-			else if( data instanceof Byte )
-				appendDataStream( stream, new byte[]{(Byte)data}); //TODO not very elegant
+	      try {
+	        stream.write(((String)data).getBytes());
+        } catch (IOException e) {
+        	throw new ValueError( "Can't append data " + data + " " + e.getMessage());
+        }
+      else if( data instanceof Byte )
+				stream.write((Byte)data);
 			else if( data instanceof Integer )
-				stream.append((Integer)data);
+				stream.write((Integer)data);
 			else if( data instanceof byte[] )
 	      try {
-	        stream.append( new String((byte[])data, "ISO-8859-1"));
-        } catch (UnsupportedEncodingException e) {
-        	throw new ValueError( "Can't append data " + e.getMessage());
+	        stream.write((byte[])data);
+        } catch (IOException e) {
+        	throw new ValueError( "Can't append data " + data + " " + e.getMessage());
         }
       else throw new ValueError( "Can't append data " + data);
 		}
 		
-		public void _write_stream( StringBuilder stream, int length, Object data) {
+		public void _write_stream( ByteArrayOutputStream stream, int length, Object data) {
 			if (length < 0)
 				throw new FieldError("length must be >= 0 " + length);
 
@@ -226,10 +232,10 @@ public class Core {
 		 * @return
 		 */
 		public byte[] build( Object obj) {
-			StringBuilder stream = new StringBuilder();
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			build_stream(obj, stream);
 
-			return stream.toString().getBytes();
+			return stream.toByteArray();
 		}
 
 		/**
@@ -238,13 +244,13 @@ public class Core {
 		 * @param obj
 		 * @param stream
 		 */
-		public void build_stream( Object obj, StringBuilder stream) {
+		public void build_stream( Object obj, ByteArrayOutputStream stream) {
 			_build(obj, stream, new Container());
 		}
 
 		// abstract void _build( String obj, OutputStream stream, Container
 		// context);
-		protected abstract void _build( Object obj, StringBuilder stream, Container context);
+		protected abstract void _build( Object obj, ByteArrayOutputStream stream, Container context);
 
 		/**
 		 * Calculate the size of this object, optionally using a context. Some constructs have no fixed size and can only know their size for a given hunk of data;
@@ -296,7 +302,7 @@ public class Core {
 		}
 
 		@Override
-		protected void _build( Object obj, StringBuilder stream, Container context) {
+		protected void _build( Object obj, ByteArrayOutputStream stream, Container context) {
 			subcon._build(obj, stream, context);
 		}
 
@@ -325,7 +331,7 @@ public class Core {
 			return _decode(subcon._parse( stream, context ), context);
 		}
 
-		public void _build(Object obj, StringBuilder stream, Container context) {
+		public void _build(Object obj, ByteArrayOutputStream stream, Container context) {
 			subcon._build(_encode(obj, context), stream, context);
 		}
 
@@ -362,7 +368,7 @@ public class Core {
 		}
 
 		@Override
-		protected void _build( Object obj, StringBuilder stream, Container context) {
+		protected void _build( Object obj, ByteArrayOutputStream stream, Container context) {
 			_write_stream(stream, length, obj);
 		}
 		
@@ -414,7 +420,7 @@ public class Core {
 		}
 
 		@Override
-		public void _build( Object obj, StringBuilder stream, Container context) {
+		public void _build( Object obj, ByteArrayOutputStream stream, Container context) {
 			_write_stream(stream, super.length, packer.pack(obj));
 		}
 
@@ -484,7 +490,7 @@ public class Core {
     }
 
 		@Override
-    protected void _build( Object obj, StringBuilder stream, Container context ) {
+    protected void _build( Object obj, ByteArrayOutputStream stream, Container context ) {
 			if( context.contains("<unnested>")){
 				context.del("<unnested>");
 			} else if( nested ){
@@ -564,14 +570,14 @@ public class Core {
 		@Override
 		public Object _parse( ByteBuffer stream, Container context) {
       byte[] data = _read_stream(stream, _sizeof(context));
-      String stream2 = decoder.decode(data);
-			return subcon._parse(ByteBuffer.wrap( stream2.getBytes() ), context);
+      byte[] stream2 = decoder.decode(data);
+			return subcon._parse(ByteBuffer.wrap( stream2 ), context);
 		}
 
 		@Override
-		protected void _build( Object obj, StringBuilder stream, Container context) {
+		protected void _build( Object obj, ByteArrayOutputStream stream, Container context) {
 			int size = _sizeof(context);
-			StringBuilder stream2 = new StringBuilder();
+			ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
 			subcon._build(obj, stream2, context);
 			byte[] data = encoder.encode(stream2.toString());
 			if( data.length != size )
@@ -792,7 +798,7 @@ class Restream(Subconstruct):
     }
 
 		@Override
-    protected void _build(Object obj, StringBuilder stream, Container context) {
+    protected void _build(Object obj, ByteArrayOutputStream stream, Container context) {
 	    // assert obj is None
     }
 

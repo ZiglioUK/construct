@@ -54,12 +54,12 @@ public class LibTest
 			                         0, 0, 0, 1, // 0x61 ascii for 'a'
 			                         0, 1, 1, 0,
 			                         0, 0, 1, 0  // 0x62 ascii for 'b'
-			                         }, encode_bin("ab"));
+			                         }, encode_bin("ab".getBytes()));
   }
 
   @Test
   public void test_decode_bin(){
-	  assertEquals( "ab", decode_bin(new byte[]{ 
+	  assertArrayEquals( "ab".getBytes(), decode_bin(new byte[]{ 
 			                        		 0, 1, 1, 0,
 			                        		 0, 0, 0, 1,
 			                        		 0, 1, 1, 0,
