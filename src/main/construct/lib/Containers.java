@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Various containers.
- */
 public class Containers
 {
 	static public class Pair{
@@ -89,44 +86,10 @@ public class Containers
 
     public Container reverse(){
     	Container reverse = new Container();
-    	//    reversed_mapping = dict((v, k) for k, v in mapping.iteritems())
     	for( Object key : this.keys() ){
     		reverse.set( this.get(key ), key );
     	}
     	return reverse;
     }
-	/*
-    def iteritems(self):
-        return self.__dict__.iteritems()
-
-    # Rich comparisons.
-
-    def __eq__(self, other):
-        try:
-            return self.__dict__ == other.__dict__
-        except AttributeError:
-            return False
-
-    def __ne__(self, other):
-        return not self == other
-
-    # Copy interface.
-
-    def copy(self):
-        return self.__class__(**self.__dict__)
-
-    __copy__ = copy
-
-    # Iterator interface.
-
-    def __iter__(self):
-        return iter(self.__dict__)
-
-    def __repr__(self):
-        return "%s(%s)" % (self.__class__.__name__, repr(self.__dict__))
-
-    def __str__(self):
-        return "%s(%s)" % (self.__class__.__name__, str(self.__dict__))
-*/
 	}
 }
