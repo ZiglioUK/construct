@@ -33,7 +33,7 @@ public class CoreTest
   public void testStaticField() {
     StaticField sf = new StaticField("staticfield", 2);
     
-    assertEquals( "ab", new String((byte[])sf.parse("ab")) );
+    assertArrayEquals( "ab".getBytes(), (byte[])sf.parse("ab") );
 
     assertArrayEquals( new byte[]{ 'a','b' }, sf.build("ab") );
 

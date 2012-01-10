@@ -87,6 +87,14 @@ public class Containers
       return dict.toString();
   }
 
+    public Container reverse(){
+    	Container reverse = new Container();
+    	//    reversed_mapping = dict((v, k) for k, v in mapping.iteritems())
+    	for( Object key : this.keys() ){
+    		reverse.set( this.get(key ), key );
+    	}
+    	return reverse;
+    }
 	/*
     def iteritems(self):
         return self.__dict__.iteritems()

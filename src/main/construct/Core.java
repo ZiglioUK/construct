@@ -150,6 +150,8 @@ public class Core {
 		static public int getDataLength( Object data ){
 			if( data instanceof String)
 				return ((String)data).length();
+			else if( data instanceof Byte )
+				return 1;
 			else if( data instanceof Integer ){
 				int num = (Integer)data;
 				if( num < 256 )
@@ -167,6 +169,8 @@ public class Core {
 		static public void appendDataStream( StringBuilder stream, Object data ){
 			if( data instanceof String)
 				stream.append((String)data);
+			else if( data instanceof Byte )
+				appendDataStream( stream, new byte[]{(Byte)data}); //TODO not very elegant
 			else if( data instanceof Integer )
 				stream.append((Integer)data);
 			else if( data instanceof byte[] )
@@ -754,9 +758,7 @@ class Restream(Subconstruct):
 #===============================================================================
 */
 	
-	static public Pass Pass(){
-		return Pass.getInstance();
-	}
+	static public final PassClass Pass = PassClass.getInstance();
 	
 	/**
     """
@@ -771,16 +773,16 @@ class Restream(Subconstruct):
     Example:
     Pass
 	 */
-	static public class Pass extends Construct{
-		private static Pass instance;
+	static private class PassClass extends Construct{
+		private static PassClass instance;
 		
-		private Pass(String name) {
+		private PassClass(String name) {
 	    super(name);
     }
 
-		public static synchronized construct.Core.Pass getInstance() {
+		public static synchronized construct.Core.PassClass getInstance() {
 	    if( instance == null )
-	    	instance = new Pass("Pass"); // TODO should use a null name
+	    	instance = new PassClass("Pass"); // TODO should use a null name
 	    return instance;
     }
 

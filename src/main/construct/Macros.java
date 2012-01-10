@@ -1,10 +1,11 @@
 package construct;
 import static construct.Core.*;
 import static construct.Adapters.*;
+import static construct.lib.Containers.*;
+import static construct.lib.Binary.*;
 import construct.Core.Construct;
 import construct.exception.SizeofError;
 import construct.lib.Resizer;
-import static construct.lib.Binary.*;
 
 public class Macros {
 
@@ -93,11 +94,17 @@ public class Macros {
   static public Adapter Padding( int length  ){
   	return Padding( length, (byte)0x00, false );
   }
-  /*
 
-def Flag(name, truth = 1, falsehood = 0, default = False):
-    """
-    A flag.
+  static public Adapter Flag( String name ){
+  	return Flag( name, (byte)1, (byte)0, false );
+  }
+  
+  /**
+   * @param name field name
+   * @param truth value of truth (default 1)
+   * @param falsehood value of falsehood (default 0)
+   * @param defaultmapping default value (default False)
+   * @return     A flag.
 
     Flags are usually used to signify a Boolean value, and this construct
     maps values onto the ``bool`` type.
@@ -108,18 +115,13 @@ def Flag(name, truth = 1, falsehood = 0, default = False):
         C and Python way of thinking about truth, and may be subject to change
         in the future.
 
-    :param str name: field name
-    :param int truth: value of truth (default 1)
-    :param int falsehood: value of falsehood (default 0)
-    :param bool default: default value (default False)
-    """
-
-    return SymmetricMapping(Field(name, 1),
-        {True : chr(truth), False : chr(falsehood)},
-        default = default,
-    )
-
    */
+  static public Adapter Flag( String name, byte truth, byte falsehood, Object defaultmapping ){
+
+  	return SymmetricMapping(Field(name, 1),
+  													Container( P(true, truth), P(false, falsehood )),
+  													defaultmapping );
+  }
 /*
   #===============================================================================
 	# field shortcuts
@@ -336,24 +338,19 @@ static public Construct Bitwise(Construct subcon) {
 # mapping
 #===============================================================================
 */
-/*def SymmetricMapping(subcon, mapping, default = NotImplemented):
-    """defines a symmetrical mapping: a->b, b->a.
-    * subcon - the subcon to map
-    * mapping - the encoding mapping (a dict); the decoding mapping is
+/**
+ * @param subcon the subcon to map
+ * @param mapping the encoding mapping (a dict); the decoding mapping is
       achieved by reversing this mapping
-    * default - the default value to use when no mapping is found. if no
+ * @param mappingdefault the default value to use when no mapping is found. if no
       default value is given, and exception is raised. setting to Pass would
       return the value "as is" (unmapped)
-    """
-    reversed_mapping = dict((v, k) for k, v in mapping.iteritems())
-    return MappingAdapter(subcon,
-        encoding = mapping,
-        decoding = reversed_mapping,
-        encdefault = default,
-        decdefault = default,
-    )
-
+ * @return a symmetrical mapping: a->b, b->a.
  */
+static public Adapter SymmetricMapping( Construct subcon, final Container mapping, 
+		Object mappingdefault ){
+	return MappingAdapter( subcon, mapping.reverse(), mapping, mappingdefault, mappingdefault );
+}
 /*
 #===============================================================================
 # structs
