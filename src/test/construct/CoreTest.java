@@ -5,15 +5,10 @@ package construct;
 //from construct import FieldError, SizeofError
 
 import static org.junit.Assert.*;
-
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
 import static construct.Core.*;
-import construct.exception.FieldError;
-import junit.framework.TestCase;
 
 public class CoreTest  
 {

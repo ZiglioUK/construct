@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
-import construct.exception.FieldError;
-import construct.exception.SizeofError;
-import construct.exception.ValueError;
 import construct.lib.Containers.Container;
 import construct.lib.Decoder;
 import construct.lib.Encoder;
@@ -15,6 +12,21 @@ import construct.lib.Resizer;
 import static construct.lib.Containers.*;
 
 public class Core {
+  public static class FieldError extends RuntimeException {
+    public FieldError(String string) {
+      super(string);
+    }
+  }
+  public static class SizeofError extends RuntimeException {
+    public SizeofError(String string) {
+      super(string);
+    }
+  }
+  public static class ValueError extends RuntimeException {
+    public ValueError(String string) {
+      super(string);
+    }
+  }
 
 /*
  * #===============================================================================
@@ -267,7 +279,7 @@ public class Core {
 			try {
 				return _sizeof(context);
 			} catch (Exception e) {
-				throw new SizeofError(e);
+				throw new SizeofError(e.getMessage());
 			}
 		}
 
@@ -415,7 +427,7 @@ public class Core {
 			try {
 				return packer.unpack(stream)[0];
 			} catch (Exception e) {
-				throw new FieldError(e);
+				throw new FieldError(e.getMessage());
 			}
 		}
 

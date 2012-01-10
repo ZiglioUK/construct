@@ -4,26 +4,26 @@ package construct;
 //from construct import Container, Byte
 //from construct import FieldError, SizeofError
 
-import static org.junit.Assert.*;
-
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import static construct.Core.*;
-import static construct.Adapters.*;
-import static construct.Macros.*;
-import static construct.lib.Containers.*;
-import construct.exception.FieldError;
-import junit.framework.TestCase;
-
+import static construct.Adapters.BitIntegerAdapter;
+import static construct.Adapters.MappingAdapter;
+import static construct.Adapters.PaddingAdapter;
+import static construct.Core.Pass;
+import static construct.Macros.Field;
+import static construct.Macros.UBInt8;
+import static construct.lib.Containers.Container;
+import static construct.lib.Containers.P;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import construct.exception.ValueError;
+import construct.Adapters.BitIntegerError;
+import construct.Adapters.MappingError;
+import construct.Adapters.PaddingError;
+import construct.Core.Adapter;
+
 
 public class AdaptersTest  
 {

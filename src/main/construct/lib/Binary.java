@@ -2,7 +2,7 @@ package construct.lib;
 
 import java.io.UnsupportedEncodingException;
 
-import construct.exception.ValueError;
+import construct.Core.ValueError;
 
 public class Binary {
 

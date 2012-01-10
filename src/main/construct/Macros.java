@@ -4,7 +4,6 @@ import static construct.Adapters.*;
 import static construct.lib.Containers.*;
 import static construct.lib.Binary.*;
 import construct.Core.Construct;
-import construct.exception.SizeofError;
 import construct.lib.Resizer;
 
 public class Macros {

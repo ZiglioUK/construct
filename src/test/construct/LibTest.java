@@ -1,14 +1,6 @@
 package construct;
 
-//from construct import Struct, MetaField, StaticField, FormatField
-//from construct import Container, Byte
-//from construct import FieldError, SizeofError
-
-import static construct.lib.Binary.bin_to_int;
-import static construct.lib.Binary.decode_bin;
-import static construct.lib.Binary.encode_bin;
-import static construct.lib.Binary.int_to_bin;
-import static construct.lib.Binary.swap_bytes;
+import static construct.lib.Binary.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -16,7 +8,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import construct.exception.ValueError;
+import construct.Core.ValueError;
 
 public class LibTest  
 {

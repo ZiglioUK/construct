@@ -6,24 +6,13 @@ package construct;
 
 import static org.junit.Assert.*;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import static construct.Core.*;
-import static construct.Adapters.*;
 import static construct.Macros.*;
 import static construct.lib.Containers.*;
-import construct.exception.FieldError;
-import junit.framework.TestCase;
-
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import construct.exception.ValueError;
 
 public class BitTest  
 {
