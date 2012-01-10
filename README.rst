@@ -24,8 +24,29 @@ constructs to make your work easier:
  * Pointers
  * And more!
 
-Requirements
+Java Version
 ============
 
-Construct should run on any Python 2.5+ implementation. It has no external
-dependencies.
+This Java version employs some syntactic sugar (i.e. static methods) to make the syntax as close as possible to the original Construct library in Python.
+
+See for example: src/test/BitTest.java
+
+    Construct struct = BitStruct("foo",
+        BitField("a", 3),
+        Flag("b"),
+        Padding(3),
+        Nibble("c"),
+        Struct("bar",
+            Nibble("d"),
+            Bit("e")
+        )
+    );
+
+A Java Construct can parse byte arrays and produces Objects like Containers. Viceversa, it can take Objects to produce byte arrays.
+    public Object parse(byte[] data);
+    public byte[] build( Object obj);
+
+Parsing example:
+    Container c1 = Container( P("a", 7), P("b", false), P("bar", Container( P("d", 15 ), P("e", 1))), P("c",8) );
+    Container c2 = (Container)struct.parse(new byte[]{(byte)0xe1, 0x1f});
+    assertTrue( c1.equals(c2) );
