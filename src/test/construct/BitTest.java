@@ -40,8 +40,9 @@ public class BitTest
                         BitField("d", 5)
     									);
 
-  	Object o = struct.parse(new byte[]{(byte)0xe1, 0x1f});
-  	assertTrue( Container( P("a", 7), P("b", false), P("c",8), P("d", 31 )).equals(o) );
+  	Container c1 = Container( P("a", 7), P("b", false), P("c",8), P("d", 31 ));
+  	Container c2 = (Container)struct.parse(new byte[]{(byte)0xe1, 0x1f});
+  	assertTrue( c1.equals(c2) );
   	
     /*
         def test_parse(self):

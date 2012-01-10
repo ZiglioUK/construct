@@ -89,7 +89,7 @@ public class Macros {
    * @return a padding field (value is discarded)
    */
   static public Adapter Padding( int length, byte pattern, boolean strict ){
-  	return PaddingAdapter( Field( "", length ), pattern, strict ); // TODO should pass Field name null
+  	return PaddingAdapter( Field( null, length ), pattern, strict ); 
   }
   static public Adapter Padding( int length  ){
   	return Padding( length, (byte)0x00, false );

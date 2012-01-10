@@ -90,10 +90,10 @@ public class Core {
 		}
 
 		public Construct(String name, int flags) {
-			if (name.equals("_") || name.startsWith("<"))
-				throw new FieldError("reserved name " + name); // raise
-			// ValueError
-
+      if( name != null ){
+  			if (name.equals("_") || name.startsWith("<"))
+  				throw new ValueError("reserved name " + name); // raise
+      }
 			this.name = name;
 			this.conflags = flags;
 		}
@@ -480,10 +480,12 @@ public class Core {
 				if( (sc.conflags & FLAG_EMBED) != 0 ){
 					context.set("<obj>", obj);
 					sc._parse(stream, context);
-				} else if( sc.name != null ){
-					  Object subobj = sc._parse(stream, context);
+				} else {
+				  Object subobj = sc._parse(stream, context);
+					if( sc.name != null ){
 						obj.set( sc.name, subobj );
 						context.set( sc.name, subobj );
+					}
 				}
 			}
 			return obj;
@@ -764,21 +766,21 @@ class Restream(Subconstruct):
 #===============================================================================
 */
 	
+	/**
+  """
+  A do-nothing construct, useful as the default case for Switch, or
+  to indicate Enums.
+  See also Switch and Enum.
+
+  Notes:
+  * this construct is a singleton. do not try to instatiate it, as it
+    will not work...
+
+  Example:
+  Pass
+ */
 	static public final PassClass Pass = PassClass.getInstance();
 	
-	/**
-    """
-    A do-nothing construct, useful as the default case for Switch, or
-    to indicate Enums.
-    See also Switch and Enum.
-
-    Notes:
-    * this construct is a singleton. do not try to instatiate it, as it
-      will not work...
-
-    Example:
-    Pass
-	 */
 	static private class PassClass extends Construct{
 		private static PassClass instance;
 		
@@ -788,7 +790,7 @@ class Restream(Subconstruct):
 
 		public static synchronized construct.Core.PassClass getInstance() {
 	    if( instance == null )
-	    	instance = new PassClass("Pass"); // TODO should use a null name
+	    	instance = new PassClass(null); 
 	    return instance;
     }
 
