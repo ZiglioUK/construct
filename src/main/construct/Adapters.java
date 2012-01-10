@@ -40,37 +40,50 @@ public class Adapters
   *
   */
   static public Adapter BitIntegerAdapter( Construct subcon, final int width ) {
-    return BitIntegerAdapter( subcon, width, false, false, 8 );
+    return new BitIntegerAdapter( subcon, width, false, false, 8 );
   }
 
   static public Adapter BitIntegerAdapter( Construct subcon, final int width, final boolean swapped, final boolean signed ) {
-    return BitIntegerAdapter( subcon, width, swapped, signed, 8 );
+    return new BitIntegerAdapter( subcon, width, swapped, signed, 8 );
   }
 
   static public Adapter BitIntegerAdapter( Construct subcon, final int width, final boolean swapped, final boolean signed, final int bytesize ) {
-      
-      return new Adapter(subcon)
-      {
-        public Object _encode( Object obj, Container context) {
-        	int intobj = (Integer)obj; 
-          if( intobj < 0 && !signed ){
-              throw new BitIntegerError("object is negative, but field is not signed " + intobj );
-          }
-          byte[] obj2 = int_to_bin( intobj, width );
-          if( swapped ){
-              obj2 = swap_bytes( obj2, bytesize );
-          }
-          return obj2;
-        }
+  	return new BitIntegerAdapter(subcon, width, swapped, signed, bytesize);
+  }
+  
+  static public class BitIntegerAdapter extends Adapter{
+  	final int width;
+  	final boolean swapped;
+  	final boolean signed;
+  	final int bytesize;
+  	
+  	public BitIntegerAdapter( Construct subcon, final int width, final boolean swapped, final boolean signed, final int bytesize ) {
+        super(subcon);
+        this.width = width;
+        this.swapped = swapped;
+        this.signed = signed;
+        this.bytesize = bytesize;
+  		}
+  	
+    public Object _encode( Object obj, Container context) {
+    	int intobj = (Integer)obj; 
+      if( intobj < 0 && !signed ){
+          throw new BitIntegerError("object is negative, but field is not signed " + intobj );
+      }
+      byte[] obj2 = int_to_bin( intobj, width );
+      if( swapped ){
+          obj2 = swap_bytes( obj2, bytesize );
+      }
+      return obj2;
+    }
 
-        public Object _decode( Object obj, Container context) {
-          byte[] ba = (byte[])obj;
-        	if( swapped ){
-            ba = swap_bytes( ba, bytesize );
-          }
-          return bin_to_int(ba, signed );
-        }
-      };
+    public Object _decode( Object obj, Container context) {
+      byte[] ba = (byte[])obj;
+    	if( swapped ){
+        ba = swap_bytes( ba, bytesize );
+      }
+      return bin_to_int(ba, signed );
+    }
   }
 
   /**
