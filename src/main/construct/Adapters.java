@@ -96,18 +96,21 @@ public class Adapters
       	else {
       		if( encdefault == null )
       			throw new MappingError("no encoding mapping for " + obj );
-      		if( encdefault == Pass() )
+      		if( encdefault == Pass )
       			return obj;
       		return encdefault;
       	}
       }
       public Object _decode( Object obj, Container context) {
+      	if( obj instanceof byte[])
+      		obj = ((byte[])obj)[0];
+      	
       	if( decoding.contains(obj) )
       		return decoding.get(obj);
       	else{
       		if( decdefault == null )
       			throw new MappingError("no encoding mapping for " + obj );
-      		if( decdefault == Pass() )
+      		if( decdefault == Pass )
       			return obj;
       		return decdefault;
       	}
