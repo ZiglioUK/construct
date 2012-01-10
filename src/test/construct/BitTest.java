@@ -31,7 +31,7 @@ public class BitTest
   public ExpectedException exception = ExpectedException.none();
   
   @Test
-  public void TestBitStruct() {
+  public void test_parse() {
   	Construct struct = BitStruct("foo",
                         BitField("a", 3),
                         Flag("b"),
@@ -43,29 +43,25 @@ public class BitTest
   	Container c1 = Container( P("a", 7), P("b", false), P("c",8), P("d", 31 ));
   	Container c2 = (Container)struct.parse(new byte[]{(byte)0xe1, 0x1f});
   	assertTrue( c1.equals(c2) );
-  	
-    /*
-        def test_parse(self):
-            self.assertEqual(struct.parse("\xe1\x1f"),
-                Container(a=7, b=False, c=8, d=31))
+  }
+  
+  @Test
+  public void test_parse_nested() {
+  
+  	Construct struct = BitStruct("foo",
+        BitField("a", 3),
+        Flag("b"),
+        Padding(3),
+        Nibble("c"),
+        Struct("bar",
+            Nibble("d"),
+            Bit("e")
+        )
+    );
 
-        def test_parse_nested(self):
-            struct = BitStruct("foo",
-                BitField("a", 3),
-                Flag("b"),
-                Padding(3),
-                Nibble("c"),
-                Struct("bar",
-                    Nibble("d"),
-                    Bit("e"),
-                )
-            )
-            self.assertEqual(struct.parse("\xe1\x1f"),
-                Container(a=7, b=False, bar=Container(d=15, e=1), c=8))
-
-     */
-
-    }
-
+  	Container c1 = Container( P("a", 7), P("b", false), P("bar", Container( P("d", 15 ), P("e", 1))), P("c",8) );
+  	Container c2 = (Container)struct.parse(new byte[]{(byte)0xe1, 0x1f});
+  	assertTrue( c1.equals(c2) );
+  }
 }
 

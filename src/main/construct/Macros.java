@@ -361,7 +361,7 @@ static public Adapter SymmetricMapping( Construct subcon, final Container mappin
  * @param subcons the subcons that make up this structure
  * @return a struct of bitwise fields
  */
-static public Construct BitStruct( String name, Subconstruct... subcons ){
+static public Construct BitStruct( String name, Construct... subcons ){
   return Bitwise(Struct(name, subcons));
 }
 	  /*
