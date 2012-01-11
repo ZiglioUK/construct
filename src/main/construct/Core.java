@@ -3,6 +3,8 @@ package construct;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import static construct.lib.Containers.*;
 import construct.lib.Decoder;
@@ -25,7 +27,17 @@ public class Core {
       super(string);
     }
   }
-
+  public static class RangeError extends RuntimeException {
+    public RangeError(String string) {
+      super(string);
+    }
+  }
+  public static class TypeError extends RuntimeException {
+    public TypeError(String string) {
+      super(string);
+    }
+  }
+  
 /*
 #===============================================================================
 # Shorthand expressions
@@ -408,64 +420,72 @@ class Range extends Subconstruct{
 	
 	@Override
 	public Object _parse( ByteBuffer stream, Container context) {
-		return subcon._parse(stream, context);
+//    obj = ListContainer()
+		List<Object> obj = new ArrayList<Object>();
+		int c = 0;
+		int pos = stream.position();
+		try{
+      if( (subcon.conflags & FLAG_COPY_CONTEXT) != 0 ){
+        while( c < maxcout ){
+            pos = stream.position();
+            obj.add( subcon._parse(stream, context.clone() ));
+            c += 1;
+        }
+      } else {
+        while( c < maxcout ){
+          pos = stream.position();
+          obj.add( subcon._parse(stream, context ));
+          c += 1;
+        }
+      }
+		}
+    catch( Exception e ){
+      if( c < mincount ){
+        stream.position(pos);
+        throw new RangeError("expected " + mincount + " to " + maxcout + " found " + c + " " + e.getMessage() );
+      }
+    }
+		
+		return obj.toArray();
 	}
 
 	@Override
-	protected void _build( Object obj, ByteArrayOutputStream stream, Container context) {
-		subcon._build(obj, stream, context);
+	protected void _build( Object object, ByteArrayOutputStream stream, Container context) {
+
+		if( object instanceof Object[] )
+			throw new TypeError( "Expected object array" );
+		Object[] obj = (Object[])object;
+		if( obj.length < mincount || obj.length > maxcout ){
+      throw new RangeError("expected " + mincount + " to " + maxcout + " found " + obj.length );
+		}
+		
+		int cnt = 0;
+		try{
+      if( (subcon.conflags & FLAG_COPY_CONTEXT) != 0 ){
+        for( Object subobj : obj ){
+          subcon._build(subobj, stream, context.clone() );
+          cnt += 1;
+        }
+      } else {
+        for( Object subobj : obj ){
+          subcon._build(subobj, stream, context );
+          cnt += 1;
+        }
+      }
+		}
+    catch( Exception e ){
+      if( cnt < mincount ){
+        throw new RangeError("expected " + mincount + " to " + maxcout + " found " + obj.length + " " + e.getMessage() );
+      }
+    }
 	}
 
 	@Override
 	protected int _sizeof(Container context){
-		return subcon._sizeof(context);
+    throw new SizeofError("can't calculate size");
 	}
 	
 }
-	/*
-    """
-    def _parse(self, stream, context):
-        obj = ListContainer()
-        c = 0
-        try:
-            if self.subcon.conflags & self.FLAG_COPY_CONTEXT:
-                while c < self.maxcout:
-                    pos = stream.tell()
-                    obj.append(self.subcon._parse(stream, context.__copy__()))
-                    c += 1
-            else:
-                while c < self.maxcout:
-                    pos = stream.tell()
-                    obj.append(self.subcon._parse(stream, context))
-                    c += 1
-        except ConstructError, ex:
-            if c < self.mincount:
-                raise RangeError("expected %d to %d, found %d" %
-                    (self.mincount, self.maxcout, c), ex)
-            stream.seek(pos)
-        return obj
-    def _build(self, obj, stream, context):
-        if len(obj) < self.mincount or len(obj) > self.maxcout:
-            raise RangeError("expected %d to %d, found %d" %
-                (self.mincount, self.maxcout, len(obj)))
-        cnt = 0
-        try:
-            if self.subcon.conflags & self.FLAG_COPY_CONTEXT:
-                for subobj in obj:
-                    self.subcon._build(subobj, stream, context.__copy__())
-                    cnt += 1
-            else:
-                for subobj in obj:
-                    self.subcon._build(subobj, stream, context)
-                    cnt += 1
-        except ConstructError, ex:
-            if cnt < self.mincount:
-                raise RangeError("expected %d to %d, found %d" %
-                    (self.mincount, self.maxcout, len(obj)), ex)
-    def _sizeof(self, context):
-        raise SizeofError("can't calculate size")
-	 */
-	
 	
 	/**
 	 * """ Abstract adapter: calls _decode for parsing and _encode for building. """
