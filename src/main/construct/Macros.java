@@ -2,8 +2,7 @@ package construct;
 import static construct.Core.*;
 import static construct.Adapters.*;
 import static construct.lib.Binary.*;
-import construct.Core.Construct;
-import construct.lib.Container;
+import static construct.lib.Containers.*;
 import construct.lib.Resizer;
 
 public class Macros {

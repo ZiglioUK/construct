@@ -2,8 +2,7 @@ package construct;
 
 import static construct.lib.Binary.*;
 import static construct.Core.*;
-import static construct.lib.Container.*;
-import construct.lib.Container;
+import static construct.lib.Containers.*;
 
 public class Adapters
 {

@@ -4,8 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import construct.lib.Container;
-import construct.lib.Container.Pair;
+import static construct.lib.Containers.*;
 import construct.lib.Decoder;
 import construct.lib.Encoder;
 import construct.lib.Resizer;
@@ -346,6 +345,128 @@ static public Pair P( final Object s, final Object o ){
 		}
 	}
 
+	
+/*
+#===============================================================================
+# arrays and repeaters
+#===============================================================================
+ */
+
+/**
+    A range-array. The subcon will iterate between `mincount` to `maxcount`
+    times. If less than `mincount` elements are found, raises RangeError.
+    See also GreedyRange and OptionalGreedyRange.
+
+    The general-case repeater. Repeats the given unit for at least mincount
+    times, and up to maxcount times. If an exception occurs (EOF, validation
+    error), the repeater exits. If less than mincount units have been
+    successfully parsed, a RangeError is raised.
+
+    .. note::
+       This object requires a seekable stream for parsing.
+ */
+class Range extends Subconstruct{
+
+	/**
+	 * @param mincount the minimal count
+	 * @param maxcount the maximal count
+	 * @param subcon the subcon to repeat
+    >>> c = Range(3, 7, UBInt8("foo"))
+    >>> c.parse("\\x01\\x02")
+    Traceback (most recent call last):
+      ...
+    construct.core.RangeError: expected 3..7, found 2
+    >>> c.parse("\\x01\\x02\\x03")
+    [1, 2, 3]
+    >>> c.parse("\\x01\\x02\\x03\\x04\\x05\\x06")
+    [1, 2, 3, 4, 5, 6]
+    >>> c.parse("\\x01\\x02\\x03\\x04\\x05\\x06\\x07")
+    [1, 2, 3, 4, 5, 6, 7]
+    >>> c.parse("\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\x09")
+    [1, 2, 3, 4, 5, 6, 7]
+    >>> c.build([1,2])
+    Traceback (most recent call last):
+      ...
+    construct.core.RangeError: expected 3..7, found 2
+    >>> c.build([1,2,3,4])
+    '\\x01\\x02\\x03\\x04'
+    >>> c.build([1,2,3,4,5,6,7,8])
+    Traceback (most recent call last):
+      ...
+    construct.core.RangeError: expected 3..7, found 8
+	 */
+	int mincount;
+	int maxcout;
+
+	public Range(int mincount, int maxcount, Construct subcon) {
+		super(subcon);
+		this.mincount = mincount;
+		this.maxcout = maxcount;
+		_clear_flag(FLAG_COPY_CONTEXT);
+		_set_flag(FLAG_DYNAMIC);
+	}
+	
+	@Override
+	public Object _parse( ByteBuffer stream, Container context) {
+		return subcon._parse(stream, context);
+	}
+
+	@Override
+	protected void _build( Object obj, ByteArrayOutputStream stream, Container context) {
+		subcon._build(obj, stream, context);
+	}
+
+	@Override
+	protected int _sizeof(Container context){
+		return subcon._sizeof(context);
+	}
+	
+}
+	/*
+    """
+    def _parse(self, stream, context):
+        obj = ListContainer()
+        c = 0
+        try:
+            if self.subcon.conflags & self.FLAG_COPY_CONTEXT:
+                while c < self.maxcout:
+                    pos = stream.tell()
+                    obj.append(self.subcon._parse(stream, context.__copy__()))
+                    c += 1
+            else:
+                while c < self.maxcout:
+                    pos = stream.tell()
+                    obj.append(self.subcon._parse(stream, context))
+                    c += 1
+        except ConstructError, ex:
+            if c < self.mincount:
+                raise RangeError("expected %d to %d, found %d" %
+                    (self.mincount, self.maxcout, c), ex)
+            stream.seek(pos)
+        return obj
+    def _build(self, obj, stream, context):
+        if len(obj) < self.mincount or len(obj) > self.maxcout:
+            raise RangeError("expected %d to %d, found %d" %
+                (self.mincount, self.maxcout, len(obj)))
+        cnt = 0
+        try:
+            if self.subcon.conflags & self.FLAG_COPY_CONTEXT:
+                for subobj in obj:
+                    self.subcon._build(subobj, stream, context.__copy__())
+                    cnt += 1
+            else:
+                for subobj in obj:
+                    self.subcon._build(subobj, stream, context)
+                    cnt += 1
+        except ConstructError, ex:
+            if cnt < self.mincount:
+                raise RangeError("expected %d to %d, found %d" %
+                    (self.mincount, self.maxcout, len(obj)), ex)
+    def _sizeof(self, context):
+        raise SizeofError("can't calculate size")
+	 */
+	
+	
 	/**
 	 * """ Abstract adapter: calls _decode for parsing and _encode for building. """
 	 * 

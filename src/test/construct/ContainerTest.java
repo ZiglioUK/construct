@@ -9,7 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import static construct.Core.*;
-import construct.lib.Container;
+import static construct.lib.Containers.*;
 
 public class ContainerTest  
 {

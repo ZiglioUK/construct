@@ -8,7 +8,7 @@ import org.junit.rules.ExpectedException;
 
 import static construct.Core.*;
 import static construct.Macros.*;
-import construct.lib.Container;
+import static construct.lib.Containers.*;
 
 public class ConstructTest  
 {
