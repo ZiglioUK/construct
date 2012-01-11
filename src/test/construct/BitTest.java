@@ -49,8 +49,8 @@ public class BitTest
     );
 
   	Container c1 = Container( P("a", 7), P("b", false), P("bar", Container( P("d", 15 ), P("e", 1))), P("c",8) );
-  	Container c2 = (Container)struct.parse(new byte[]{(byte)0xe1, 0x1f});
-  	assertTrue( c1.equals(c2) );
+  	Object c2 = struct.parse(new byte[]{(byte)0xe1, 0x1f});
+  	assertEquals( c1, c2 );
   }
 }
 
