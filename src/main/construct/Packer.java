@@ -79,16 +79,28 @@ public class Packer {
   
       switch( fmt ){
       	case 'b':
-      	case 'B':
-      	case 'C':
       	case 's':
       	case 'p':
       		obj = new Integer(buf.get());
       	break;
+      	case 'B':
+      	case 'C':
+      		byte b = buf.get();
+      		if( b<0 )
+      			obj = 256 + b;
+      		else
+      			obj = new Integer(b);
+      	break;
 
       	case 'h':
-      	case 'H':
       		obj = new Integer(buf.getShort());
+      	break;
+      	case 'H':
+      		short s = buf.getShort();
+      		if( s<0 )
+      			obj = 2^16 + s;
+      		else
+      			obj = new Integer(s);
       	break;
       	
       	case 'i':
