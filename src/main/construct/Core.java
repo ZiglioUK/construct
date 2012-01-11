@@ -2,14 +2,13 @@ package construct;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
-import construct.lib.Containers.Container;
+import construct.lib.Container;
+import construct.lib.Container.Pair;
 import construct.lib.Decoder;
 import construct.lib.Encoder;
 import construct.lib.Resizer;
-import static construct.lib.Containers.*;
 
 public class Core {
   public static class FieldError extends RuntimeException {
@@ -28,6 +27,29 @@ public class Core {
     }
   }
 
+/*
+#===============================================================================
+# Shorthand expressions
+#===============================================================================
+*/
+//  	  Bits = BitField
+//  		Byte = UBInt8
+//  		Bytes = Field
+//  		Const = ConstAdapter
+//  		Tunnel = TunnelAdapter
+//  		Embed = Embedded
+/**
+  A generic container of attributes.
+
+  Containers are the common way to express parsed data.
+ */
+static public Container Container( Pair... dict ){
+	return new Container( dict );
+}
+static public Pair P( final Object s, final Object o ){
+	return new Pair(s, o);
+}
+  
 /*
  * #===============================================================================
  * # abstract constructs

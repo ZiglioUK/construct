@@ -12,7 +12,7 @@ import org.junit.rules.ExpectedException;
 
 import static construct.Core.*;
 import static construct.Macros.*;
-import static construct.lib.Containers.*;
+import construct.lib.Container;
 
 public class BitTest  
 {

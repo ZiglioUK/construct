@@ -1,9 +1,9 @@
 package construct;
 import static construct.Core.*;
 import static construct.Adapters.*;
-import static construct.lib.Containers.*;
 import static construct.lib.Binary.*;
 import construct.Core.Construct;
+import construct.lib.Container;
 import construct.lib.Resizer;
 
 public class Macros {
@@ -74,10 +74,25 @@ public class Macros {
     );
   }
    
-  static public Adapter BitField( final String name, final int length ) {
+  /**
+   * Bits is just an alias for BitField
+   */
+  static public Adapter Bits( final String name, final int length ) {
      return BitField( name, length, false, false, 8 );
   }
 
+  static public Adapter Bits( final String name, final int length, boolean swapped, boolean signed, int bytesize ) {
+    return BitIntegerAdapter( Field(name, length),
+         length,
+         swapped,
+         signed,
+         bytesize
+     );
+   }
+    
+   static public Adapter BitField( final String name, final int length ) {
+      return BitField( name, length, false, false, 8 );
+   }
   /**
    * @param length the length of the field. the length can be either an integer,
       or a function that takes the context as an argument and returns the
@@ -346,10 +361,24 @@ static public Subconstruct Bitwise(Construct subcon) {
       return the value "as is" (unmapped)
  * @return a symmetrical mapping: a->b, b->a.
  */
-static public Adapter SymmetricMapping( Construct subcon, final Container mapping, 
-		Object mappingdefault ){
+static public Adapter SymmetricMapping( Construct subcon, final Container mapping, Object mappingdefault ){
 	return MappingAdapter( subcon, mapping.reverse(), mapping, mappingdefault, mappingdefault );
 }
+
+/**
+ * @param subcon the subcon to map
+ * @param mapping keyword arguments which serve as the encoding mapping
+ * @param _default_ vn optional, keyword-only argument that specifies the
+      default value to use when the mapping is undefined. if not given,
+      and exception is raised when the mapping is undefined. use `Pass` to
+      pass the unmapped value as-is
+ * @return a set of named values mapping.
+ */
+static public Adapter Enum( Construct subcon, final Container kw ){
+	return SymmetricMapping( subcon, kw, kw.get("_default_") );
+}
+
+//  return SymmetricMapping(subcon, kw, kw.pop(, NotImplemented));
 /*
 #===============================================================================
 # structs

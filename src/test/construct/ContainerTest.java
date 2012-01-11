@@ -8,7 +8,8 @@ import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import static construct.lib.Containers.*;
+import static construct.Core.*;
+import construct.lib.Container;
 
 public class ContainerTest  
 {

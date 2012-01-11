@@ -2,7 +2,8 @@ package construct;
 
 import static construct.lib.Binary.*;
 import static construct.Core.*;
-import static construct.lib.Containers.*;
+import static construct.lib.Container.*;
+import construct.lib.Container;
 
 public class Adapters
 {
@@ -18,6 +19,11 @@ public class Adapters
   }
   public static class MappingError extends RuntimeException {
     public MappingError(String string) {
+      super(string);
+    }
+  }
+  public static class ConstError extends RuntimeException {
+    public ConstError(String string) {
       super(string);
     }
   }
@@ -130,7 +136,44 @@ public class Adapters
       }
   };
 }
-  
+
+  /**
+   * @param subcon the subcon to validate
+   * @param value the expected value
+   * @return Adapter for enforcing a constant value ("magic numbers"). When decoding,
+      the return value is checked; when building, the value is substituted in.
+      Example:
+      Const(Field("signature", 2), "MZ")
+   */
+  static public Adapter Const( Construct subcon, final Object value ){
+  	return ConstAdapter(subcon,value);
+  }
+/**
+ * @param subcon the subcon to validate
+ * @param value the expected value
+ * @return Adapter for enforcing a constant value ("magic numbers"). When decoding,
+    the return value is checked; when building, the value is substituted in.
+    Example:
+    Const(Field("signature", 2), "MZ")
+ */
+static public Adapter ConstAdapter( Construct subcon, final Object value ){
+	return new Adapter(subcon)
+  {
+    public Object _encode( Object obj, Container context) {
+      if( obj == null || obj.equals(value))
+        return value;
+      else
+      	throw new ConstError( "expected " + value + " found " + obj );
+    }
+
+    public Object _decode( Object obj, Container context) {
+      if( !obj.equals(value) )
+      	throw new ConstError( "expected " + value + " found " + obj );
+      return obj;
+    }
+  };
+}
+
 /*
 class MappingAdapter(Adapter):
     def _encode(self, obj, context):
