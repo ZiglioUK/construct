@@ -162,7 +162,7 @@ public class Macros {
   /**
   * @return unsigned, big endian 8-bit integer
   */
-  static FormatField UBInt8(String name){
+  static public FormatField UBInt8(String name){
    	return new FormatField( name, '>', 'B' );
   }
   /**
