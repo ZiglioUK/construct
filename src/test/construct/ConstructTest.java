@@ -40,6 +40,16 @@ public class ConstructTest
   	  struct = Struct( "struct", UBInt8("a"), UBInt16("b"), foo );
   	  ba = struct.build( Container( P("a",1), P("b", 2), P("foo", Container(P("c", 3), P("d",4)))));
   	  assertArrayEquals( new byte[]{1,0,2,3,4}, ba );
+  	  
+  	  struct = Struct( "struct", UBInt8("a"), UBInt16("b"), Embedded( Struct("foo", UBInt8("c"), UBInt8("d"))));
+  	  ca = (Container)struct.parse( new byte[]{1,0,2,3,4} );
+  	  cb = Container( P("a", 1), P("b", 2), P("c", 3), P("d", 4 ));
+  	  assertEquals( cb, ca );
+
+  	  struct = Struct( "struct", UBInt8("a"), UBInt16("b"), Embedded( Struct("foo", UBInt8("c"), UBInt8("d"))));
+  	  ba = struct.build( Container( P("a", 1), P("b", 2), P("c", 3), P("d", 4 )));
+  	  assertArrayEquals( new byte[]{1,0,2,3,4}, ba );
+	  
   }
   
   @Test

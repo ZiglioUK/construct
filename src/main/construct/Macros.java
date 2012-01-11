@@ -347,6 +347,24 @@ static public Subconstruct Bitwise(Construct subcon) {
     return con;
 }
 
+static public Subconstruct Embed( Construct subcon ){
+	return Embedded( subcon );
+}
+/**
+ * embeds a struct into the enclosing struct.
+ * @param subcon the struct to embed
+ * @return
+ */
+static public Subconstruct Embedded( Construct subcon ){
+	return Reconfig( subcon.name, subcon, subcon.FLAG_EMBED, 0 );
+}
+/*
+def Embedded(subcon):
+    """
+    * subcon - the struct to embed
+    """
+    return Reconfig(subcon.name, subcon, subcon.FLAG_EMBED)
+ */
 /*
 #===============================================================================
 # mapping
