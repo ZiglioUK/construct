@@ -140,7 +140,7 @@ static public Pair P( final Object s, final Object o ){
         Set the given flag or flags.
 		 * @param flag flag to set; may be OR'd combination of flags
 		 */
-		public void _set_flag(int flag){
+		protected void _set_flag(int flag){
 			conflags |= flag;
 		}
 		
@@ -148,15 +148,13 @@ static public Pair P( final Object s, final Object o ){
         Clear the given flag or flags.
 		 * @param flag flag to clear; may be OR'd combination of flags
 		 */
-		public void _clear_flag( int flag ){
+		protected void _clear_flag( int flag ){
 			conflags &= ~flag;
 		}
 		
-		/**
-        Pull flags from subconstructs.
-		 */
-		public void _inherit_flags( Subconstruct... subcons ){
-			for( Subconstruct sc : subcons ){
+		/**Pull flags from subconstructs.*/
+		protected void _inherit_flags( Construct... subcons ){
+			for( Construct sc : subcons ){
 				_set_flag(sc.conflags);
 			}
 		}
@@ -166,7 +164,7 @@ static public Pair P( final Object s, final Object o ){
 		 * @param flag flag to check
 		 * @return
 		 */
-		public boolean _is_flag( int flag ){
+		protected boolean _is_flag( int flag ){
 			return (conflags & flag) == flag;
 		}
 
@@ -312,23 +310,25 @@ static public Pair P( final Object s, final Object o ){
 		abstract protected int _sizeof(Container context);
 	}
 
-	/**
-	 * """ Abstract subconstruct (wraps an inner construct, inheriting its name and flags). """
-	 * 
+	/** 
+	 * Abstract subconstruct (wraps an inner construct, inheriting its name and flags). 
 	 */
 	public static abstract class Subconstruct extends Construct {
 
 		protected Construct subcon;
 
 		/**
-		 * @param name
-		 * @param subcon
-		 *          the construct to wrap
+		 * @param subcon the construct to wrap
 		 */
 		public Subconstruct(Construct subcon) {
 			super(subcon.name, subcon.conflags);
 			this.subcon = subcon;
 		}
+
+		protected Subconstruct(String name, Construct subcon) {
+			super(name, subcon.conflags);
+			this.subcon = subcon;
+    }
 
 		@Override
 		public Object _parse( ByteBuffer stream, Container context) {
@@ -490,11 +490,9 @@ static public Pair P( final Object s, final Object o ){
 		public Struct(String name, Construct... subcons) {
 	    super(name);
 	    this.subcons = subcons;
-/*
-        self._inherit_flags(*subcons)
-        self._clear_flag(self.FLAG_EMBED)
- * */
-	    }
+	    _inherit_flags(subcons);
+	    _clear_flag(FLAG_EMBED);
+	  }
 
 		@Override
 		public Object _parse( ByteBuffer stream, Container context) {
@@ -799,7 +797,51 @@ class Restream(Subconstruct):
 # miscellaneous
 #===============================================================================
 */
+
+	/**
+	 * @param name the new name
+	 * @param subcon the subcon to reconfigure
+	 * @param setflags the flags to set (default is 0)
+	 * @param clearflags the flags to clear (default is 0)
+	 */
+	static public Reconfig Reconfig(String name, Construct subcon ) {
+		return new Reconfig(name, subcon);
+	}
+
+	/**
+	 * @param name the new name
+	 * @param subcon the subcon to reconfigure
+	 * @param setflags the flags to set (default is 0)
+	 * @param clearflags the flags to clear (default is 0)
+	 */
+	static public Reconfig Reconfig(String name, Construct subcon, int setflags, int clearflags ) {
+		return new Reconfig(name, subcon, setflags, clearflags);
+	}
+/**
+    Reconfigures a subconstruct. Reconfig can be used to change the name and
+    set and clear flags of the inner subcon.
+    Example:
+    Reconfig("foo", UBInt8("bar"))
+ */
+static public class Reconfig extends Subconstruct{
+
+	/**
+	 * @param name the new name
+	 * @param subcon the subcon to reconfigure
+	 * @param setflags the flags to set (default is 0)
+	 * @param clearflags the flags to clear (default is 0)
+	 */
+	public Reconfig(String name, Construct subcon, int setflags, int clearflags ) {
+	  super(name, subcon);
+	  _set_flag(setflags);
+	  _clear_flag(clearflags);
+  }
+
+	public Reconfig(String name, Construct subcon ) {
+	  this(name, subcon, 0, 0);
+  }
 	
+}
 	/**
   """
   A do-nothing construct, useful as the default case for Switch, or
