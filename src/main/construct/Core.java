@@ -364,6 +364,9 @@ static public Pair P( final Object s, final Object o ){
 #===============================================================================
  */
 
+	public static Range Range(int mincount, int maxcount, Construct subcon){
+		return new Range(mincount,maxcount,subcon);
+	}
 /**
     A range-array. The subcon will iterate between `mincount` to `maxcount`
     times. If less than `mincount` elements are found, raises RangeError.
@@ -377,7 +380,7 @@ static public Pair P( final Object s, final Object o ){
     .. note::
        This object requires a seekable stream for parsing.
  */
-class Range extends Subconstruct{
+public static class Range extends Subconstruct{
 
 	/**
 	 * @param mincount the minimal count
@@ -452,11 +455,11 @@ class Range extends Subconstruct{
 	@Override
 	protected void _build( Object object, ByteArrayOutputStream stream, Container context) {
 
-		if( object instanceof Object[] )
+		if( !(object instanceof List ))
 			throw new TypeError( "Expected object array" );
-		Object[] obj = (Object[])object;
-		if( obj.length < mincount || obj.length > maxcout ){
-      throw new RangeError("expected " + mincount + " to " + maxcout + " found " + obj.length );
+		List<Object> obj = (List<Object>)object;
+		if( obj.size() < mincount || obj.size() > maxcout ){
+      throw new RangeError("expected " + mincount + " to " + maxcout + " found " + obj.size() );
 		}
 		
 		int cnt = 0;
@@ -474,10 +477,8 @@ class Range extends Subconstruct{
       }
 		}
     catch( Exception e ){
-      if( cnt < mincount ){
-        throw new RangeError("expected " + mincount + " to " + maxcout + " found " + obj.length + " " + e.getMessage() );
-      }
-    }
+        throw new RangeError( e.getMessage() );
+     }
 	}
 
 	@Override

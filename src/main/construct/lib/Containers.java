@@ -1,6 +1,8 @@
 package construct.lib;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -79,6 +81,13 @@ public class Containers{
     	}
     	return reverse;
     }
+  }
+  
+  static public List<Object> ListContainer( Object... args ){
+  	ArrayList<Object> l = new ArrayList<Object>();
+  	for( Object o: args )
+  		l.add(o);
+  	return l;
   }
 /*
   class ListContainer(list):
