@@ -11,6 +11,8 @@ import static construct.lib.Containers.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -26,10 +28,10 @@ public class RepeatersTest
   	byte[] ba;
   	
   	c = Range(3, 7, UBInt8("foo"));
-  	assertArrayEquals( new Object[]{1,2,3}, (Object[])c.parse(new byte[]{1,2,3}));
-  	assertArrayEquals( new Object[]{1,2,3,4,5,6}, (Object[])c.parse(new byte[]{1,2,3,4,5,6}));
-  	assertArrayEquals( new Object[]{1,2,3,4,5,6,7}, (Object[])c.parse(new byte[]{1,2,3,4,5,6,7}));
-  	assertArrayEquals( new Object[]{1,2,3,4,5,6,7}, (Object[])c.parse(new byte[]{1,2,3,4,5,6,7,8,9}));
+  	assertEquals( ListContainer(1,2,3), (List)c.parse(new byte[]{1,2,3}));
+  	assertEquals( ListContainer(1,2,3,4,5,6), (List)c.parse(new byte[]{1,2,3,4,5,6}));
+  	assertEquals( ListContainer(1,2,3,4,5,6,7), (List)c.parse(new byte[]{1,2,3,4,5,6,7}));
+  	assertEquals( ListContainer(1,2,3,4,5,6,7), (List)c.parse(new byte[]{1,2,3,4,5,6,7,8,9}));
 
   	ba = c.build( ListContainer( 1,2,3,4 ));
   	assertArrayEquals( new byte[]{1,2,3,4}, ba );

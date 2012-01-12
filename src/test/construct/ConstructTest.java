@@ -6,6 +6,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import construct.Core.RangeError;
+
 import static construct.Core.*;
 import static construct.Macros.*;
 import static construct.lib.Containers.*;
@@ -15,6 +17,33 @@ public class ConstructTest
   @Rule
   public ExpectedException exception = ExpectedException.none();
 
+  @Test
+  public void rangeTest(){
+  	Range range;
+  	
+  	range = Range(3,5, UBInt8("range"));
+  	assertEquals( ListContainer(1,2,3), range.parse( new byte[]{1,2,3}));
+  	assertEquals( ListContainer(1,2,3,4), range.parse( new byte[]{1,2,3,4}));
+  	assertEquals( ListContainer(1,2,3,4,5), range.parse( new byte[]{1,2,3,4,5}));
+
+  	assertArrayEquals( new byte[]{1,2,3}, range.build( ListContainer(1,2,3)));
+  	assertArrayEquals( new byte[]{1,2,3,4}, range.build( ListContainer(1,2,3,4)));
+  	assertArrayEquals( new byte[]{1,2,3,4,5}, range.build( ListContainer(1,2,3,4,5)));
+
+  	exception.expect( RangeError.class );
+  	range.build( ListContainer(1,2,3,4,5,6));
+
+  	exception.expect( RangeError.class );
+  	range.build( ListContainer(1,2));
+  			
+  	exception.expect( RangeError.class );
+  	range.parse( new byte[]{1,2});
+  	
+  /*
+    [Range(3, 5, UBInt8("range")).build, [1,2,3,4,5,6], None, RangeError],
+   */
+  }
+  
   @Test
   public void structTest() {
   	  Struct struct, foo;

@@ -424,7 +424,7 @@ public static class Range extends Subconstruct{
 	@Override
 	public Object _parse( ByteBuffer stream, Container context) {
 //    obj = ListContainer()
-		List<Object> obj = new ArrayList<Object>();
+		List<Object> obj = ListContainer();
 		int c = 0;
 		int pos = stream.position();
 		try{
@@ -449,7 +449,7 @@ public static class Range extends Subconstruct{
       }
     }
 		
-		return obj.toArray();
+		return obj;
 	}
 
 	@Override
