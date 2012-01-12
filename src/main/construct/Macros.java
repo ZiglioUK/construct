@@ -304,6 +304,68 @@ public class Macros {
 	  static public FormatField SNInt64(String name){
 	   	return new FormatField( name, '=', 'q' );
 	  }
+	  
+/*
+#===============================================================================
+# arrays
+#===============================================================================
+ */
+	  
+public static Range OpenRange(int mincount, Construct subcon){
+	return Range( mincount, Integer.MAX_VALUE, subcon);
+}
+
+/**
+ *  Repeats the given unit one or more times.
+    >>> from construct import GreedyRange, UBInt8
+    >>> c = GreedyRange(UBInt8("foo"))
+    >>> c.parse("\\x01")
+    [1]
+    >>> c.parse("\\x01\\x02\\x03")
+    [1, 2, 3]
+    >>> c.parse("\\x01\\x02\\x03\\x04\\x05\\x06")
+    [1, 2, 3, 4, 5, 6]
+    >>> c.parse("")
+    Traceback (most recent call last):
+      ...
+    construct.core.RangeError: expected 1..2147483647, found 0
+    >>> c.build([1,2])
+    '\\x01\\x02'
+    >>> c.build([])
+    Traceback (most recent call last):
+      ...
+    construct.core.RangeError: expected 1..2147483647, found 0
+    """
+
+    return OpenRange(1, subcon)
+ * @param subcon ``Construct`` subcon: construct to repeat
+ */
+public static Range GreedyRange(Construct subcon){
+	return OpenRange( 1, subcon );
+}
+
+/**
+  Repeats the given unit zero or more times. This repeater can't
+  fail, as it accepts lists of any length.
+
+  :param ``Construct`` subcon: 
+
+  >>> from construct import OptionalGreedyRange, UBInt8
+  >>> c = OptionalGreedyRange(UBInt8("foo"))
+  >>> c.parse("")
+  []
+  >>> c.parse("\\x01\\x02")
+  [1, 2]
+  >>> c.build([])
+  ''
+  >>> c.build([1,2])
+  '\\x01\\x02'
+ * @param subcon construct to repeat
+ */
+public static Range OptionalGreedyRange(Construct subcon){
+	return OpenRange( 0, subcon );
+}
+
 /*
 #===============================================================================
 # subconstructs
