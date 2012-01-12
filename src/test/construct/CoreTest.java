@@ -46,7 +46,7 @@ public class CoreTest
 
     FormatField ff = new FormatField("formatfield", '<', 'L');
 
-    assertEquals( new Integer(0x78563412), (Integer)ff.parse(new byte[]{0x12, 0x34, 0x56, 0x78}) );
+    assertEquals( new Integer(0x78563412), ff.parse(new byte[]{0x12, 0x34, 0x56, 0x78}) );
 
     assertArrayEquals( new byte[]{0x12, 0x34, 0x56, 0x78}, ff.build(0x78563412) );
 

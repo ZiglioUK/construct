@@ -249,8 +249,8 @@ static public Pair P( final Object s, final Object o ){
 		 * 
 		 * @param data
 		 */
-		public Object parse(byte[] data) {
-			return parse_stream( ByteBuffer.wrap( data ));
+		public <T extends Object>T parse(byte[] data) {
+			return (T)parse_stream( ByteBuffer.wrap( data ));
 		}
 
 		public Object parse(String text) {
@@ -444,9 +444,9 @@ public static class Range extends Subconstruct{
 		}
     catch( Exception e ){
       if( c < mincount ){
-        stream.position(pos);
         throw new RangeError("expected " + mincount + " to " + maxcout + " found " + c + " " + e.getMessage() );
       }
+      stream.position(pos);
     }
 		
 		return obj;
@@ -641,7 +641,7 @@ public static class Range extends Subconstruct{
 			
 			Container obj;
 			if( context.contains("<obj>")){
-				obj = (Container)context.get("<obj>");
+				obj = context.get("<obj>");
 				context.del("<obj>");
 			} else{
 				obj = new Container();

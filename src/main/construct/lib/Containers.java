@@ -32,8 +32,9 @@ public class Containers{
   		this.dict.putAll( dict );
   	}
   
-  	public Object get( Object name ){
-  		return dict.get(name);
+  	public <T>T get( Object name ){
+  		Object o = dict.get(name);
+  		return (T)dict.get(name);
   	}
   	
   	public void del( Object name ){

@@ -51,13 +51,13 @@ public class ConstructTest
   	  byte[] ba;
   	  
   	  struct = Struct( "struct", UBInt8("a"), UBInt16("b") );
-  	  ca = (Container)struct.parse( new byte[]{1,0,2} );
+  	  ca = struct.parse( new byte[]{1,0,2} );
   	  cb = Container( P("a", 1), P("b", 2) );
       assertTrue( ca.equals(cb) );
 
       struct = Struct( "struct", UBInt8("a"), UBInt16("b"), 
   	  									Struct( "foo", UBInt8("c"), UBInt8("d") ));
-  	  ca = (Container)struct.parse( new byte[]{1,0,2,3,4} );
+  	  ca = struct.parse( new byte[]{1,0,2,3,4} );
   	  cb = Container( P("a",1), P("b",2), P("foo", Container( P("c",3), P("d",4))));
       assertTrue( ca.equals(cb) );
 
@@ -71,7 +71,7 @@ public class ConstructTest
   	  assertArrayEquals( new byte[]{1,0,2,3,4}, ba );
   	  
   	  struct = Struct( "struct", UBInt8("a"), UBInt16("b"), Embedded( Struct("foo", UBInt8("c"), UBInt8("d"))));
-  	  ca = (Container)struct.parse( new byte[]{1,0,2,3,4} );
+  	  ca = struct.parse( new byte[]{1,0,2,3,4} );
   	  cb = Container( P("a", 1), P("b", 2), P("c", 3), P("d", 4 ));
   	  assertEquals( cb, ca );
 
