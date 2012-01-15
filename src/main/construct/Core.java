@@ -49,6 +49,15 @@ public class Core {
 //  		Const = ConstAdapter
 //  		Tunnel = TunnelAdapter
 //  		Embed = Embedded
+static public byte[] ByteArray( int... ints ){
+	byte[] ba = new byte[ints.length];
+	int k = 0;
+	for( int i : ints ){
+		ba[k++] = (byte)i;
+	}
+	return ba;
+}
+
 /**
   A generic container of attributes.
 

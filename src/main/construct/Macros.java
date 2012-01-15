@@ -7,14 +7,6 @@ import construct.lib.Resizer;
 
 public class Macros {
 
-	static public byte[] ByteArray( int... ints ){
-		byte[] ba = new byte[ints.length];
-		int k = 0;
-		for( int i : ints ){
-			ba[k++] = (byte)i;
-		}
-  	return ba;
-	}
 /*
 	#===============================================================================
 	# fields
@@ -427,13 +419,16 @@ static public Subconstruct Embed( Construct subcon ){
 static public Subconstruct Embedded( Construct subcon ){
 	return Reconfig( subcon.name, subcon, subcon.FLAG_EMBED, 0 );
 }
-/*
-def Embedded(subcon):
-    """
-    * subcon - the struct to embed
-    """
-    return Reconfig(subcon.name, subcon, subcon.FLAG_EMBED)
+
+/**
+ * renames an existing construct
+ * @param newname the new name
+ * @param subcon the subcon to rename
  */
+static public Subconstruct Rename( String newname, Construct subcon ){
+	return Reconfig( newname, subcon, subcon.FLAG_EMBED, 0 );
+}
+
 /*
 #===============================================================================
 # mapping
@@ -461,7 +456,11 @@ static public Adapter SymmetricMapping( Construct subcon, final Container mappin
       pass the unmapped value as-is
  * @return a set of named values mapping.
  */
-static public Adapter Enum( Construct subcon, final Container kw ){
+static public Adapter Enum( Construct subcon, Object... pairs ){
+	// we could do some static type checks, making sure that names are String
+	// and that the size of values matches the size of subcon
+	// Let's keep things simple for now
+	final Container kw = Container(pairs);
 	return SymmetricMapping( subcon, kw, kw.get("_default_") );
 }
 

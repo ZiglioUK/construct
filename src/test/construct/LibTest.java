@@ -1,7 +1,7 @@
 package construct;
 
 import static construct.lib.Binary.*;
-import static construct.Macros.ByteArray;
+import static construct.Core.ByteArray;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
