@@ -9,6 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import static construct.Core.*;
+import static construct.Macros.*;
 
 public class CoreTest  
 {
@@ -18,7 +19,7 @@ public class CoreTest
   @Test 
   public void testDataLength(){
   	assertEquals( 2, Construct.getDataLength("ab"));
-  	assertEquals( 3, Construct.getDataLength( new byte[]{1,2,3}));
+  	assertEquals( 3, Construct.getDataLength( ByteArray(1,2,3)));
   	assertEquals( 1, Construct.getDataLength( 255 ));
   	assertEquals( 2, Construct.getDataLength( 256 ));
   	assertEquals( 4, Construct.getDataLength( 0x01ABCDEF ));
@@ -30,7 +31,7 @@ public class CoreTest
     
     assertArrayEquals( "ab".getBytes(), (byte[])sf.parse("ab") );
 
-    assertArrayEquals( new byte[]{ 'a','b' }, sf.build("ab") );
+    assertArrayEquals( ByteArray( 'a','b' ), sf.build("ab") );
 
     exception.expect( FieldError.class );
     sf.parse("a");
@@ -46,14 +47,14 @@ public class CoreTest
 
     FormatField ff = new FormatField("formatfield", '<', 'L');
 
-    assertEquals( new Integer(0x78563412), ff.parse(new byte[]{0x12, 0x34, 0x56, 0x78}) );
+    assertEquals( new Integer(0x78563412), ff.parse(ByteArray(0x12, 0x34, 0x56, 0x78)) );
 
-    assertArrayEquals( new byte[]{0x12, 0x34, 0x56, 0x78}, ff.build(0x78563412) );
+    assertArrayEquals( ByteArray(0x12, 0x34, 0x56, 0x78), ff.build(0x78563412) );
 
     assertEquals(4, ff.sizeof());
 
     exception.expect( FieldError.class );
-    ff.parse(new byte[]{0x12, 0x34, 0x56});
+    ff.parse(ByteArray(0x12, 0x34, 0x56));
 
     exception.expect( FieldError.class );
     ff.build(9^9999);

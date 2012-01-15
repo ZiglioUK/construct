@@ -1,30 +1,42 @@
 package construct.lib;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import construct.Core.FieldError;
+import construct.Core.FormatField;
+
 public class Containers{
   
-	static public class Pair{
-		public Object s;
-		public Object o;
-		
-		public Pair( Object s, Object o){
-			this.s = s;
-			this.o = o;
-		}
-	}
-
+  public static class ContainerError extends RuntimeException {
+    public ContainerError(String string) {
+      super(string);
+    }
+  }
+	
   static public class Container
   {
   	HashMap<Object, Object> dict = new HashMap<Object, Object>();
   	
-  	public Container( Pair... dict ){
-  		for( Pair p : dict ){
-  			this.dict.put( p.s, p.o);
+  	public Container( Object... pairs ){
+  		if(( pairs.length & 1 ) != 0 )
+  			throw new ContainerError( "length of parameters is not and even number: " + pairs.length );
+  		
+  		for( int i=0; i<pairs.length;  ){
+  			Object name = pairs[i++];
+  			Object value = pairs[i++];
+  			
+  			this.dict.put( name, value);
   		}
   	}
   
@@ -90,16 +102,5 @@ public class Containers{
   		l.add(o);
   	return l;
   }
-/*
-  class ListContainer(list):
-    """
-    A container for lists.
-    """
 
-    __slots__ = ["__recursion_lock__"]
-
-    @recursion_lock("[...]")
-    def __str__(self):
-        return pformat(self)
-*/  
 }

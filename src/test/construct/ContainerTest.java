@@ -1,15 +1,13 @@
 package construct;
 
-//from construct import Struct, MetaField, StaticField, FormatField
-//from construct import Container, Byte
-//from construct import FieldError, SizeofError
-
 import static org.junit.Assert.*;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import static construct.Core.*;
-import static construct.lib.Containers.*;
+
+import construct.lib.Containers.Container;
+import construct.lib.Containers.ContainerError;
 
 public class ContainerTest  
 {
@@ -18,7 +16,7 @@ public class ContainerTest
 
   @Test
   public void test_getattr() {
-      Container c = new Container( P("a",1) );
+      Container c = new Container( "a",1 );
       assertEquals( 1, c.get("a") );
   }
   @Test
@@ -29,21 +27,21 @@ public class ContainerTest
   }
   @Test
   public void test_delattr() {
-      Container c = new Container( P("a",1) );
+      Container c = new Container( "a",1 );
       c.del("a");
       assertFalse( c.contains("a") );
   }
   @Test
   public void test_update() {
-      Container c = new Container( P("a",1) );
+      Container c = new Container( "a",1 );
       Container d = new Container();
       d.update(c);
       assertEquals( 1, d.get("a") );
   }
   @Test
   public void test_eq_eq() {
-      Container c = new Container( P("a",1) );
-      Container d = new Container( P("a",1) );
+      Container c = new Container( "a",1 );
+      Container d = new Container( "a",1 );
       assertTrue( c.equals(d) );
   }
       /*
@@ -54,19 +52,19 @@ public class ContainerTest
 */
   @Test
   public void test_ne_wrong_key() {
-      Container c = new Container( P("a",1) );
-      Container d = new Container( P("b",1) );
+      Container c = new Container( "a",1 );
+      Container d = new Container( "b",1 );
       assertFalse( c.equals(d) );
   }
   @Test
   public void test_ne_wrong_value() {
-      Container c = new Container( P("a",1) );
-      Container d = new Container( P("a",2) );
+      Container c = new Container( "a",1 );
+      Container d = new Container( "a",2 );
       assertFalse( c.equals(d) );
   }
   @Test
   public void test_copy() {
-      Container c = new Container( P("a",1) );
+      Container c = new Container( "a",1 );
       Container d = c.clone();
       assertTrue( c.equals(d) );
       assertNotSame( c, d );
@@ -82,7 +80,7 @@ public class ContainerTest
 */
   @Test
   public void test_in() {
-      Container c = new Container( P("a",1) );
+      Container c = new Container( "a",1 );
       assertTrue( c.contains("a") );
   }
   @Test
@@ -116,6 +114,23 @@ public class ContainerTest
           l = ListContainer(range(5))
           str(l)
    */
+  @Test
+  public void testContainer(){
+  	Container c, d;
+  	
+    c = new Container("name1",1,"name2",2);
+    assertEquals( 1, c.get("name1"));
+    assertEquals( 2, c.get("name2"));
+    
+    d = c.reverse();
+    assertEquals( "name1", d.get(1));
+    assertEquals( "name2", d.get(2));
+   
+    exception.expect( ContainerError.class );
+    c = new Container(1,2,3);
+
+  }
+ 
 
 }
 

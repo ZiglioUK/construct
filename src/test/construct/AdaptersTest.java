@@ -24,22 +24,22 @@ public class AdaptersTest
     Adapter ba;
 
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8 );
-    assertEquals( 255, ba.parse( new byte[]{1,1,1,1,1,1,1,1} ));
+    assertEquals( 255, ba.parse( ByteArray(1,1,1,1,1,1,1,1) ));
 
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8, false, true );
-    assertEquals( -1, ba.parse( new byte[]{1,1,1,1,1,1,1,1} ));
+    assertEquals( -1, ba.parse( ByteArray(1,1,1,1,1,1,1,1) ));
 
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8, true, false, 4 );
-    assertEquals( 0x0f, ba.parse( new byte[]{1,1,1,1,0,0,0,0} ));
+    assertEquals( 0x0f, ba.parse( ByteArray(1,1,1,1,0,0,0,0) ));
 
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8 );
-    assertArrayEquals( new byte[]{1,1,1,1,1,1,1,1}, ba.build(255) );
+    assertArrayEquals( ByteArray(1,1,1,1,1,1,1,1), ba.build(255) );
 
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8, false, true );
-    assertArrayEquals( new byte[]{1,1,1,1,1,1,1,1}, ba.build(-1) );
+    assertArrayEquals( ByteArray(1,1,1,1,1,1,1,1), ba.build(-1) );
 
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8, true, false, 4 );
-    assertArrayEquals( new byte[]{1,1,1,1,0,0,0,0}, ba.build(0x0f) );
+    assertArrayEquals( ByteArray(1,1,1,1,0,0,0,0), ba.build(0x0f) );
 
     exception.expect( BitIntegerError.class );
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8 );
@@ -50,31 +50,31 @@ public class AdaptersTest
   public void MappingAdapterTest(){
   	Adapter ma;
   	
-  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( P(2,"x"), P(3,"y")), Container( P("x",2), P("y",3)), null, null);
-  	assertEquals( "y", ma.parse(new byte[]{3}));
+  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( 2,"x", 3,"y"), Container( "x",2, "y",3), null, null);
+  	assertEquals( "y", ma.parse(ByteArray(3)));
   	
-  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( P(2,"x"), P(3,"y")), Container( P("x",2), P("y",3)), "foo", null );
-  	assertEquals( "foo", ma.parse(new byte[]{4}));
+  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( 2,"x", 3,"y"), Container( "x",2, "y",3), "foo", null );
+  	assertEquals( "foo", ma.parse(ByteArray(4)));
 
-  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( P(2,"x"), P(3,"y")), Container( P("x",2), P("y",3)), Pass, null );
-  	assertEquals( 4, ma.parse(new byte[]{4}));
+  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( 2,"x", 3,"y"), Container( "x",2, "y",3), Pass, null );
+  	assertEquals( 4, ma.parse(ByteArray(4)));
 
-  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( P(2,"x"), P(3,"y")), Container( P("x",2), P("y",3)), null, null);
-  	assertArrayEquals( new byte[]{3}, ma.build("y"));
+  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( 2,"x", 3,"y"), Container( "x",2, "y",3), null, null);
+  	assertArrayEquals( ByteArray(3), ma.build("y"));
 
-  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( P(2,"x"), P(3,"y")), Container( P("x",2), P("y",3)), null, 17);
-  	assertArrayEquals( new byte[]{17}, ma.build("foo"));
+  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( 2,"x", 3,"y"), Container( "x",2, "y",3), null, 17);
+  	assertArrayEquals( ByteArray(17), ma.build("foo"));
 
-  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( P(2,"x"), P(3,"y")), Container( P("x",2), P("y",3)), null, Pass);
-  	assertArrayEquals( new byte[]{4}, ma.build(4));
+  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( 2,"x", 3,"y"), Container( "x",2, "y",3), null, Pass);
+  	assertArrayEquals( ByteArray(4), ma.build(4));
   	
-  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( P(2,"x"), P(3,"y")), Container( P("x",2), P("y",3)), null, null);
+  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( 2,"x", 3,"y"), Container( "x",2, "y",3), null, null);
     exception.expect( MappingError.class );
   	ma.build("z");
 
-  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( P(2,"x"), P(3,"y")), Container( P("x",2), P("y",3)), null, null);
+  	ma = MappingAdapter( UBInt8("mappingadapter"), Container( 2,"x", 3,"y"), Container( "x",2, "y",3), null, null);
     exception.expect( MappingError.class );
-  	ma.parse(new byte[]{4});
+  	ma.parse(ByteArray(4));
 
   }
 
@@ -85,9 +85,9 @@ public class AdaptersTest
     exception.expect( PaddingError.class );
   	assertArrayEquals( "abcd".getBytes(), (byte[])PaddingAdapter( Field("paddingadapter", 4), (byte)0x00, true ).parse("abcd"));
 
-  	assertArrayEquals( new byte[]{0,0,0,0}, (byte[])PaddingAdapter( Field("paddingadapter", 4), (byte)0x00, true ).parse( new byte[]{0,0,0,0}));
+  	assertArrayEquals( ByteArray(0,0,0,0), (byte[])PaddingAdapter( Field("paddingadapter", 4), (byte)0x00, true ).parse( ByteArray(0,0,0,0)));
 
-  	assertArrayEquals( new byte[]{0,0,0,0}, (byte[])PaddingAdapter( Field("paddingadapter", 4) ).build("abcd"));
+  	assertArrayEquals( ByteArray(0,0,0,0), (byte[])PaddingAdapter( Field("paddingadapter", 4) ).build("abcd"));
   	
   }
 }

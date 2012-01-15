@@ -54,11 +54,8 @@ public class Core {
 
   Containers are the common way to express parsed data.
  */
-static public Container Container( Pair... dict ){
-	return new Container( dict );
-}
-static public Pair P( final Object s, final Object o ){
-	return new Pair(s, o);
+static public Container Container( Object... pairs ){
+	return new Container( pairs );
 }
   
 /*
@@ -646,7 +643,7 @@ public static class Range extends Subconstruct{
 			} else{
 				obj = new Container();
 				if( nested ){
-					context = Container( P("_", context) );
+					context = Container( "_", context );
 				}
 			}
 
@@ -670,7 +667,7 @@ public static class Range extends Subconstruct{
 			if( context.contains("<unnested>")){
 				context.del("<unnested>");
 			} else if( nested ){
-				context = Container( P("_", context ));
+				context = Container( "_", context );
 			}
 			for( Construct sc: subcons){
 				Object subobj;
@@ -682,6 +679,10 @@ public static class Range extends Subconstruct{
 				} else if( obj instanceof Container ){
 					Container container = (Container)obj;
 					subobj = container.get( sc.name );
+					
+					if( subobj == null )
+						throw new FieldError( "No field found: " + sc.name + " in " + subobj );
+					
 					context.set(sc.name, subobj);
 				} else
 						continue;
@@ -694,7 +695,7 @@ public static class Range extends Subconstruct{
     protected int _sizeof(Container context) {
         int sum = 0;
 				if( nested )
-            context = Container( P("_", context) );
+            context = Container( "_", context );
         
         for( Construct sc: subcons ){
         	sum += sc._sizeof(context);

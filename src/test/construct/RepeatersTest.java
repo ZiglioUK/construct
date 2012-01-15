@@ -28,13 +28,13 @@ public class RepeatersTest
   	byte[] ba;
   	
   	c = Range(3, 7, UBInt8("foo"));
-  	assertEquals( ListContainer(1,2,3), (List)c.parse(new byte[]{1,2,3}));
-  	assertEquals( ListContainer(1,2,3,4,5,6), (List)c.parse(new byte[]{1,2,3,4,5,6}));
-  	assertEquals( ListContainer(1,2,3,4,5,6,7), (List)c.parse(new byte[]{1,2,3,4,5,6,7}));
-  	assertEquals( ListContainer(1,2,3,4,5,6,7), (List)c.parse(new byte[]{1,2,3,4,5,6,7,8,9}));
+  	assertEquals( ListContainer(1,2,3), (List)c.parse(ByteArray(1,2,3)));
+  	assertEquals( ListContainer(1,2,3,4,5,6), (List)c.parse(ByteArray(1,2,3,4,5,6)));
+  	assertEquals( ListContainer(1,2,3,4,5,6,7), (List)c.parse(ByteArray(1,2,3,4,5,6,7)));
+  	assertEquals( ListContainer(1,2,3,4,5,6,7), (List)c.parse(ByteArray(1,2,3,4,5,6,7,8,9)));
 
   	ba = c.build( ListContainer( 1,2,3,4 ));
-  	assertArrayEquals( new byte[]{1,2,3,4}, ba );
+  	assertArrayEquals( ByteArray(1,2,3,4), ba );
 
   	exception.expect( RangeError.class );
   	c.build( ListContainer( 1,2,3,4,5,6,7,8 ));

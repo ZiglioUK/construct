@@ -19,22 +19,22 @@ public class MappingTest
     Adapter flag;
     
     flag = Flag("flag");
-    assertTrue( (Boolean)(flag.parse( new byte[]{1})) );
+    assertTrue( (Boolean)(flag.parse( ByteArray(1))) );
     
     flag = Flag("flag", (byte)0, (byte)1, null );
-    assertFalse( (Boolean)(flag.parse( new byte[]{1})) );
+    assertFalse( (Boolean)(flag.parse( ByteArray(1))) );
     
     flag = Flag("flag");
-    assertFalse( (Boolean)(flag.parse( new byte[]{2})) );
+    assertFalse( (Boolean)(flag.parse( ByteArray(2))) );
 
     flag = Flag("flag", (byte)0, (byte)1, true );
-    assertTrue( (Boolean)(flag.parse( new byte[]{2})) );
+    assertTrue( (Boolean)(flag.parse( ByteArray(2))) );
 
     flag = Flag("flag");
-    assertArrayEquals( new byte[]{1}, flag.build(true));
+    assertArrayEquals( ByteArray(1), flag.build(true));
 
     flag = Flag("flag", (byte)0, (byte)1, null );
-    assertArrayEquals( new byte[]{0}, flag.build(true));
+    assertArrayEquals( ByteArray(0), flag.build(true));
   }
 }
 

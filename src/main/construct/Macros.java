@@ -7,6 +7,14 @@ import construct.lib.Resizer;
 
 public class Macros {
 
+	static public byte[] ByteArray( int... ints ){
+		byte[] ba = new byte[ints.length];
+		int k = 0;
+		for( int i : ints ){
+			ba[k++] = (byte)i;
+		}
+  	return ba;
+	}
 /*
 	#===============================================================================
 	# fields
@@ -132,7 +140,7 @@ public class Macros {
   static public Adapter Flag( String name, byte truth, byte falsehood, Object defaultmapping ){
 
   	return SymmetricMapping(Field(name, 1),
-  													Container( P(true, truth), P(false, falsehood )),
+  													Container( true, truth, false, falsehood ),
   													defaultmapping );
   }
 /*
