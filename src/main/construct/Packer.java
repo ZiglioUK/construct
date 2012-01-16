@@ -98,16 +98,23 @@ public class Packer {
       	case 'H':
       		short s = buf.getShort();
       		if( s<0 )
-      			obj = 2^16 + s;
+      			obj = 65536 + s;  
       		else
       			obj = new Integer(s);
       	break;
       	
       	case 'i':
-      	case 'I':
       	case 'l':
-      	case 'L':
       			obj = buf.getInt();
+     		break;
+      	case 'I':
+      	case 'L':
+    				int i = buf.getInt();
+    				// not sure here, somewhere we make assumptions that all returned numbers are int
+      		  if( i<0 )
+      		  	obj = 4294967296L + i;
+      		  else 
+      		  	obj = new Integer(i);
      		break;
      		default:
       			throw new StructError( "unrecognized fmt " + fmt);
