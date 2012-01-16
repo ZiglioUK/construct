@@ -16,6 +16,8 @@ import org.junit.rules.ExpectedException;
 import construct.Adapters.MappingError;
 import construct.Core.Adapter;
 import construct.Core.Construct;
+import construct.Core.KeyFunc;
+import construct.lib.Containers.Container;
 
 public class MacrosTest  
 {
@@ -65,6 +67,24 @@ public class MacrosTest
   	a = Enum( UBInt8("enum"), 'q',3,'r',4,'t',5);
     exception.expect( MappingError.class );
     a.parse(ByteArray(7));
+  }
+  
+  @Test
+  public void ifThenElseTest(){
+  	Switch ifThenElse;
+  	
+  	ifThenElse = IfThenElse("ifthenelse", new KeyFunc(){ Object key(Container context){return true;}}, UBInt8("then"), UBInt16("else") );
+  	assertEquals(1, ifThenElse.parse(ByteArray(1)));
+
+  	ifThenElse = IfThenElse("ifthenelse", new KeyFunc(){ Object key(Container context){return false;}}, UBInt8("then"), UBInt16("else") );
+  	assertEquals(1, ifThenElse.parse(ByteArray(0,1)));
+
+  	ifThenElse = IfThenElse("ifthenelse", new KeyFunc(){ Object key(Container context){return true;}}, UBInt8("then"), UBInt16("else") );
+  	assertArrayEquals(ByteArray(1), (byte[])ifThenElse.build(1));
+
+  	ifThenElse = IfThenElse("ifthenelse", new KeyFunc(){ Object key(Container context){return false;}}, UBInt8("then"), UBInt16("else") );
+  	assertArrayEquals(ByteArray(0,1), (byte[])ifThenElse.build(1));
+  	
   }
 }
 

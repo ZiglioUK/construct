@@ -493,4 +493,20 @@ static public Construct BitStruct( String name, Construct... subcons ){
 	  		    """
 	  		    return Bitwise(Embedded(Struct(None, *subcons)))
 */
+/*
+#===============================================================================
+# conditional
+#===============================================================================
+*/
+  /**
+   * an if-then-else conditional construct: if the predicate indicates True,
+      `then_subcon` will be used; otherwise `else_subcon`
+     @param name the name of the construct
+   * @param keyfunc a function taking the context as an argument and returning
+   * @param then_subcon the subcon that will be used if the predicate returns True
+   * @param else_subcon the subcon that will be used if the predicate returns False
+   */
+  public static Switch IfThenElse( String name, KeyFunc keyfunc, Construct then_subcon, Construct else_subcon ){
+  	return Switch( name, keyfunc, Container( true, then_subcon, false, else_subcon ));
+  }
 }
