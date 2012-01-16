@@ -20,12 +20,14 @@ public class Macros {
     returns the length (MetaField)
    * @return
    */
-  static public Construct Field( String name, int length ){
+  static public Construct Field( String name, Object length ){
     
-  //  if callable(length):
-  //      return MetaField(name, length)
-  //  else:
-        return new StaticField(name, length);
+    if( length instanceof LengthFunc )
+        return MetaField(name, (LengthFunc)length);
+    else if( length instanceof Integer )
+        return new StaticField(name, (Integer)length);
+    else 
+    	throw new FieldError( "Unsupported type: " + length.getClass() );
   }
 
 	/**
