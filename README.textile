@@ -51,6 +51,9 @@ Parsing example:<pre><code>
 
 h3. Features 
 
-Currently Java Construct supports enough Macros, Adapters and repeaters to build protocols.
+Currently Java Construct supports enough Macros, Adapters and repeaters to build protocols:
+* "etheret":https://github.com/ZiglioNZ/construct/blob/master/src/main/construct/protocols/layer2/ethernet.java
+* "arp":https://github.com/ZiglioNZ/construct/blob/master/src/main/construct/protocols/layer2/arp.java
+* "ipv4":https://github.com/ZiglioNZ/construct/tree/master/src/main/construct/protocols/layer3
+
 I still need to implement Validators. The Packer class needs some more testing. 
-I'm not planning to do much work on Meta constructs. 

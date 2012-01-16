@@ -17,7 +17,7 @@ import construct.lib.Containers.Container;
 /**
  * Ethernet (TCP/IP protocol stack) 
 */
-public class Ipv4 {
+public class ipv4 {
 
     public static Adapter IpAddress( String name ) {
     	return IpAddressAdapter( Field( name, 4));

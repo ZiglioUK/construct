@@ -9,7 +9,7 @@ import static construct.lib.Binary.*;
 /**
  * Ethernet (TCP/IP protocol stack) 
 */
-public class Ethernet {
+public class ethernet {
 
     public static Adapter MacAddress( String name ) {
     	return MacAddressAdapter( Field( name, 6));
