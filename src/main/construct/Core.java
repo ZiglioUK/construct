@@ -259,8 +259,8 @@ static public Container Container( Object... pairs ){
 			return (T)parse_stream( ByteBuffer.wrap( data ));
 		}
 
-		public Object parse(String text) {
-			return parse_stream( ByteBuffer.wrap( text.getBytes() ));
+		public <T extends Object>T parse(String text) {
+			return (T)parse_stream( ByteBuffer.wrap( text.getBytes() ));
 		}
 
 		/**
@@ -608,6 +608,63 @@ public static class Range extends Subconstruct{
 
 	}
 
+	/**
+	 * callable that takes a context and returns length as an int	 
+	*/
+	static public abstract class LengthFunc{
+		 abstract int length(Container context);
+	}
+	/**
+    A variable-length field. The length is obtained at runtime from a
+    function.
+    >>> foo = Struct("foo",
+    ...     Byte("length"),
+    ...     MetaField("data", lambda ctx: ctx["length"])
+    ... )
+    >>> foo.parse("\\x03ABC")
+    Container(data = 'ABC', length = 3)
+    >>> foo.parse("\\x04ABCD")
+    Container(data = 'ABCD', length = 4)
+		 * @param name name of the field
+		 * @param lengthfunc callable that takes a context and returns
+                                length as an int
+	 */
+	public static MetaField MetaField(String name, LengthFunc lengthfunc ){
+		return new MetaField(name, lengthfunc);
+	}
+	
+	public static class MetaField extends Construct {
+
+		LengthFunc lengthfunc;
+		
+		/**
+		 * @param name name of the field
+		 * @param lengthfunc callable that takes a context and returns
+                                length as an int
+		 */
+		public MetaField(String name, LengthFunc lengthfunc) {
+	    super(name);
+	    this.lengthfunc = lengthfunc;
+	    this._set_flag(FLAG_DYNAMIC);
+    }
+
+
+		@Override
+    public Object _parse(ByteBuffer stream, Container context) {
+	    return _read_stream(stream, lengthfunc.length(context));
+    }
+
+		@Override
+    protected void _build(Object obj, ByteArrayOutputStream stream, Container context) {
+			_write_stream(stream, lengthfunc.length(context), obj);
+    }
+
+		@Override
+    protected int _sizeof(Container context) {
+	    return lengthfunc.length(context);
+    }
+		
+	}
 /*
  * #===============================================================================
  * # structures and sequences

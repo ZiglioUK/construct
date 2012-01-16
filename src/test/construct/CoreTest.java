@@ -8,6 +8,10 @@ import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import construct.Core.LengthFunc;
+import construct.Core.MetaField;
+import construct.lib.Containers.Container;
 import static construct.Core.*;
 import static construct.Macros.*;
 
@@ -58,7 +62,50 @@ public class CoreTest
 
     exception.expect( FieldError.class );
     ff.build(9^9999);
+  }
 
+  @Test
+  public void testMetaField(){
+  	MetaField mf = MetaField("metafield", new LengthFunc(){
+  		int length(Container context){
+  			return 3;
+  		}
+  	});
+
+  	assertArrayEquals( "abc".getBytes(), (byte[])mf.parse("abc") );
+    assertArrayEquals( ByteArray('a','b','c'), mf.build("abc") );
+    assertEquals( 3, mf.sizeof());
+    
+    exception.expect( FieldError.class );
+  	mf.build("ab");
+
+  	exception.expect( FieldError.class );
+  	mf.parse("ab");
+ }
+
+  @Test
+  public void testMetaFieldStruct(){
+  	MetaField mf = MetaField("data", new LengthFunc(){
+  		int length(Container context){
+  			return context.get("length");
+  		}
+  	});
+  	Construct s = Struct("foo", UBInt8("length"), mf );
+  	Container c;
+  	
+  	c = s.parse(ByteArray( 3, 'A', 'B', 'C'));
+  	assertEquals(3, c.get("length"));
+  	assertArrayEquals( "ABC".getBytes(), (byte[])c.get("data"));
+
+  	c = s.parse(ByteArray( 4, 'A', 'B', 'C', 'D'));
+  	assertEquals(4, c.get("length"));
+  	assertArrayEquals( "ABCD".getBytes(), (byte[])c.get("data"));
+ 
+  	Container context = Container("length", 4);
+  	assertEquals(4, mf.sizeof(context));
+  	
+    exception.expect( SizeofError.class );
+  	mf.sizeof();
   }
 }
 
