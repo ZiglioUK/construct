@@ -37,6 +37,11 @@ public class Core {
       super(string);
     }
   }
+  public static class SwitchError extends RuntimeException {
+    public SwitchError(String string) {
+      super(string);
+    }
+  }
   
 /*
 #===============================================================================
@@ -255,11 +260,11 @@ static public Container Container( Object... pairs ){
 		 * 
 		 * @param data
 		 */
-		public <T extends Object>T parse(byte[] data) {
+		public <T>T parse(byte[] data) {
 			return (T)parse_stream( ByteBuffer.wrap( data ));
 		}
 
-		public <T extends Object>T parse(String text) {
+		public <T>T parse(String text) {
 			return (T)parse_stream( ByteBuffer.wrap( text.getBytes() ));
 		}
 
@@ -370,6 +375,183 @@ static public Container Container( Object... pairs ){
 #===============================================================================
  */
 
+	/**
+   * """ Abstract adapter: calls _decode for parsing and _encode for building. """
+   * 
+   */
+  public static abstract class Adapter extends Subconstruct {
+  	/**
+  	 * @param name
+  	 * @param subcon
+  	 *          the construct to wrap
+  	 */
+  	public Adapter(Construct subcon) {
+  		super(subcon);
+  	}
+  
+  	@Override
+  	public Object _parse( ByteBuffer stream, Container context) {
+  		return _decode(subcon._parse( stream, context ), context);
+  	}
+  
+  	public void _build(Object obj, ByteArrayOutputStream stream, Container context) {
+  		subcon._build(_encode(obj, context), stream, context);
+  	}
+  
+  	abstract public Object _decode(Object obj, Container context);
+  	abstract public Object _encode(Object obj, Container context);
+  }
+
+/*
+ * ===============================================================================
+ * * Fields
+ * ===============================================================================
+ */
+  
+  	/**
+  	 * A fixed-size byte field.
+  	 */
+  	public static class StaticField extends Construct {
+  		int length;
+  
+  		/**
+  		 * @param name
+  		 *          field name
+  		 * @param length
+  		 *          number of bytes in the field
+  		 */
+  		public StaticField(String name, int length) {
+  			super(name);
+  			this.length = length;
+  		}
+  
+  		@Override
+  		public Object _parse( ByteBuffer stream, Container context) {
+  			return _read_stream( stream, length);
+  		}
+  
+  		@Override
+  		protected void _build( Object obj, ByteArrayOutputStream stream, Container context) {
+  			_write_stream(stream, length, obj);
+  		}
+  		
+  		@Override
+      protected int _sizeof(Container context) {
+  			return length;
+      }
+  
+  		/*
+  		  * public int _sizeof( Container context ){ return length; }
+  		  */
+  	}
+	/**
+   * A field that uses ``struct`` to pack and unpack data.
+   * 
+   * See ``struct`` documentation for instructions on crafting format strings.
+   */
+  public static class FormatField extends StaticField {
+  	int length;
+  	Packer packer;
+  
+  	/**
+  	 * @param name
+  	 *          name of the field
+  	 * @param endianness
+  	 *          : format endianness string; one of "<", ">", or "="
+  	 * @param format
+  	 *          : a single format character
+  	 */
+  	public FormatField(String name, char endianity, char format) {
+  		super(name, 0);
+  
+  		if (endianity != '>' && endianity != '<' && endianity != '=')
+  			throw new ValueError("endianity must be be '=', '<', or '>' " + endianity);
+  
+  		packer = new Packer(endianity, format);
+  		super.length = packer.length();
+  
+  	}
+  
+  	@Override
+  	public Object _parse( ByteBuffer stream, Container context ) {
+  		try {
+  			return packer.unpack(stream)[0];
+  		} catch (Exception e) {
+  			throw new FieldError(e.getMessage());
+  		}
+  	}
+  
+  	@Override
+  	public void _build( Object obj, ByteArrayOutputStream stream, Container context) {
+  		_write_stream(stream, super.length, packer.pack(obj));
+  	}
+  
+  }
+
+	/**
+   * callable that takes a context and returns length as an int	 
+  */
+  static public abstract class LengthFunc{
+  	 abstract int length(Container context);
+  }
+
+	/**
+    A variable-length field. The length is obtained at runtime from a
+    function.
+    >>> foo = Struct("foo",
+    ...     Byte("length"),
+    ...     MetaField("data", lambda ctx: ctx["length"])
+    ... )
+    >>> foo.parse("\\x03ABC")
+    Container(data = 'ABC', length = 3)
+    >>> foo.parse("\\x04ABCD")
+    Container(data = 'ABCD', length = 4)
+  	 * @param name name of the field
+  	 * @param lengthfunc callable that takes a context and returns
+                                length as an int
+   */
+  public static MetaField MetaField(String name, LengthFunc lengthfunc ){
+  	return new MetaField(name, lengthfunc);
+  }
+
+	public static class MetaField extends Construct {
+  
+  	LengthFunc lengthfunc;
+  	
+  	/**
+  	 * @param name name of the field
+  	 * @param lengthfunc callable that takes a context and returns
+                                length as an int
+  	 */
+  	public MetaField(String name, LengthFunc lengthfunc) {
+      super(name);
+      this.lengthfunc = lengthfunc;
+      this._set_flag(FLAG_DYNAMIC);
+    }
+  
+  
+  	@Override
+    public Object _parse(ByteBuffer stream, Container context) {
+      return _read_stream(stream, lengthfunc.length(context));
+    }
+  
+  	@Override
+    protected void _build(Object obj, ByteArrayOutputStream stream, Container context) {
+  		_write_stream(stream, lengthfunc.length(context), obj);
+    }
+  
+  	@Override
+    protected int _sizeof(Container context) {
+      return lengthfunc.length(context);
+    }
+  	
+  }
+
+/*	
+#===============================================================================
+# arrays and repeaters
+#===============================================================================
+*/
 	public static Range Range(int mincount, int maxcount, Construct subcon){
 		return new Range(mincount,maxcount,subcon);
 	}
@@ -494,182 +676,11 @@ public static class Range extends Subconstruct{
 	
 }
 	
-	/**
-	 * """ Abstract adapter: calls _decode for parsing and _encode for building. """
-	 * 
-	 */
-	public static abstract class Adapter extends Subconstruct {
-		/**
-		 * @param name
-		 * @param subcon
-		 *          the construct to wrap
-		 */
-		public Adapter(Construct subcon) {
-			super(subcon);
-		}
-
-		@Override
-		public Object _parse( ByteBuffer stream, Container context) {
-			return _decode(subcon._parse( stream, context ), context);
-		}
-
-		public void _build(Object obj, ByteArrayOutputStream stream, Container context) {
-			subcon._build(_encode(obj, context), stream, context);
-		}
-
-		abstract public Object _decode(Object obj, Container context);
-		abstract public Object _encode(Object obj, Container context);
-	}
-
 /*
- * ===============================================================================
- * * Fields
- * ===============================================================================
- */
-
-	/**
-	 * A fixed-size byte field.
-	 */
-	public static class StaticField extends Construct {
-		int length;
-
-		/**
-		 * @param name
-		 *          field name
-		 * @param length
-		 *          number of bytes in the field
-		 */
-		public StaticField(String name, int length) {
-			super(name);
-			this.length = length;
-		}
-
-		@Override
-		public Object _parse( ByteBuffer stream, Container context) {
-			return _read_stream( stream, length);
-		}
-
-		@Override
-		protected void _build( Object obj, ByteArrayOutputStream stream, Container context) {
-			_write_stream(stream, length, obj);
-		}
-		
-		@Override
-    protected int _sizeof(Container context) {
-			return length;
-    }
-
-		/*
-		  * public int _sizeof( Container context ){ return length; }
-		  */
-	}
-
-	/**
-	 * A field that uses ``struct`` to pack and unpack data.
-	 * 
-	 * See ``struct`` documentation for instructions on crafting format strings.
-	 */
-	public static class FormatField extends StaticField {
-		int length;
-		Packer packer;
-
-		/**
-		 * @param name
-		 *          name of the field
-		 * @param endianness
-		 *          : format endianness string; one of "<", ">", or "="
-		 * @param format
-		 *          : a single format character
-		 */
-		public FormatField(String name, char endianity, char format) {
-			super(name, 0);
-
-			if (endianity != '>' && endianity != '<' && endianity != '=')
-				throw new ValueError("endianity must be be '=', '<', or '>' " + endianity);
-
-			packer = new Packer(endianity, format);
-			super.length = packer.length();
-
-		}
-
-		@Override
-		public Object _parse( ByteBuffer stream, Container context ) {
-			try {
-				return packer.unpack(stream)[0];
-			} catch (Exception e) {
-				throw new FieldError(e.getMessage());
-			}
-		}
-
-		@Override
-		public void _build( Object obj, ByteArrayOutputStream stream, Container context) {
-			_write_stream(stream, super.length, packer.pack(obj));
-		}
-
-	}
-
-	/**
-	 * callable that takes a context and returns length as an int	 
-	*/
-	static public abstract class LengthFunc{
-		 abstract int length(Container context);
-	}
-	/**
-    A variable-length field. The length is obtained at runtime from a
-    function.
-    >>> foo = Struct("foo",
-    ...     Byte("length"),
-    ...     MetaField("data", lambda ctx: ctx["length"])
-    ... )
-    >>> foo.parse("\\x03ABC")
-    Container(data = 'ABC', length = 3)
-    >>> foo.parse("\\x04ABCD")
-    Container(data = 'ABCD', length = 4)
-		 * @param name name of the field
-		 * @param lengthfunc callable that takes a context and returns
-                                length as an int
-	 */
-	public static MetaField MetaField(String name, LengthFunc lengthfunc ){
-		return new MetaField(name, lengthfunc);
-	}
-	
-	public static class MetaField extends Construct {
-
-		LengthFunc lengthfunc;
-		
-		/**
-		 * @param name name of the field
-		 * @param lengthfunc callable that takes a context and returns
-                                length as an int
-		 */
-		public MetaField(String name, LengthFunc lengthfunc) {
-	    super(name);
-	    this.lengthfunc = lengthfunc;
-	    this._set_flag(FLAG_DYNAMIC);
-    }
-
-
-		@Override
-    public Object _parse(ByteBuffer stream, Container context) {
-	    return _read_stream(stream, lengthfunc.length(context));
-    }
-
-		@Override
-    protected void _build(Object obj, ByteArrayOutputStream stream, Container context) {
-			_write_stream(stream, lengthfunc.length(context), obj);
-    }
-
-		@Override
-    protected int _sizeof(Container context) {
-	    return lengthfunc.length(context);
-    }
-		
-	}
-/*
- * #===============================================================================
- * # structures and sequences
- * #===============================================================================
- */
+* #===============================================================================
+* # structures and sequences
+* #===============================================================================
+*/
 	/**
     A sequence of named constructs, similar to structs in C. The elements are
     parsed and built in the order they are defined.
@@ -770,6 +781,186 @@ public static class Range extends Subconstruct{
         return sum;
     }
 	}
+
+/*
+#===============================================================================
+# conditional
+#===============================================================================
+*/
+	
+	public static Construct NoDefault = new Construct( null ){
+
+			@Override
+      public Object _parse(ByteBuffer stream, Container context) {
+				throw new SwitchError("no default case defined");
+      }
+
+			@Override
+      protected void _build(Object obj, ByteArrayOutputStream stream, construct.lib.Containers.Container context) {
+				throw new SwitchError("no default case defined");
+	      
+      }
+
+			@Override
+      protected int _sizeof(construct.lib.Containers.Container context) {
+				throw new SwitchError("no default case defined");
+      }
+	};
+
+	/**
+   * a function that takes the context and returns a key	 
+  */
+  public static abstract class KeyFunc{
+  	 abstract Object key(Container context);
+  }
+  
+  /**
+  A conditional branch. Switch will choose the case to follow based on
+  the return value of keyfunc. If no case is matched, and no default value
+  is given, SwitchError will be raised.
+  See also Pass.
+  Example:
+  Struct("foo",
+      UBInt8("type"),
+      Switch("value", lambda ctx: ctx.type, {
+              1 : UBInt8("spam"),
+              2 : UBInt16("spam"),
+              3 : UBInt32("spam"),
+              4 : UBInt64("spam"),
+          }
+      ),
+  )
+ * @param name the name of the construct
+ * @param keyfunc a function that takes the context and returns a key, which
+    will ne used to choose the relevant case.
+ * @param cases a dictionary mapping keys to constructs. the keys can be any
+    values that may be returned by keyfunc.
+ */
+public static Switch Switch(String name, KeyFunc keyfunc, Container cases  ) {
+	return new Switch( name,  keyfunc,  cases,  NoDefault,  false );
+}
+
+/**
+    A conditional branch. Switch will choose the case to follow based on
+    the return value of keyfunc. If no case is matched, and no default value
+    is given, SwitchError will be raised.
+    See also Pass.
+    Example:
+    Struct("foo",
+        UBInt8("type"),
+        Switch("value", lambda ctx: ctx.type, {
+                1 : UBInt8("spam"),
+                2 : UBInt16("spam"),
+                3 : UBInt32("spam"),
+                4 : UBInt64("spam"),
+            }
+        ),
+    )
+	 * @param name the name of the construct
+	 * @param keyfunc a function that takes the context and returns a key, which
+      will ne used to choose the relevant case.
+	 * @param cases a dictionary mapping keys to constructs. the keys can be any
+      values that may be returned by keyfunc.
+	 * @param defaultval a default value to use when the key is not found in the cases.
+      if not supplied, an exception will be raised when the key is not found.
+      You can use the builtin construct Pass for 'do-nothing'.
+	 * @param include_key whether or not to include the key in the return value
+      of parsing. defualt is False.
+   */
+  public static Switch Switch(String name, KeyFunc keyfunc, Container cases, Construct defaultval, boolean include_key ) {
+  	return new Switch( name,  keyfunc,  cases,  defaultval,  include_key );
+  }
+
+/**
+    A conditional branch. Switch will choose the case to follow based on
+    the return value of keyfunc. If no case is matched, and no default value
+    is given, SwitchError will be raised.
+    See also Pass.
+    Example:
+    Struct("foo",
+        UBInt8("type"),
+        Switch("value", lambda ctx: ctx.type, {
+                1 : UBInt8("spam"),
+                2 : UBInt16("spam"),
+                3 : UBInt32("spam"),
+                4 : UBInt64("spam"),
+            }
+        ),
+    )
+ */
+public static class Switch extends Construct{
+	/**
+	 * a function that takes the context and returns a key, which
+      will ne used to choose the relevant case.
+	 */
+	KeyFunc keyfunc;
+	Container cases;
+	Construct defaultval;
+	boolean include_key;
+
+	/**
+	 * @param name the name of the construct
+	 * @param keyfunc a function that takes the context and returns a key, which
+      will ne used to choose the relevant case.
+	 * @param cases a dictionary mapping keys to constructs. the keys can be any
+      values that may be returned by keyfunc.
+	 * @param defaultval a default value to use when the key is not found in the cases.
+      if not supplied, an exception will be raised when the key is not found.
+      You can use the builtin construct Pass for 'do-nothing'.
+	 * @param include_key whether or not to include the key in the return value
+      of parsing. defualt is False.
+	 */
+	public Switch(String name, KeyFunc keyfunc, Container cases, Construct defaultval, boolean include_key ) {
+	  super(name);
+	  this.keyfunc = keyfunc;
+	  this.cases = cases;
+	  this.defaultval = defaultval;
+	  this.include_key = include_key;
+	  Construct[] ca = cases.values( Construct.class );
+	  this._inherit_flags(ca);
+	  this._set_flag(FLAG_DYNAMIC);
+	}
+	
+	@Override
+  public Object _parse(ByteBuffer stream, Container context) {
+		Object key = keyfunc.key(context);
+		Construct c = cases.get(key, defaultval);
+		Object obj = c._parse(stream, context);
+		if( include_key ){
+			return Container( key, obj );
+		} else {
+			return obj;
+		}
+  }
+
+	@Override
+  protected void _build(Object obj, ByteArrayOutputStream stream, Container context) {
+		Object key;
+		if( include_key ){
+			List list = (List)obj;
+			key = list.get(0);
+			obj = list.get(1);
+		} else {
+			key = keyfunc.key( context );
+		}
+		
+		Construct casestruct = cases.get(key, defaultval);
+		casestruct._build(obj, stream, context);
+/*
+        if self.include_key:
+            key, obj = obj
+        else:
+            key = self.keyfunc(context)
+        case = self.cases.get(key, self.default)
+        case._build(obj, stream, context)
+ */
+	}
+	@Override
+  protected int _sizeof( Container context) {
+		Construct casestruct = cases.get(keyfunc.key( context ), defaultval);
+		return casestruct._sizeof(context);
+  }
+}
 
 /*
 #===============================================================================

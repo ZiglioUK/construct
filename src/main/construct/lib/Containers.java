@@ -3,7 +3,9 @@ package construct.lib;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,9 +46,15 @@ public class Containers{
   		this.dict.putAll( dict );
   	}
   
-  	public <T>T get( Object name ){
-  		Object o = dict.get(name);
-  		return (T)dict.get(name);
+  	public <K,V>V get( K name ){
+  		return (V)dict.get(name);
+  	}
+
+  	public <K,V>V get( K name, V defaultval ){
+  		if( dict.containsKey(name))
+  			return (V)dict.get(name);
+  		else
+  			return defaultval;
   	}
   	
   	public void del( Object name ){
@@ -59,6 +67,10 @@ public class Containers{
   	
   	public Set<Object> keys(){
   		return dict.keySet();
+  	}
+
+  	public <T> T[] values( Class<T> clazz ){
+  		return (T[]) dict.values().toArray((T[])Array.newInstance( clazz, 0));
   	}
   	
   	public void update( Container other ){
