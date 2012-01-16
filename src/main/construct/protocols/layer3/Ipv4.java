@@ -5,6 +5,10 @@ import static construct.Macros.*;
 import static construct.Adapters.*;
 import static construct.lib.Containers.*;
 import static construct.lib.Binary.*;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import construct.Core.AdapterDecoder;
 import construct.Core.AdapterEncoder;
 import construct.Core.ValueFunc;
@@ -23,18 +27,21 @@ public class Ipv4 {
   	return new Adapter( field ){
 			@Override
       public Object encode(Object obj, Container context) {
-				String hexStr = (String)obj;
-				hexStr = hexStr.replace(".", "");
-				return hexStringToByteArray(hexStr);
+				return ((InetAddress)obj).getAddress(); 
       }
       public Object decode( Object obj, Container context) {
-      	StringBuilder sb = new StringBuilder();
-      	for( byte b : (byte[])obj ){
-      		if (sb.length() > 0)
-            sb.append('.');
-      		sb.append(String.format("%03d", b));
-      	}
-      	return sb.toString();
+      	try {
+      		return InetAddress.getByAddress((byte[])obj);
+        } catch (UnknownHostException e) {
+	        throw new RuntimeException(e);
+        }
+//      	StringBuilder sb = new StringBuilder();
+//      	for( byte b : (byte[])obj ){
+//      		if (sb.length() > 0)
+//            sb.append('.');
+//      		sb.append(String.format("%03d", b));
+//      	}
+//      	return sb.toString();
       }
 
   	};

@@ -40,11 +40,11 @@ public class arp {
                         }},
                         IpAddressAdapter( Field("data", new LengthFunc(){
                         	public int length(Container ctx){
-                       	 		return ctx.get("hwaddr_length");
+                       	 		return ctx.get("protoaddr_length");
                        	 	}})),
                         Field( "data", new LengthFunc(){
                         	public int length(Container ctx){
-                       	 		return ctx.get("hwaddr_length");
+                       	 		return ctx.get("protoaddr_length");
                        	 	}})
                       );
 	};
@@ -94,13 +94,6 @@ public class arp {
 
 	Construct rarp_header = Rename("rarp_header", arp_header);
 
-	/*
-Container({'hardware_type': 'ETHERNET', 'dest_hwaddr': '00-00-00-00-00-00', 'dest_protoaddr': '192.168.2.1', 'opcode': 'REQUEST', 'protocol_type': 'IP', 'hwaddr_length': 6, 'source_protoaddr': '192.168.2.4', 'protoaddr_length': 4, 'source_hwaddr': '00-02-e3-42-60-09'})
-'\x00\x01\x08\x00\x06\x04\x00\x01\x00\x02\xe3B`\t\xc0\xa8\x02\x04\x00\x00\x00\x00\x00\x00\xc0\xa8\x02\x01'
---------------------------------------------------------------------------------
-Container({'hardware_type': 'ETHERNET', 'dest_hwaddr': '00-02-e3-42-60-09', 'dest_protoaddr': '192.168.2.4', 'opcode': 'REPLY', 'protocol_type': 'IP', 'hwaddr_length': 6, 'source_protoaddr': '192.168.2.1', 'protoaddr_length': 4, 'source_hwaddr': '00-11-50-8c-28-3c'})
-'\x00\x01\x08\x00\x06\x04\x00\x02\x00\x11P\x8c(<\xc0\xa8\x02\x01\x00\x02\xe3B`\t\xc0\xa8\x02\x04'
-	 */
   public static void main(String[] args) {
   	byte[] cap1 = hexStringToByteArray("00010800060400010002e3426009c0a80204000000000000c0a80201"); 
   	Container c1 = arp_header.parse(cap1);
