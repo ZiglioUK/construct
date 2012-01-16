@@ -14,6 +14,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import construct.lib.Containers.Container;
+
 public class AdaptersTest  
 {
   @Rule
@@ -89,6 +91,23 @@ public class AdaptersTest
 
   	assertArrayEquals( ByteArray(0,0,0,0), (byte[])PaddingAdapter( Field("paddingadapter", 4) ).build("abcd"));
   	
+  }
+  
+  @Test
+  public void ExprAdapterTes(){
+  	Adapter exprAdapter = ExprAdapter( UBInt8("expradapter"),
+  																		 new AdapterEncoder() {
+																				public Object encode(Object obj, Container context) {
+																					return (Integer)obj / 7;
+																				}
+																			},
+																			new AdapterDecoder() {
+																				public Object decode(Object obj, Container context) {
+																					return (Integer)obj * 7;
+																				}
+																			});
+  	assertEquals( 42, exprAdapter.parse( ByteArray( 6 )));
+  	assertArrayEquals( ByteArray(6), exprAdapter.build( 42 ));
   }
 }
 

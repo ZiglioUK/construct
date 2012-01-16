@@ -86,46 +86,46 @@ public class ConstructTest
   public void switchTest(){
   	Switch switchstruct;
   	
-  	switchstruct = Switch("switch", new KeyFunc(){ Object key(Container context){return 5;}}, 
+  	switchstruct = Switch("switch", new KeyFunc(){ public Object key(Container context){return 5;}}, 
   			                  Container( 1, UBInt8("x"),5, UBInt16("y")));
   	assertEquals( 2, switchstruct.parse(ByteArray(0,2)));
 
-  	switchstruct = Switch("switch", new KeyFunc(){ Object key(Container context){return 6;}}, 
+  	switchstruct = Switch("switch", new KeyFunc(){ public Object key(Container context){return 6;}}, 
 				Container( 1, UBInt8("x"),5, UBInt16("y")),
 				UBInt8("x"), false);
   	assertEquals( 0, switchstruct.parse(ByteArray(0,2)));
 
-  	switchstruct = Switch("switch", new KeyFunc(){ Object key(Container context){return 5;}}, 
+  	switchstruct = Switch("switch", new KeyFunc(){ public Object key(Container context){return 5;}}, 
 				Container( 1, UBInt8("x"), 5, UBInt16("y")),
 				NoDefault, true);
   	assertEquals( Container(5,2), switchstruct.parse(ByteArray(0,2)));
 
-  	switchstruct = Switch("switch", new KeyFunc(){ Object key(Container context){return 5;}}, 
+  	switchstruct = Switch("switch", new KeyFunc(){ public Object key(Container context){return 5;}}, 
 				Container( 1, UBInt8("x"), 5, UBInt16("y")));
   	assertArrayEquals( ByteArray(0,2), switchstruct.build(2));
 
-  	switchstruct = Switch("switch", new KeyFunc(){ Object key(Container context){return 6;}}, 
+  	switchstruct = Switch("switch", new KeyFunc(){ public Object key(Container context){return 6;}}, 
 				Container( 1, UBInt8("x"), 5, UBInt16("y")),
 				UBInt8("x"), false);
   	assertArrayEquals( ByteArray(9), switchstruct.build(9));
 
-  	switchstruct = Switch("switch", new KeyFunc(){ Object key(Container context){return 6;}}, 
+  	switchstruct = Switch("switch", new KeyFunc(){ public Object key(Container context){return 6;}}, 
 				Container( 1, UBInt8("x"), 5, UBInt16("y")),
 				NoDefault, true);
   	assertArrayEquals( ByteArray(0,2), switchstruct.build(ListContainer(5,2)));
 
-  	switchstruct = Switch("switch", new KeyFunc(){ Object key(Container context){return 6;}}, 
+  	switchstruct = Switch("switch", new KeyFunc(){ public Object key(Container context){return 6;}}, 
 				Container( 1, UBInt8("x"), 5, UBInt16("y")),
 				NoDefault, true);
   	exception.expect( SwitchError.class );
   	switchstruct.build(ListContainer(89,2));
   	
-  	switchstruct = Switch("switch", new KeyFunc(){ Object key(Container context){return 6;}}, 
+  	switchstruct = Switch("switch", new KeyFunc(){ public Object key(Container context){return 6;}}, 
 				Container( 1, UBInt8("x"), 5, UBInt16("y")));
   	exception.expect( SwitchError.class );
   	switchstruct.build(9);
   	
-  	switchstruct = Switch("switch", new KeyFunc(){ Object key(Container context){return 6;}}, 
+  	switchstruct = Switch("switch", new KeyFunc(){ public Object key(Container context){return 6;}}, 
   												Container( 1, UBInt8("x"), 5, UBInt16("y")));
   	exception.expect( SwitchError.class );
   	switchstruct.parse(ByteArray(0,2));
@@ -141,5 +141,11 @@ public class ConstructTest
   	assertArrayEquals( ByteArray(1), ba);
   }
   
+  @Test
+  public void valueTest(){
+  	Value val = Value("value", new ValueFunc(){public Object get(Container ctx) {return "moo";}});
+  	assertEquals( "moo", val.parse(""));
+  	assertArrayEquals( ByteArray(), val.build(null));
+  }
 }
 

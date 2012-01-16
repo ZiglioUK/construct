@@ -10,6 +10,7 @@ import static construct.lib.Containers.*;
 import construct.lib.Decoder;
 import construct.lib.Encoder;
 import construct.lib.Resizer;
+import construct.lib.Containers.Container;
 
 public class Core {
   public static class FieldError extends RuntimeException {
@@ -375,11 +376,19 @@ static public Container Container( Object... pairs ){
 #===============================================================================
  */
 
+	public static interface AdapterEncoder{
+		public Object encode(Object obj, Container context);
+	}
+	
+	public static interface AdapterDecoder{
+		public Object decode(Object obj, Container context);
+  }
+
 	/**
    * """ Abstract adapter: calls _decode for parsing and _encode for building. """
    * 
    */
-  public static abstract class Adapter extends Subconstruct {
+  public static abstract class Adapter extends Subconstruct implements AdapterEncoder, AdapterDecoder {
   	/**
   	 * @param name
   	 * @param subcon
@@ -391,15 +400,15 @@ static public Container Container( Object... pairs ){
   
   	@Override
   	public Object _parse( ByteBuffer stream, Container context) {
-  		return _decode(subcon._parse( stream, context ), context);
+  		return decode(subcon._parse( stream, context ), context);
   	}
   
   	public void _build(Object obj, ByteArrayOutputStream stream, Container context) {
-  		subcon._build(_encode(obj, context), stream, context);
+  		subcon._build(encode(obj, context), stream, context);
   	}
   
-  	abstract public Object _decode(Object obj, Container context);
-  	abstract public Object _encode(Object obj, Container context);
+  	abstract public Object decode(Object obj, Container context);
+  	abstract public Object encode(Object obj, Container context);
   }
 
 /*
@@ -491,7 +500,7 @@ static public Container Container( Object... pairs ){
 	/**
    * callable that takes a context and returns length as an int	 
   */
-  static public abstract class LengthFunc{
+  static public interface LengthFunc{
   	 abstract int length(Container context);
   }
 
@@ -810,8 +819,8 @@ public static class Range extends Subconstruct{
 	/**
    * a function that takes the context and returns a key	 
   */
-  public static abstract class KeyFunc{
-  	 abstract Object key(Container context);
+  public static interface KeyFunc{
+  	 Object key(Container context);
   }
   
   /**
@@ -1242,7 +1251,55 @@ static public class Reconfig extends Subconstruct{
   }
 	
 }
-	/**
+
+/**
+ * a function that takes the context and return the computed value
+ */
+public static interface ValueFunc{
+	Object get( Container ctx );
+}
+/**
+ *     A computed value.
+    Example:
+    Struct("foo",
+        UBInt8("width"),
+        UBInt8("height"),
+        Value("total_pixels", lambda ctx: ctx.width * ctx.height),
+    )
+ * @param name the name of the value
+ * @param func a function that takes the context and return the computed value
+ */
+public static Value Value( String name, ValueFunc func ){
+	return new Value( name, func );
+};
+
+public static class Value extends Construct{
+	ValueFunc func;
+	
+	public Value(String name, ValueFunc func ) {
+	  super(name);
+	  this.func = func;
+	  _set_flag(FLAG_DYNAMIC);
+  }
+
+	@Override
+  public Object _parse(ByteBuffer stream, construct.lib.Containers.Container context) {
+	  return func.get(context);
+  }
+
+	@Override
+  protected void _build(Object obj, ByteArrayOutputStream stream, construct.lib.Containers.Container context) {
+	  context.set( name, func.get(context) );
+  }
+
+	@Override
+  protected int _sizeof(construct.lib.Containers.Container context) {
+	  return 0;
+  }
+	
+}
+
+/**
   """
   A do-nothing construct, useful as the default case for Switch, or
   to indicate Enums.

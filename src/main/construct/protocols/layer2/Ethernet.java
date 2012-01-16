@@ -11,15 +11,19 @@ import static construct.lib.Binary.*;
 */
 public class Ethernet {
 
-  static Adapter MacAddress( String name ) {
-  	return new Adapter( Field(name, 6)){
+    public static Adapter MacAddress( String name ) {
+    	return MacAddressAdapter( Field( name, 6));
+    }
+  
+    public static Adapter MacAddressAdapter( Construct field ) {
+  	return new Adapter( field ){
 			@Override
-      public Object _encode(Object obj, Container context) {
+      public Object encode(Object obj, Container context) {
 				String hexStr = (String)obj;
 				hexStr = hexStr.replace("-", "");
 				return hexStringToByteArray(hexStr);
       }
-      public Object _decode( Object obj, Container context) {
+      public Object decode( Object obj, Container context) {
       	StringBuilder sb = new StringBuilder();
       	for( byte b : (byte[])obj ){
       		if (sb.length() > 0)
@@ -35,7 +39,7 @@ public class Ethernet {
   static Construct ethernet_header = Struct("ethernet_header",
       MacAddress("destination"),
       MacAddress("source"),
-      Enum(UBInt16("type"), Container(
+      Enum(UBInt16("type"), 
           "IPv4",  0x0800,
           "ARP",  0x0806,
           "RARP",  0x8035,
@@ -43,7 +47,7 @@ public class Ethernet {
           "IPX",  0x8137,
           "IPv6",  0x86DD,
           "_default_",  Pass
-   )));
+   ));
 
   public static void main(String[] args) {
   	byte[] cap = hexStringToByteArray("0011508c283c0002e34260090800"); 

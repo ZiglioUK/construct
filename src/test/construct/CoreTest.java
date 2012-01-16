@@ -67,7 +67,7 @@ public class CoreTest
   @Test
   public void testMetaField(){
   	MetaField mf = MetaField("metafield", new LengthFunc(){
-  		int length(Container context){
+  		public int length(Container context){
   			return 3;
   		}
   	});
@@ -86,7 +86,7 @@ public class CoreTest
   @Test
   public void testMetaFieldStruct(){
   	MetaField mf = MetaField("data", new LengthFunc(){
-  		int length(Container context){
+  		public int length(Container context){
   			return context.get("length");
   		}
   	});

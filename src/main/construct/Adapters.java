@@ -3,6 +3,7 @@ package construct;
 import static construct.lib.Binary.*;
 import static construct.Core.*;
 import static construct.lib.Containers.*;
+import construct.lib.Containers.Container;
 
 public class Adapters
 {
@@ -70,7 +71,7 @@ public class Adapters
         this.bytesize = bytesize;
   		}
   	
-    public Object _encode( Object obj, Container context) {
+    public Object encode( Object obj, Container context) {
     	int intobj = (Integer)obj; 
       if( intobj < 0 && !signed ){
           throw new BitIntegerError("object is negative, but field is not signed " + intobj );
@@ -82,7 +83,7 @@ public class Adapters
       return obj2;
     }
 
-    public Object _decode( Object obj, Container context) {
+    public Object decode( Object obj, Container context) {
       byte[] ba = (byte[])obj;
     	if( swapped ){
         ba = swap_bytes( ba, bytesize );
@@ -108,7 +109,7 @@ public class Adapters
   																			final Object decdefault, final Object encdefault ) {
     return new Adapter(subcon)
     {
-      public Object _encode( Object obj, Container context) {
+      public Object encode( Object obj, Container context) {
       	if( encoding.contains(obj) )
       		return encoding.get(obj);
       	else {
@@ -119,7 +120,7 @@ public class Adapters
       		return encdefault;
       	}
       }
-      public Object _decode( Object obj, Container context) {
+      public Object decode( Object obj, Container context) {
       	if( obj instanceof byte[])
       		obj = ((byte[])obj)[0];
       	
@@ -158,14 +159,14 @@ public class Adapters
 static public Adapter ConstAdapter( Construct subcon, final Object value ){
 	return new Adapter(subcon)
   {
-    public Object _encode( Object obj, Container context) {
+    public Object encode( Object obj, Container context) {
       if( obj == null || obj.equals(value))
         return value;
       else
       	throw new ConstError( "expected " + value + " found " + obj );
     }
 
-    public Object _decode( Object obj, Container context) {
+    public Object decode( Object obj, Container context) {
       if( !obj.equals(value) )
       	throw new ConstError( "expected " + value + " found " + obj );
       return obj;
@@ -193,14 +194,14 @@ class MappingAdapter(Adapter):
     
     return new Adapter(subcon)
     {
-      public Object _encode( Object obj, Container context) {
+      public Object encode( Object obj, Container context) {
       	byte[] out = new byte[_sizeof(context)];
       	for( int i = 0; i<out.length; i++)
       		out[i] = pattern;
       	return out;
       }
 
-      public Object _decode( Object obj, Container context) {
+      public Object decode( Object obj, Container context) {
         if( strict ){
         	byte[] expected = new byte[_sizeof(context)];
         	for( int i = 0; i<expected.length; i++)
@@ -212,9 +213,35 @@ class MappingAdapter(Adapter):
         return obj;
       }
     };
-}
-  
-  /*
-    def _decode(self, obj, context):
+  }
+
+  /**
+    Example:
+    ExprAdapter(UBInt8("foo"), 
+        encoder = lambda obj, ctx: obj / 4,
+        decoder = lambda obj, ctx: obj * 4,
+    )
+   A generic adapter that accepts 'encoder' and 'decoder' as parameters. You
+    can use ExprAdapter instead of writing a full-blown class when only a 
+    simple expression is needed.
+   * @param subcon the subcon to adapt
+   * @param encoder a function that takes (obj, context) and returns an encoded 
+      version of obj
+   * @param decoder a function that takes (obj, context) and returns an decoded 
+      version of obj
    */
+  public static Adapter ExprAdapter( Construct subcon, final AdapterEncoder encoder, final AdapterDecoder decoder ){
+  	return new Adapter(subcon){
+
+			@Override
+      public Object decode(Object obj, Container context) {
+	      return decoder.decode(obj, context);
+      }
+
+			@Override
+      public Object encode(Object obj, Container context) {
+	      return encoder.encode(obj, context);
+      }
+  	};
+  };
 }

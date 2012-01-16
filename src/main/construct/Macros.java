@@ -20,14 +20,19 @@ public class Macros {
     returns the length (MetaField)
    * @return
    */
-  static public Construct Field( String name, Object length ){
-    
-    if( length instanceof LengthFunc )
-        return MetaField(name, (LengthFunc)length);
-    else if( length instanceof Integer )
-        return new StaticField(name, (Integer)length);
-    else 
-    	throw new FieldError( "Unsupported type: " + length.getClass() );
+  static public Construct Field( String name, LengthFunc length ){
+    return MetaField(name, length);
+  }
+  /**
+  A field consisting of a specified number of bytes.
+   * @param name the name of the field
+   * @param length the length of the field. the length can be either an integer
+    (StaticField), or a function that takes the context as an argument and
+    returns the length (MetaField)
+   * @return
+   */
+  static public Construct Field( String name, int length ){
+      return new StaticField(name, length);
   }
 
 	/**
@@ -495,6 +500,15 @@ static public Construct BitStruct( String name, Construct... subcons ){
 	  		    """
 	  		    return Bitwise(Embedded(Struct(None, *subcons)))
 */
+
+/**
+ * an embedded BitStruct. no name is necessary.
+ * @param subcons the subcons that make up this structure
+ * @return
+ */
+static public Construct EmbeddedBitStruct(Construct... subcons){
+  return Bitwise(Embedded(Struct( null, subcons)));
+}
 /*
 #===============================================================================
 # conditional
