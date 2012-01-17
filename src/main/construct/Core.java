@@ -496,7 +496,7 @@ static public Container Container( Object... pairs ){
   	@Override
   	public Object _parse( ByteBuffer stream, Container context ) {
   		try {
-  			return packer.unpack(stream)[0];
+  			return packer.unpack(stream);
   		} catch (Exception e) {
   			throw new FieldError(e.getMessage());
   		}

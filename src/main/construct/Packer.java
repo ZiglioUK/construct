@@ -65,7 +65,7 @@ public class Packer {
     this.fmt = fmt;
   }
 
-  public Object[] unpack( ByteBuffer buf )
+  public Object unpack( ByteBuffer buf )
   {
       ArrayList<Object> result = new ArrayList<Object>();
       Object obj;
@@ -119,8 +119,7 @@ public class Packer {
      		default:
       			throw new StructError( "unrecognized fmt " + fmt);
       }
-     result.add( obj );
-     return result.toArray();
+     return obj;
   }
 
   static public byte getByte( Object obj ){
