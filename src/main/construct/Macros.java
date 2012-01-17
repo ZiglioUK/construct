@@ -536,6 +536,6 @@ static public Construct EmbeddedBitStruct(Construct... subcons){
    * @param else_subcon the subcon that will be used if the predicate returns False
    */
   public static Switch IfThenElse( String name, KeyFunc keyfunc, Construct then_subcon, Construct else_subcon ){
-  	return Switch( name, keyfunc, Container( true, then_subcon, false, else_subcon ));
+  	return Switch( name, keyfunc, true, then_subcon, false, else_subcon );
   }
 }

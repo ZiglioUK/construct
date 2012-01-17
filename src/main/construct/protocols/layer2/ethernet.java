@@ -35,7 +35,7 @@ public class ethernet {
   	};
   }
 	
-  static Construct ethernet_header = Struct("ethernet_header",
+  public static Construct ethernet_header = Struct("ethernet_header",
       MacAddress("destination"),
       MacAddress("source"),
       Enum(UBInt16("type"), 
@@ -49,7 +49,8 @@ public class ethernet {
    ));
 
   public static void main(String[] args) {
-  	byte[] cap = hexStringToByteArray("0011508c283c0002e34260090800"); 
+//  	byte[] cap = hexStringToByteArray("0011508c283c0002e34260090800"); 
+  	byte[] cap = hexStringToByteArray("0011508c283c001150886b570800"); 
   	Container c = ethernet_header.parse(cap);
   	System.out.println(c);
   	byte[] ba = ethernet_header.build(c);

@@ -16,37 +16,34 @@ import construct.lib.Containers.Container;
  */
 public class arp {
 	static Switch HwAddress(String name){
-    return IfThenElse( name, 
-    									 new KeyFunc(){
-                        public Object key(Container ctx) {
-                  	      return ctx.get("hardware_type").equals("ETHERNET");
-                        }},
-                        MacAddressAdapter( Field("data", new LengthFunc(){
-                        	public int length(Container ctx){
-                       	 		return ctx.get("hwaddr_length");
-                       	 	}})),
-                        Field( "data", new LengthFunc(){
-                        	public int length(Container ctx){
-                       	 		return ctx.get("hwaddr_length");
-                       	 	}})
-                      );
+    return IfThenElse( 
+    		name, 
+    		new KeyFunc(){ public Object key(Container ctx) {
+    			return ctx.get("hardware_type").equals("ETHERNET");
+        }},
+        MacAddressAdapter( Field( "data", new LengthFunc(){ public int length(Container ctx){
+        				return ctx.get("hwaddr_length");
+        }})),
+        Field( "data", new LengthFunc(){ public int length(Container ctx){
+        	return ctx.get("hwaddr_length");
+        }})
+     );
 	};
 
 	static Switch ProtoAddress(String name){
-    return IfThenElse( name, 
-    									 new KeyFunc(){
-                        public Object key(Container ctx) {
-                  	      return ctx.get("protocol_type").equals("IP");
-                        }},
-                        IpAddressAdapter( Field("data", new LengthFunc(){
-                        	public int length(Container ctx){
-                       	 		return ctx.get("protoaddr_length");
-                       	 	}})),
-                        Field( "data", new LengthFunc(){
-                        	public int length(Container ctx){
-                       	 		return ctx.get("protoaddr_length");
-                       	 	}})
-                      );
+    return IfThenElse( 
+    		name, 
+    		new KeyFunc(){ public Object key(Container ctx) {
+    			return ctx.get("protocol_type").equals("IP");
+        }},
+        IpAddressAdapter( 
+        		Field("data", new LengthFunc(){ public int length(Container ctx){
+              return ctx.get("protoaddr_length");
+        		}})),
+        		Field( "data", new LengthFunc(){ public int length(Container ctx){
+        			return ctx.get("protoaddr_length");
+        		}})
+        );
 	};
 
 	static Construct arp_header = Struct( 

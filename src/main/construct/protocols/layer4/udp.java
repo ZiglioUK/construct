@@ -18,7 +18,7 @@ import construct.Core.ValueFunc;
 import construct.lib.Containers.Container;
 
 public class udp {
-  static Construct udp_header = Struct( 
+  public static Construct udp_header = Struct( 
   		"udp_header",
   		Value("header_length", new ValueFunc(){
 	    	public Object get(Container ctx) {

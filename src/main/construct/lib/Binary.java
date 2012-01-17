@@ -127,7 +127,26 @@ public class Binary {
 
   static final char[] HEXES = new char[]{ '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'}; 
 	
-	public static String byteArrayToHexString(byte[] raw)
+	public static String byteArrayToHexString(byte[] raw, int linesize){
+  	if ( raw == null ) 
+  		return null; 
+  	
+  	final StringBuilder hex = new StringBuilder( 2 * raw.length ); 
+
+    int i = 0;
+  	for ( final byte b : raw ) { 
+  		hex.append(HEXES[(b >> 4) & 0xF]) 
+  		   .append(HEXES[(b ) & 0xF]); 
+  		i++;
+  		if( i == linesize ){
+  			hex.append( '\n');
+  			i = 0;
+  		}
+  	} 
+  	return hex.toString(); 
+	}
+  
+	public static String byteArrayToHexString(byte[] raw )
 	{
   	if ( raw == null ) 
   		return null; 

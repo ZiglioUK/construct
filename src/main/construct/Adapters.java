@@ -157,6 +157,27 @@ public class Adapters
   static public Adapter Const( Construct subcon, final Object value ){
   	return ConstAdapter(subcon,value);
   }
+  
+  /**
+   * Adapter for hex-dumping strings. It returns a HexString, which is a string
+   */
+  static public Adapter HexDumpAdapter( Construct subcon ){
+  	return HexDumpAdapter(subcon, 16);
+  }
+  
+  static public Adapter HexDumpAdapter( Construct subcon, final int linesize ){
+  	return new Adapter(subcon)
+    {
+      public Object encode( Object obj, Container context) {
+        return obj;
+      }
+
+      public Object decode( Object obj, Container context) {
+        return byteArrayToHexString( (byte[])obj, 16);
+      }
+    };
+  }
+
 /**
  * @param subcon the subcon to validate
  * @param value the expected value

@@ -19,7 +19,7 @@ import construct.Core.ValueFunc;
 import construct.lib.Containers.Container;
 
 public class tcp {
-  static Construct tcp_header = Struct( 
+  public static Construct tcp_header = Struct( 
   		"tcp_header",
       UBInt16("source"),
       UBInt16("destination"),

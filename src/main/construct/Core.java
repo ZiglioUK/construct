@@ -857,8 +857,8 @@ public static class Range extends Subconstruct{
  * @param cases a dictionary mapping keys to constructs. the keys can be any
     values that may be returned by keyfunc.
  */
-public static Switch Switch(String name, KeyFunc keyfunc, Container cases  ) {
-	return new Switch( name,  keyfunc,  cases,  NoDefault,  false );
+public static Switch Switch(String name, KeyFunc keyfunc, Object... cases  ) {
+	return new Switch( name,  keyfunc,  Container(cases),  NoDefault,  false );
 }
 
 /**

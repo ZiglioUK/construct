@@ -45,7 +45,7 @@ public class ipv4 {
   							"UDP", 17 );
   };
   
-  static Construct ipv4_header = 
+  public static Construct ipv4_header = 
   		Struct( "ip_header",
   						EmbeddedBitStruct(
     						Const(Nibble("version"), 4 ),

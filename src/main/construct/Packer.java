@@ -132,18 +132,6 @@ public class Packer {
     else if( obj instanceof Integer && (Integer)obj < 256 ){
     	return (byte)((Integer)obj & 0xFF);
     }
-  //else if( obj instanceof Character )
-  //  b.putChar( (Character)obj );
-  //else if( obj instanceof Double )
-  //  b.putDouble( (Double)obj );
-  //else if( obj instanceof Float )
-  //  b.putFloat( (Float)obj );
-  //else if( obj instanceof Integer )
-  //  b.putInt( (Integer)obj );
-  //else if( obj instanceof Long )
-  //  b.putLong( (Long)obj );
-  //else if( obj instanceof Short )
-  //  b.putShort( (Short)obj );
   	throw new RuntimeException( "type not supported " + obj );
   }
 
@@ -154,18 +142,16 @@ public class Packer {
     else if( obj instanceof Integer && (Integer)obj < 65536 ){
     	return (short)((Integer)obj & 0xFFFF );
     }
-  //else if( obj instanceof Character )
-  //  b.putChar( (Character)obj );
-  //else if( obj instanceof Double )
-  //  b.putDouble( (Double)obj );
-  //else if( obj instanceof Float )
-  //  b.putFloat( (Float)obj );
-  //else if( obj instanceof Integer )
-  //  b.putInt( (Integer)obj );
-  //else if( obj instanceof Long )
-  //  b.putLong( (Long)obj );
-  //else if( obj instanceof Short )
-  //  b.putShort( (Short)obj );
+  	throw new RuntimeException( "type not supported " + obj );
+  }
+
+  static public int getInt( Object obj ){
+    if( obj instanceof Integer ){
+    	return( (Integer)obj );
+    }
+    else if( obj instanceof Long && (Long)obj < 4294967296L ){
+    	return (int)((Long)obj - 4294967296L );
+    }
   	throw new RuntimeException( "type not supported " + obj );
   }
   
@@ -185,24 +171,31 @@ public class Packer {
     
     switch( fmt ){
     	case 'b':
-    	case 'B':
-    	case 'C':
     	case 's':
     	case 'p':
     		b.put( getByte(obj) );
     	break;
+    	case 'B':
+    	case 'C':
+    		b.put( getByte(obj) );
+    	break;
   
     	case 'h':
+    		b.putShort( getShort(obj) );
+    	break;
     	case 'H':
     		b.putShort( getShort(obj) );
     	break;
     	
     	case 'i':
-    	case 'I':
     	case 'l':
-    	case 'L':
   //      if( obj instanceof Integer )
         	b.putInt( (Integer)obj );
+   		break;
+    	case 'I':
+    	case 'L':
+  //      if( obj instanceof Integer )
+        	b.putInt( getInt(obj) );
    		break;
    		default:
     			throw new StructError( "unrecognized fmt " + fmt);

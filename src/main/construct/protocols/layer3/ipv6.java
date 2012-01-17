@@ -16,7 +16,7 @@ public class ipv6 {
     	return IpAddressAdapter( Field( name, 16));
     }
   
-  static Construct ipv6_header = Struct( 
+  public static Construct ipv6_header = Struct( 
   		"ip_header",
   		EmbeddedBitStruct(
           OneOf(Bits("version", 4), ListContainer(6)),
