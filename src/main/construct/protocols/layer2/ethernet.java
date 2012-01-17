@@ -17,7 +17,6 @@ public class ethernet {
   
     public static Adapter MacAddressAdapter( Construct field ) {
   	return new Adapter( field ){
-			@Override
       public Object encode(Object obj, Container context) {
 				String hexStr = (String)obj;
 				hexStr = hexStr.replace("-", "");

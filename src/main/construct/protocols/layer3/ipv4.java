@@ -25,7 +25,6 @@ public class ipv4 {
   
     public static Adapter IpAddressAdapter( Construct field ) {
   	return new Adapter( field ){
-			@Override
       public Object encode(Object obj, Container context) {
 				return ((InetAddress)obj).getAddress(); 
       }
@@ -72,8 +71,9 @@ public class ipv4 {
 					        Padding(1)
 					    ),
 					    UBInt16("total_length"),
-					    Value("payload_length", new ValueFunc(){public Object get(Container ctx) {
-					    	return (Integer)ctx.get("total_length") - (Integer)ctx.get("header_length");
+					    Value("payload_length", new ValueFunc(){
+					    	public Object get(Container ctx) {
+					    		return (Integer)ctx.get("total_length") - (Integer)ctx.get("header_length");
 					    }}),
 					    UBInt16("identification"),
 					    EmbeddedBitStruct(
