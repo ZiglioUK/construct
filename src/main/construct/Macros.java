@@ -397,7 +397,7 @@ static public Subconstruct Bitwise(Construct subcon) {
 			@Override
       public int resize(int length) {
           if( (length & 7) != 0 )
-            throw new SizeofError("size must be a multiple of 8 " + length );
+            throw new SizeofError("size must be a multiple of 8, size = " + length );
         return length >> 3;
       }
     };
