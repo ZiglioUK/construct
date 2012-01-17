@@ -169,7 +169,9 @@ public class Adapters
   	return new Adapter(subcon)
     {
       public Object encode( Object obj, Container context) {
-        return obj;
+      	String str = (String)obj;
+      	str = str.replaceAll("[\n ]", "" ); 
+        return hexStringToByteArray(str);
       }
 
       public Object decode( Object obj, Container context) {

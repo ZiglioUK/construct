@@ -133,16 +133,19 @@ public class Binary {
   	
   	final StringBuilder hex = new StringBuilder( 2 * raw.length ); 
 
+		hex.append( '\n');
     int i = 0;
   	for ( final byte b : raw ) { 
   		hex.append(HEXES[(b >> 4) & 0xF]) 
   		   .append(HEXES[(b ) & 0xF]); 
   		i++;
+			hex.append( ' ');
   		if( i == linesize ){
   			hex.append( '\n');
   			i = 0;
   		}
   	} 
+		hex.append( '\n');
   	return hex.toString(); 
 	}
   
