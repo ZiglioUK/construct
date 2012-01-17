@@ -6,6 +6,8 @@ import static construct.Adapters.*;
 import static construct.lib.Containers.*;
 import static construct.lib.Binary.*;
 
+import java.util.Arrays;
+
 /**
  * Ethernet (TCP/IP protocol stack) 
 */
@@ -56,5 +58,4 @@ public class ethernet {
   	byte[] ba = ethernet_header.build(c);
   	System.out.println( byteArrayToHexString(ba) );
   }
-  
 }
