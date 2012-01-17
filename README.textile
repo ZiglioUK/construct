@@ -51,9 +51,9 @@ Parsing example:<pre><code>
 
 h3. Features 
 
-Currently Java Construct supports enough Macros, Adapters and repeaters to build protocols:
-* "etheret":https://github.com/ZiglioNZ/construct/blob/master/src/main/construct/protocols/layer2/ethernet.java
-* "arp":https://github.com/ZiglioNZ/construct/blob/master/src/main/construct/protocols/layer2/arp.java
-* "ipv4":https://github.com/ZiglioNZ/construct/blob/master/src/main/construct/protocols/layer3/ipv4.java
+Currently Java Construct supports enough Macros, Adapters and repeaters to parse and build these protocols:
+* Layer 2: "etheret":https://github.com/ZiglioNZ/construct/blob/master/src/main/construct/protocols/layer2/ethernet.java, "arp":https://github.com/ZiglioNZ/construct/blob/master/src/main/construct/protocols/layer2/arp.java
+* Layer 3: "ipv4":https://github.com/ZiglioNZ/construct/blob/master/src/main/construct/protocols/layer3/ipv4.java, "ipv6":https://github.com/ZiglioNZ/construct/blob/master/src/main/construct/protocols/layer3/ipv6.java
+* Layer 4: "udp":https://github.com/ZiglioNZ/construct/blob/master/src/main/construct/protocols/layer4/udp.java, "tcp":https://github.com/ZiglioNZ/construct/blob/master/src/main/construct/protocols/layer4/tcp.java
+* "ipstack":https://github.com/ZiglioNZ/construct/blob/master/src/main/construct/protocols/ipstack.java
 
-I still need to implement Validators. The Packer class needs some more testing. 
