@@ -3,7 +3,9 @@ import static construct.Core.*;
 import static construct.Adapters.*;
 import static construct.lib.Binary.*;
 import static construct.lib.Containers.*;
+import construct.Core.ValueFunc;
 import construct.lib.Resizer;
+import construct.lib.Containers.Container;
 
 public class Macros {
 
@@ -436,6 +438,17 @@ static public Subconstruct Rename( String newname, Construct subcon ){
 	return Reconfig( newname, subcon, subcon.FLAG_EMBED, 0 );
 }
 
+/**
+ * creates an alias for an existing element in a struct
+ * @param newname the new name
+ * @param oldname the name of an existing element
+ */
+static public Construct Alias(String newname, final String oldname){
+  return Value( newname, new ValueFunc(){
+  	public Object get(Container ctx) {
+  		return ctx.get(oldname);
+  }});
+}
 /*
 #===============================================================================
 # mapping

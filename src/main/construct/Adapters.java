@@ -3,6 +3,10 @@ package construct;
 import static construct.lib.Binary.*;
 import static construct.Core.*;
 import static construct.lib.Containers.*;
+
+import java.util.List;
+
+import construct.Core.Construct;
 import construct.lib.Containers.Container;
 
 public class Adapters
@@ -24,6 +28,11 @@ public class Adapters
   }
   public static class ConstError extends RuntimeException {
     public ConstError(String string) {
+      super(string);
+    }
+  }
+  public static class ValidationError extends RuntimeException {
+    public ValidationError(String string) {
       super(string);
     }
   }
@@ -244,4 +253,64 @@ class MappingAdapter(Adapter):
       }
   	};
   };
+/*
+#===============================================================================
+# validators
+#===============================================================================
+*/
+  /**
+   * validates a condition on the encoded/decoded object. 
+   * Override _validate(obj, context) in deriving classes.
+   */
+  public static abstract class Validator extends Adapter {
+  	/**
+  	 * @param subcon the subcon to validate
+  	 */
+  	public Validator(Construct subcon) {
+	    super(subcon);
+    }
+
+		@Override
+    public Object decode(Object obj, Container context) {
+      if( !validate(obj, context) )
+        throw new ValidationError("invalid object" + obj);
+			return obj;
+    }
+
+		@Override
+    public Object encode(Object obj, Container context) {
+	    return decode(obj, context);
+    }
+
+    abstract boolean validate( Object obj, Container context);
+
+  }
+  
+  /**
+    >>> OneOf(UBInt8("foo"), [4,5,6,7]).parse("\\x05")
+    5
+    >>> OneOf(UBInt8("foo"), [4,5,6,7]).parse("\\x08")
+    Traceback (most recent call last):
+        ...
+    construct.core.ValidationError: ('invalid object', 8)
+    >>>
+    >>> OneOf(UBInt8("foo"), [4,5,6,7]).build(5)
+    '\\x05'
+    >>> OneOf(UBInt8("foo"), [4,5,6,7]).build(9)
+    Traceback (most recent call last):
+        ...
+    construct.core.ValidationError: ('invalid object', 9)
+   * Validates that the object is one of the listed values.
+   * @param subcon object to validate
+   * @param valids a set of valid values
+   */
+  public static Validator OneOf( Construct subcon, final List valids  ){
+  	return new Validator(subcon){
+			@Override
+      boolean validate(Object obj, Container context) {
+	      return valids.contains(obj);
+      }
+  	};
+  }
+  
 }

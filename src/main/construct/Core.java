@@ -64,6 +64,18 @@ static public byte[] ByteArray( int... ints ){
 	return ba;
 }
 
+static public byte[] ByteArray( byte[]... bas ){
+	ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+	for( byte[]ba : bas ){
+		try {
+	    out.write(ba);
+    } catch (IOException e) {
+	    throw new RuntimeException(e);
+    }
+	}
+	return out.toByteArray();
+}
+
 /**
   A generic container of attributes.
 

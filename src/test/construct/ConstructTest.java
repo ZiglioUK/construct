@@ -145,7 +145,7 @@ public class ConstructTest
   public void valueTest(){
   	Value val = Value("value", new ValueFunc(){public Object get(Container ctx) {return "moo";}});
   	assertEquals( "moo", val.parse(""));
-  	assertArrayEquals( ByteArray(), val.build(null));
+  	assertArrayEquals( new byte[0], val.build(null));
   }
 }
 

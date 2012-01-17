@@ -7,6 +7,7 @@ package construct;
 import static construct.Core.*;
 import static construct.Macros.*;
 import static construct.Adapters.*;
+import static construct.lib.Containers.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -46,6 +47,20 @@ public class AdaptersTest
     exception.expect( BitIntegerError.class );
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8 );
     assertEquals( null, ba.build(-1) );
+  }
+
+  @Test
+  public void oneOfTest(){
+  	Adapter oneOf = OneOf(UBInt8("foo"), ListContainer(4, 5, 6, 7));
+  	assertEquals( 5, oneOf.parse( ByteArray(5)));
+
+  	assertArrayEquals( ByteArray(5), oneOf.build(5) );
+
+    exception.expect( ValidationError.class );
+    oneOf.build( 9 );
+
+    exception.expect( ValidationError.class );
+    oneOf.parse( ByteArray(8));
   }
 
   @Test
