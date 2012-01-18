@@ -1,0 +1,13 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>construct</groupId>
+  <artifactId>javaconstruct</artifactId>
+  <version>1.0.0</version>
+  <name>Java Construct</name>
+  <description>A Java version of &quot;Construct&quot; a python library for parsing and building of binary data structures </description>
+  <organization>
+  	<name>Sirtrack Ltd.</name>
+  	<url>http://www.sirtrack.com</url>
+  </organization>
+  <url>https://github.com/ZiglioNZ/construct</url>
+</project>
