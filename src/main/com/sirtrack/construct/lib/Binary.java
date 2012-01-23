@@ -1,5 +1,5 @@
-package construct.lib;
-import construct.Core.ValueError;
+package com.sirtrack.construct.lib;
+import com.sirtrack.construct.Core.ValueError;
 
 public class Binary {
 

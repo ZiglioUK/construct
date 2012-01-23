@@ -9,11 +9,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import construct.Core.LengthFunc;
-import construct.Core.MetaField;
-import construct.lib.Containers.Container;
-import static construct.Core.*;
-import static construct.Macros.*;
+import com.sirtrack.construct.Core.LengthFunc;
+import com.sirtrack.construct.Core.MetaField;
+import com.sirtrack.construct.lib.Containers.Container;
+
+import static com.sirtrack.construct.Core.*;
+import static com.sirtrack.construct.Macros.*;
 
 public class CoreTest  
 {

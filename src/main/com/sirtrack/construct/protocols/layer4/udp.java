@@ -1,21 +1,22 @@
 /**
  * User Datagram Protocol (TCP/IP protocol stack)
 */
-package construct.protocols.layer4;
+package com.sirtrack.construct.protocols.layer4;
 
-import static construct.Core.*;
-import static construct.Macros.*;
-import static construct.Adapters.*;
-import static construct.lib.Containers.*;
-import static construct.lib.Binary.*;
+import static com.sirtrack.construct.Adapters.*;
+import static com.sirtrack.construct.Core.*;
+import static com.sirtrack.construct.Macros.*;
+import static com.sirtrack.construct.lib.Binary.*;
+import static com.sirtrack.construct.lib.Containers.*;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import construct.Core.AdapterDecoder;
-import construct.Core.AdapterEncoder;
-import construct.Core.ValueFunc;
-import construct.lib.Containers.Container;
+import com.sirtrack.construct.Core.AdapterDecoder;
+import com.sirtrack.construct.Core.AdapterEncoder;
+import com.sirtrack.construct.Core.ValueFunc;
+import com.sirtrack.construct.lib.Containers.Container;
+
 
 public class udp {
   public static Construct udp_header = Struct( 

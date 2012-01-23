@@ -1,13 +1,14 @@
-package construct;
+package com.sirtrack.construct;
 
-import static construct.lib.Binary.*;
-import static construct.Core.*;
-import static construct.lib.Containers.*;
+import static com.sirtrack.construct.Core.*;
+import static com.sirtrack.construct.lib.Binary.*;
+import static com.sirtrack.construct.lib.Containers.*;
 
 import java.util.List;
 
-import construct.Core.Construct;
-import construct.lib.Containers.Container;
+import com.sirtrack.construct.Core.Construct;
+import com.sirtrack.construct.lib.Containers.Container;
+
 
 public class Adapters
 {

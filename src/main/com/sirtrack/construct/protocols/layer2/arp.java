@@ -1,15 +1,16 @@
-package construct.protocols.layer2;
+package com.sirtrack.construct.protocols.layer2;
 
-import static construct.Core.*;
-import static construct.Macros.*;
-import static construct.Adapters.*;
-import static construct.lib.Containers.*;
-import static construct.lib.Binary.*;
-import static construct.protocols.layer2.ethernet.MacAddressAdapter;
-import static construct.protocols.layer3.ipv4.IpAddressAdapter;
-import construct.Core.Adapter;
-import construct.Core.KeyFunc;
-import construct.lib.Containers.Container;
+import static com.sirtrack.construct.Adapters.*;
+import static com.sirtrack.construct.Core.*;
+import static com.sirtrack.construct.Macros.*;
+import static com.sirtrack.construct.lib.Binary.*;
+import static com.sirtrack.construct.lib.Containers.*;
+import static com.sirtrack.construct.protocols.layer2.ethernet.MacAddressAdapter;
+import static com.sirtrack.construct.protocols.layer3.ipv4.IpAddressAdapter;
+
+import com.sirtrack.construct.Core.Adapter;
+import com.sirtrack.construct.Core.KeyFunc;
+import com.sirtrack.construct.lib.Containers.Container;
 
 /**
  * Ethernet (TCP/IP protocol stack)

@@ -6,8 +6,9 @@ import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import static construct.Core.*;
-import static construct.Macros.*;
+
+import static com.sirtrack.construct.Core.*;
+import static com.sirtrack.construct.Macros.*;
 
 public class MappingTest  
 {

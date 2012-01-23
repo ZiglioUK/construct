@@ -1,4 +1,4 @@
-package construct.lib;
+package com.sirtrack.construct.lib;
 
 public interface Resizer {
 

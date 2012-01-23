@@ -1,11 +1,12 @@
-package construct;
-import static construct.Core.*;
-import static construct.Adapters.*;
-import static construct.lib.Binary.*;
-import static construct.lib.Containers.*;
-import construct.Core.ValueFunc;
-import construct.lib.Resizer;
-import construct.lib.Containers.Container;
+package com.sirtrack.construct;
+import static com.sirtrack.construct.Adapters.*;
+import static com.sirtrack.construct.Core.*;
+import static com.sirtrack.construct.lib.Binary.*;
+import static com.sirtrack.construct.lib.Containers.*;
+
+import com.sirtrack.construct.Core.ValueFunc;
+import com.sirtrack.construct.lib.Resizer;
+import com.sirtrack.construct.lib.Containers.Container;
 
 public class Macros {
 

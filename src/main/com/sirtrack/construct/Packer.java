@@ -3,7 +3,7 @@
  * @author zigliolie - Copyright Sirtrack Ltd.
  *
  */
-package construct;
+package com.sirtrack.construct;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

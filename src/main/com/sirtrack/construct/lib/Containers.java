@@ -1,4 +1,4 @@
-package construct.lib;
+package com.sirtrack.construct.lib;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -15,8 +15,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import construct.Core.FieldError;
-import construct.Core.FormatField;
+import com.sirtrack.construct.Core.FieldError;
+import com.sirtrack.construct.Core.FormatField;
+
 
 public class Containers{
   

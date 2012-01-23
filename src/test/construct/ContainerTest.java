@@ -6,8 +6,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import construct.lib.Containers.Container;
-import construct.lib.Containers.ContainerError;
+import com.sirtrack.construct.lib.Containers.Container;
+import com.sirtrack.construct.lib.Containers.ContainerError;
+
 
 public class ContainerTest  
 {

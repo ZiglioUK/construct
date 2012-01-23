@@ -4,10 +4,10 @@ package construct;
 //from construct import Container, Byte
 //from construct import FieldError, SizeofError
 
-import static construct.Core.*;
-import static construct.Macros.*;
-import static construct.Adapters.*;
-import static construct.lib.Containers.*;
+import static com.sirtrack.construct.Adapters.*;
+import static com.sirtrack.construct.Core.*;
+import static com.sirtrack.construct.Macros.*;
+import static com.sirtrack.construct.lib.Containers.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 

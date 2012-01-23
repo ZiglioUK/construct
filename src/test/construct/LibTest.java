@@ -1,7 +1,7 @@
 package construct;
 
-import static construct.lib.Binary.*;
-import static construct.Core.ByteArray;
+import static com.sirtrack.construct.Core.ByteArray;
+import static com.sirtrack.construct.lib.Binary.*;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -10,7 +10,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import construct.Core.ValueError;
+import com.sirtrack.construct.Core.ValueError;
+
 
 public class LibTest  
 {

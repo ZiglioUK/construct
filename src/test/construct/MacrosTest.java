@@ -4,8 +4,8 @@ package construct;
 //from construct import Container, Byte
 //from construct import FieldError, SizeofError
 
-import static construct.Core.*;
-import static construct.Macros.*;
+import static com.sirtrack.construct.Core.*;
+import static com.sirtrack.construct.Macros.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -13,11 +13,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import construct.Adapters.MappingError;
-import construct.Core.Adapter;
-import construct.Core.Construct;
-import construct.Core.KeyFunc;
-import construct.lib.Containers.Container;
+import com.sirtrack.construct.Adapters.MappingError;
+import com.sirtrack.construct.Core.Adapter;
+import com.sirtrack.construct.Core.Construct;
+import com.sirtrack.construct.Core.KeyFunc;
+import com.sirtrack.construct.lib.Containers.Container;
+
 
 public class MacrosTest  
 {

@@ -6,12 +6,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import construct.Core.RangeError;
-import construct.lib.Containers.Container;
+import com.sirtrack.construct.Core.RangeError;
+import com.sirtrack.construct.lib.Containers.Container;
 
-import static construct.Core.*;
-import static construct.Macros.*;
-import static construct.lib.Containers.*;
+
+import static com.sirtrack.construct.Core.*;
+import static com.sirtrack.construct.Macros.*;
+import static com.sirtrack.construct.lib.Containers.*;
 
 public class ConstructTest  
 {

@@ -1,4 +1,4 @@
-package construct;
+package com.sirtrack.construct;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -6,11 +6,12 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static construct.lib.Containers.*;
-import construct.lib.Decoder;
-import construct.lib.Encoder;
-import construct.lib.Resizer;
-import construct.lib.Containers.Container;
+import com.sirtrack.construct.lib.Decoder;
+import com.sirtrack.construct.lib.Encoder;
+import com.sirtrack.construct.lib.Resizer;
+import com.sirtrack.construct.lib.Containers.Container;
+
+import static com.sirtrack.construct.lib.Containers.*;
 
 public class Core {
   public static class FieldError extends RuntimeException {
@@ -817,13 +818,13 @@ public static class Range extends Subconstruct{
       }
 
 			@Override
-      protected void _build(Object obj, ByteArrayOutputStream stream, construct.lib.Containers.Container context) {
+      protected void _build(Object obj, ByteArrayOutputStream stream, com.sirtrack.construct.lib.Containers.Container context) {
 				throw new SwitchError("no default case defined");
 	      
       }
 
 			@Override
-      protected int _sizeof(construct.lib.Containers.Container context) {
+      protected int _sizeof(com.sirtrack.construct.lib.Containers.Container context) {
 				throw new SwitchError("no default case defined");
       }
 	};
@@ -1295,17 +1296,17 @@ public static class Value extends Construct{
   }
 
 	@Override
-  public Object _parse(ByteBuffer stream, construct.lib.Containers.Container context) {
+  public Object _parse(ByteBuffer stream, com.sirtrack.construct.lib.Containers.Container context) {
 	  return func.get(context);
   }
 
 	@Override
-  protected void _build(Object obj, ByteArrayOutputStream stream, construct.lib.Containers.Container context) {
+  protected void _build(Object obj, ByteArrayOutputStream stream, com.sirtrack.construct.lib.Containers.Container context) {
 	  context.set( name, func.get(context) );
   }
 
 	@Override
-  protected int _sizeof(construct.lib.Containers.Container context) {
+  protected int _sizeof(com.sirtrack.construct.lib.Containers.Container context) {
 	  return 0;
   }
 	
@@ -1333,7 +1334,7 @@ public static class Value extends Construct{
 	    super(name);
     }
 
-		public static synchronized construct.Core.PassClass getInstance() {
+		public static synchronized com.sirtrack.construct.Core.PassClass getInstance() {
 	    if( instance == null )
 	    	instance = new PassClass(null); 
 	    return instance;
