@@ -6,9 +6,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sirtrack.construct.lib.Decoder;
-import com.sirtrack.construct.lib.Encoder;
-import com.sirtrack.construct.lib.Resizer;
+import com.sirtrack.construct.lib.*;
 import com.sirtrack.construct.lib.Containers.Container;
 
 import static com.sirtrack.construct.lib.Containers.*;

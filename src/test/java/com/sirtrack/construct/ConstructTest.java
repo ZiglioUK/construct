@@ -1,4 +1,4 @@
-package construct;
+package com.sirtrack.construct;
 
 import static org.junit.Assert.*;
 

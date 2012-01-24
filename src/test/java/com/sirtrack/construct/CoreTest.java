@@ -1,4 +1,4 @@
-package construct;
+package com.sirtrack.construct;
 
 //from construct import Struct, MetaField, StaticField, FormatField
 //from construct import Container, Byte
@@ -88,7 +88,7 @@ public class CoreTest
   public void testMetaFieldStruct(){
   	MetaField mf = MetaField("data", new LengthFunc(){
   		public int length(Container context){
-  			return context.get("length");
+  			return (Integer)context.get("length");
   		}
   	});
   	Construct s = Struct("foo", UBInt8("length"), mf );

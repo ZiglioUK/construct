@@ -1,4 +1,4 @@
-package construct;
+package com.sirtrack.construct;
 
 //from construct import Struct, MetaField, StaticField, FormatField
 //from construct import Container, Byte

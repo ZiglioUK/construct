@@ -23,10 +23,10 @@ public class arp {
     			return ctx.get("hardware_type").equals("ETHERNET");
         }},
         MacAddressAdapter( Field( "data", new LengthFunc(){ public int length(Container ctx){
-        				return ctx.get("hwaddr_length");
+        				return (Integer)ctx.get("hwaddr_length");
         }})),
         Field( "data", new LengthFunc(){ public int length(Container ctx){
-        	return ctx.get("hwaddr_length");
+        	return (Integer)ctx.get("hwaddr_length");
         }})
      );
 	};
@@ -39,10 +39,10 @@ public class arp {
         }},
         IpAddressAdapter( 
         		Field("data", new LengthFunc(){ public int length(Container ctx){
-              return ctx.get("protoaddr_length");
+              return (Integer)ctx.get("protoaddr_length");
         		}})),
         		Field( "data", new LengthFunc(){ public int length(Container ctx){
-        			return ctx.get("protoaddr_length");
+        			return (Integer)ctx.get("protoaddr_length");
         		}})
         );
 	};

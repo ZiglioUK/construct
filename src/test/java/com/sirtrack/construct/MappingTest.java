@@ -1,4 +1,4 @@
-package construct;
+package com.sirtrack.construct;
 
 //from construct import FieldError, SizeofError
 

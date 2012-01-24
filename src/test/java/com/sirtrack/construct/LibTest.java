@@ -1,4 +1,4 @@
-package construct;
+package com.sirtrack.construct;
 
 import static com.sirtrack.construct.Core.ByteArray;
 import static com.sirtrack.construct.lib.Binary.*;

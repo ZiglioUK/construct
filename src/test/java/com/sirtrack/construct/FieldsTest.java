@@ -1,4 +1,4 @@
-package construct;
+package com.sirtrack.construct;
 
 import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.Macros.*;
