@@ -4,7 +4,7 @@
   <artifactId>javaconstruct</artifactId>
   <version>1.1.1-SNAPSHOT</version>
   <name>Java Construct</name>
-  <description>A Java version of &quot;Construct&quot; a python library for parsing and building of binary data structures </description>
+  <description>A Java version of "Construct" a python library for parsing and building of binary data structures </description>
   <organization>
   	<name>Sirtrack Ltd.</name>
   	<url>http://www.sirtrack.com</url>
