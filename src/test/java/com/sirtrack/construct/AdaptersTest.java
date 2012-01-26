@@ -121,7 +121,7 @@ public class AdaptersTest
 																				}
 																			},
 																			new AdapterDecoder() {
-																				public Object decode(Object obj, Container context) {
+																				public Integer decode(Object obj, Container context) {
 																					return (Integer)obj * 7;
 																				}
 																			});
@@ -135,7 +135,7 @@ public class AdaptersTest
   	
   	adapter = IpAddress( "v4addr" );
   	InetAddress addrA = InetAddress.getByAddress(ByteArray( 192, 168, 0, 1 ));
-  	InetAddress addrB = (InetAddress)adapter.decode(ByteArray( 192, 168, 0, 1 ), null);
+  	InetAddress addrB = adapter.decode(ByteArray( 192, 168, 0, 1 ), null);
   	assertEquals( addrA, addrB );
   }
 

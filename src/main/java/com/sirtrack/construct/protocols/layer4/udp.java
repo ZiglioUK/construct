@@ -34,7 +34,7 @@ public class udp {
 						}
 					},
 					new AdapterDecoder() {
-						public Object decode(Object obj, Container context) {
+						public Integer decode(Object obj, Container context) {
 							return (Integer)obj - 8;
 						}
 					}

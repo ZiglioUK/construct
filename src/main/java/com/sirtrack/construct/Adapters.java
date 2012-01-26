@@ -86,6 +86,7 @@ public class Adapters
         this.bytesize = bytesize;
   		}
   	
+  	@Override
     public Object encode( Object obj, Container context) {
     	int intobj = (Integer)obj; 
       if( intobj < 0 && !signed ){
@@ -98,7 +99,8 @@ public class Adapters
       return obj2;
     }
 
-    public Object decode( Object obj, Container context) {
+    @Override
+    public Integer decode( Object obj, Container context) {
       byte[] ba = (byte[])obj;
     	if( swapped ){
         ba = swap_bytes( ba, bytesize );
@@ -124,6 +126,7 @@ public class Adapters
   																			final Object decdefault, final Object encdefault ) {
     return new Adapter(subcon)
     {
+    	@Override
       public Object encode( Object obj, Container context) {
       	if( encoding.contains(obj) )
       		return encoding.get(obj);
@@ -135,7 +138,9 @@ public class Adapters
       		return encdefault;
       	}
       }
-      public Object decode( Object obj, Container context) {
+    	
+    	@Override
+      public <D>D decode( Object obj, Container context) {
       	if( obj instanceof byte[])
       		obj = ((byte[])obj)[0];
       	
@@ -145,8 +150,8 @@ public class Adapters
       		if( decdefault == null )
       			throw new MappingError("no encoding mapping for " + obj );
       		if( decdefault == Pass )
-      			return obj;
-      		return decdefault;
+      			return (D) obj;
+      		return (D) decdefault;
       	}
       }
   };
@@ -174,13 +179,15 @@ public class Adapters
   static public Adapter HexDumpAdapter( Construct subcon, final int linesize ){
   	return new Adapter(subcon)
     {
+  		@Override
       public Object encode( Object obj, Container context) {
       	String str = (String)obj;
       	str = str.replaceAll("[\n ]", "" ); 
         return hexStringToByteArray(str);
       }
 
-      public Object decode( Object obj, Container context) {
+  		@Override
+      public String decode( Object obj, Container context) {
         return byteArrayToHexString( (byte[])obj, 16);
       }
     };
@@ -197,6 +204,7 @@ public class Adapters
 static public Adapter ConstAdapter( Construct subcon, final Object value ){
 	return new Adapter(subcon)
   {
+		@Override
     public Object encode( Object obj, Container context) {
       if( obj == null || obj.equals(value))
         return value;
@@ -204,10 +212,11 @@ static public Adapter ConstAdapter( Construct subcon, final Object value ){
       	throw new ConstError( "expected " + value + " found " + obj );
     }
 
-    public Object decode( Object obj, Container context) {
+    @Override
+    public <D>D decode( Object obj, Container context) {
       if( !obj.equals(value) )
       	throw new ConstError( "expected " + value + " found " + obj );
-      return obj;
+      return (D) obj;
     }
   };
 }
@@ -232,6 +241,7 @@ class MappingAdapter(Adapter):
     
     return new Adapter(subcon)
     {
+    	@Override
       public Object encode( Object obj, Container context) {
       	byte[] out = new byte[_sizeof(context)];
       	for( int i = 0; i<out.length; i++)
@@ -239,7 +249,8 @@ class MappingAdapter(Adapter):
       	return out;
       }
 
-      public Object decode( Object obj, Container context) {
+    	@Override
+      public <D>D decode( Object obj, Container context) {
         if( strict ){
         	byte[] expected = new byte[_sizeof(context)];
         	for( int i = 0; i<expected.length; i++)
@@ -248,7 +259,7 @@ class MappingAdapter(Adapter):
         	if( !obj.equals(expected))
         		throw new PaddingError( "Expected " + expected + " found " + obj );
         }
-        return obj;
+        return (D) obj;
       }
     };
   }
@@ -272,7 +283,7 @@ class MappingAdapter(Adapter):
   	return new Adapter(subcon){
 
 			@Override
-      public Object decode(Object obj, Container context) {
+      public <D>D decode(Object obj, Container context) {
 	      return decoder.decode(obj, context);
       }
 
@@ -300,10 +311,10 @@ class MappingAdapter(Adapter):
     }
 
 		@Override
-    public Object decode(Object obj, Container context) {
+    public <D>D decode(Object obj, Container context) {
       if( !validate(obj, context) )
         throw new ValidationError("invalid object" + obj);
-			return obj;
+			return (D) obj;
     }
 
 		@Override
@@ -367,7 +378,7 @@ class MappingAdapter(Adapter):
     public Object encode(Object obj, Container context) {
 			return ((InetAddress)obj).getAddress(); 
     }
-    public Object decode( Object obj, Container context) {
+    public InetAddress decode( Object obj, Container context) {
     	try {
     		return InetAddress.getByAddress((byte[])obj);
       } catch (UnknownHostException e) {
@@ -406,14 +417,13 @@ class MappingAdapter(Adapter):
 	}
 
 	@Override
-  public Object decode( Object obj, Container context) {
+  public <D>D decode( Object obj, Container context) {
 		  Container c = (Container)obj;
-			Object t = newT();
+			D t = newT();
 
-      for( Object o : c.keys() ) {
+      for( String name : c.<String>keys() ) {
           try {
-          		String name = (String)o;
-          		Field f = clazz.getField((String)name);
+          		Field f = clazz.getField(name);
               f.set(t, c.get(name));
           } catch (Exception e) {
               throw new RuntimeException(e);
