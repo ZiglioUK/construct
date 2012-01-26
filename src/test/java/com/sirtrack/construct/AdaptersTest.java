@@ -130,17 +130,6 @@ public class AdaptersTest
   }
 
   @Test 
-  public void BeanAddressTest() throws UnknownHostException{
-  	Adapter adapter;
-  	
-  	adapter = BeanAdapter( Pojo.class, Pass );
-  	Pojo a = new Pojo ( "a", 1 );
-  	Container c1 = Container( "id", "a", "val", 1 );
-
-  	assertEquals( a, adapter.decode( c1, null));
-  }
-
-  @Test 
   public void IpAddressTest() throws UnknownHostException{
   	Adapter adapter;
   	
@@ -148,6 +137,23 @@ public class AdaptersTest
   	InetAddress addrA = InetAddress.getByAddress(ByteArray( 192, 168, 0, 1 ));
   	InetAddress addrB = (InetAddress)adapter.decode(ByteArray( 192, 168, 0, 1 ), null);
   	assertEquals( addrA, addrB );
+  }
+
+
+  @Test 
+  public void BeanAdapterTest() throws UnknownHostException{
+  	Pojo pojo = new Pojo ( 100, 1 );
+  	Container c1 = Container( "id", 100, "val", 1 );
+  	
+  	Adapter adapter = BeanAdapter( Pojo.class, Pass );
+  	assertEquals( pojo, adapter.decode( c1, null));
+  	
+  	Construct ps1 =  Struct( "Pojo", UBInt8("id"), UBInt8( "val") );
+  	assertEquals( c1, ps1.parse(ByteArray( 100, 1 )) );
+  	
+  	Construct ps2 =  BeanAdapter( Pojo.class, Struct( "Pojo", UBInt8("id"), UBInt8( "val") ));
+  	assertEquals( pojo, ps2.parse(ByteArray( 100, 1 )));
+  	
   }
 
 }
