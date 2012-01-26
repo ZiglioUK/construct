@@ -12,10 +12,6 @@ import static com.sirtrack.construct.protocols.layer3.ipv4.*;
 */
 public class ipv6 {
 
-    public static Adapter Ipv6Address( String name ) {
-    	return IpAddressAdapter( Field( name, 16));
-    }
-  
   public static Construct ipv6_header = Struct( 
   		"ip_header",
   		EmbeddedBitStruct(

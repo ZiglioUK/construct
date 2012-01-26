@@ -420,6 +420,7 @@ static public Container Container( Object... pairs ){
   
   	abstract public Object decode(Object obj, Container context);
   	abstract public Object encode(Object obj, Container context);
+
   }
 
 /*

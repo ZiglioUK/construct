@@ -54,8 +54,8 @@ public class Containers{
   		dict.put( name, value);
   	}
   	
-  	public Set<Object> keys(){
-  		return dict.keySet();
+  	public <T> Set<T> keys(){
+  		return (Set<T>) dict.keySet();
   	}
 
   	public <T> T[] values( Class<T> clazz ){

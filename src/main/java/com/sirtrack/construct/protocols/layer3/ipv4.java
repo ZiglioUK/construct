@@ -20,25 +20,6 @@ import com.sirtrack.construct.lib.Containers.Container;
 */
 public class ipv4 {
 
-    public static Adapter IpAddress( String name ) {
-    	return IpAddressAdapter( Field( name, 4));
-    }
-  
-    public static Adapter IpAddressAdapter( Construct field ) {
-  	return new Adapter( field ){
-      public Object encode(Object obj, Container context) {
-				return ((InetAddress)obj).getAddress(); 
-      }
-      public Object decode( Object obj, Container context) {
-      	try {
-      		return InetAddress.getByAddress((byte[])obj);
-        } catch (UnknownHostException e) {
-	        throw new RuntimeException(e);
-        }
-      }
-  	};
-  };
-  
   static Adapter ProtocolEnum( Construct subcon ){
   	return Enum( subcon,
   							"ICMP", 1,

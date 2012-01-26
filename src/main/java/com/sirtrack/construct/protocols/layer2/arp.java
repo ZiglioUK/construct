@@ -6,7 +6,6 @@ import static com.sirtrack.construct.Macros.*;
 import static com.sirtrack.construct.lib.Binary.*;
 import static com.sirtrack.construct.lib.Containers.*;
 import static com.sirtrack.construct.protocols.layer2.ethernet.MacAddressAdapter;
-import static com.sirtrack.construct.protocols.layer3.ipv4.IpAddressAdapter;
 
 import com.sirtrack.construct.Core.Adapter;
 import com.sirtrack.construct.Core.KeyFunc;

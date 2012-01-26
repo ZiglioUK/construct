@@ -1,11 +1,16 @@
 package com.sirtrack.construct;
 
 import static com.sirtrack.construct.Core.*;
+import static com.sirtrack.construct.Macros.Field;
 import static com.sirtrack.construct.lib.Binary.*;
-import static com.sirtrack.construct.lib.Containers.*;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 
+import com.sirtrack.construct.Core.Adapter;
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.lib.Containers.Container;
 
@@ -337,4 +342,99 @@ class MappingAdapter(Adapter):
   	};
   }
   
+/***************************************************************
+ *   Miscellaneous Adapters
+ ****************************************************************/
+  
+  /**
+   * @param name
+   * @return an IPv4 Address Adapter
+   */
+  public static Adapter IpAddress( String name ) {
+  	return IpAddressAdapter( Field( name, 4));
+  }
+
+  /**
+   * @param name
+   * @return an IPv6 Address Adapter
+   */
+  public static Adapter Ipv6Address( String name ) {
+  	return IpAddressAdapter( Field( name, 16));
+  }
+  
+  public static Adapter IpAddressAdapter( Construct field ) {
+	return new Adapter( field ){
+    public Object encode(Object obj, Container context) {
+			return ((InetAddress)obj).getAddress(); 
+    }
+    public Object decode( Object obj, Container context) {
+    	try {
+    		return InetAddress.getByAddress((byte[])obj);
+      } catch (UnknownHostException e) {
+        throw new RuntimeException(e);
+      }
+    }
+	};
+ };
+
+ public static class BeanAdapter<T> extends Adapter{
+	Class<T> clazz;
+	
+	public BeanAdapter( Class<T> clazz, Construct subcon) {
+	  super(subcon);
+	  this.clazz = clazz;
+  }
+
+	T newT(){
+		try {
+			Constructor<T> c = clazz.getDeclaredConstructor();
+			c.setAccessible(true);
+			return c.newInstance();
+		}catch(NoSuchMethodException ex){
+			try {
+				return clazz.newInstance();
+			}catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}catch(Exception e){
+			throw new RuntimeException(e);
+		}		
+	}
+
+	@Override
+  public Object decode( Object obj, Container context) {
+		  Container c = (Container)obj;
+			T t = newT();
+
+      for( Object o : c.keys() ) {
+          try {
+          		String name = (String)o;
+          		Field f = clazz.getField((String)name);
+              f.set(t, c.get(name));
+          } catch (Exception e) {
+              throw new RuntimeException(e);
+          }
+      }
+		  
+			return t;
+  }
+
+	@Override
+  public Object encode(Object obj, Container context) {
+	  Container c = new Container();
+	  T t = (T)obj;
+	  
+    for( Field f: clazz.getFields() ) {
+    		String name = f.getName();
+        try {
+            c.set(name, clazz.getField(name).get(t));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+	  return c;
+  }
+	 
+ }
 }
