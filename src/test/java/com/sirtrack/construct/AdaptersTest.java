@@ -11,6 +11,9 @@ import static com.sirtrack.construct.lib.Containers.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -110,7 +113,7 @@ public class AdaptersTest
   }
   
   @Test
-  public void ExprAdapterTes(){
+  public void ExprAdapterTest(){
   	Adapter exprAdapter = ExprAdapter( UBInt8("expradapter"),
   																		 new AdapterEncoder() {
 																				public Object encode(Object obj, Container context) {
@@ -125,5 +128,27 @@ public class AdaptersTest
   	assertEquals( 42, exprAdapter.parse( ByteArray( 6 )));
   	assertArrayEquals( ByteArray(6), exprAdapter.build( 42 ));
   }
+
+  @Test 
+  public void BeanAddressTest() throws UnknownHostException{
+  	Adapter adapter;
+  	
+  	adapter = BeanAdapter( Pojo.class, Pass );
+  	Pojo a = new Pojo ( "a", 1 );
+  	Container c1 = Container( "id", "a", "val", 1 );
+
+  	assertEquals( a, adapter.decode( c1, null));
+  }
+
+  @Test 
+  public void IpAddressTest() throws UnknownHostException{
+  	Adapter adapter;
+  	
+  	adapter = IpAddress( "v4addr" );
+  	InetAddress addrA = InetAddress.getByAddress(ByteArray( 192, 168, 0, 1 ));
+  	InetAddress addrB = (InetAddress)adapter.decode(ByteArray( 192, 168, 0, 1 ), null);
+  	assertEquals( addrA, addrB );
+  }
+
 }
 

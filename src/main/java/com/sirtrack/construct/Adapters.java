@@ -377,22 +377,26 @@ class MappingAdapter(Adapter):
 	};
  };
 
- public static class BeanAdapter<T> extends Adapter{
-	Class<T> clazz;
+ public static <T>BeanAdapter BeanAdapter( Class<T> clazz, Construct subcon ){
+	 return new BeanAdapter( clazz, subcon );
+ }
+ 
+ public static class BeanAdapter extends Adapter{
+	Class clazz;
 	
-	public BeanAdapter( Class<T> clazz, Construct subcon) {
+	public BeanAdapter( Class clazz, Construct subcon) {
 	  super(subcon);
 	  this.clazz = clazz;
   }
 
-	T newT(){
+	<T>T newT(){
 		try {
 			Constructor<T> c = clazz.getDeclaredConstructor();
 			c.setAccessible(true);
 			return c.newInstance();
 		}catch(NoSuchMethodException ex){
 			try {
-				return clazz.newInstance();
+				return (T) clazz.newInstance();
 			}catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -404,7 +408,7 @@ class MappingAdapter(Adapter):
 	@Override
   public Object decode( Object obj, Container context) {
 		  Container c = (Container)obj;
-			T t = newT();
+			Object t = newT();
 
       for( Object o : c.keys() ) {
           try {
@@ -422,12 +426,11 @@ class MappingAdapter(Adapter):
 	@Override
   public Object encode(Object obj, Container context) {
 	  Container c = new Container();
-	  T t = (T)obj;
 	  
     for( Field f: clazz.getFields() ) {
     		String name = f.getName();
         try {
-            c.set(name, clazz.getField(name).get(t));
+            c.set(name, clazz.getField(name).get(obj));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
