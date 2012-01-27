@@ -392,7 +392,7 @@ static public Container Container( Object... pairs ){
 	}
 	
 	public static interface AdapterDecoder{
-		public <D>D decode(Object obj, Container context);
+		public Object decode(Object obj, Container context);
   }
 
 	/**
@@ -414,10 +414,13 @@ static public Container Container( Object... pairs ){
   		return decode(subcon._parse( stream, context ), context);
   	}
   
-  	@Override
   	public void _build(Object obj, ByteArrayOutputStream stream, Container context) {
   		subcon._build(encode(obj, context), stream, context);
   	}
+  
+  	abstract public Object decode(Object obj, Container context);
+  	abstract public Object encode(Object obj, Container context);
+
   }
 
 /*

@@ -34,7 +34,7 @@ public class tcp {
   						}
   					},
   					new AdapterDecoder() {
-  						public Integer decode(Object obj, Container context) {
+  						public Object decode(Object obj, Container context) {
   							return (Integer)obj * 4;
   						}
   					}

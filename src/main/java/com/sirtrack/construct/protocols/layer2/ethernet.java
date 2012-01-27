@@ -24,7 +24,7 @@ public class ethernet {
 				hexStr = hexStr.replace("-", "");
 				return hexStringToByteArray(hexStr);
       }
-      public String decode( Object obj, Container context) {
+      public Object decode( Object obj, Container context) {
       	StringBuilder sb = new StringBuilder();
       	for( byte b : (byte[])obj ){
       		if (sb.length() > 0)

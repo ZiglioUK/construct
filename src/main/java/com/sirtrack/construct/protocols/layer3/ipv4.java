@@ -38,7 +38,7 @@ public class ipv4 {
   										}
   									},
   									new AdapterDecoder() {
-  										public Integer decode(Object obj, Container context) {
+  										public Object decode(Object obj, Container context) {
   											return (Integer)obj * 4;
   										}
   									}
