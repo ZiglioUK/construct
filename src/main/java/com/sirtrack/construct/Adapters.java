@@ -410,9 +410,8 @@ class MappingAdapter(Adapter):
 		  Container c = (Container)obj;
 			Object t = newT();
 
-      for( Object o : c.keys() ) {
+      for( String name : c.<String>keys() ) {
           try {
-          		String name = (String)o;
           		Field f = clazz.getField((String)name);
               f.set(t, c.get(name));
           } catch (Exception e) {

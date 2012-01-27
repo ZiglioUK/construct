@@ -142,18 +142,25 @@ public class AdaptersTest
 
   @Test 
   public void BeanAdapterTest() throws UnknownHostException{
-  	Pojo pojo = new Pojo ( 100, 1 );
+  	Pojo p = new Pojo ( 100, 1 );
   	Container c1 = Container( "id", 100, "val", 1 );
   	
   	Adapter adapter = BeanAdapter( Pojo.class, Pass );
-  	assertEquals( pojo, adapter.decode( c1, null));
+  	assertEquals( p, adapter.decode( c1, null));
   	
-  	Construct ps1 =  Struct( "Pojo", UBInt8("id"), UBInt8( "val") );
-  	assertEquals( c1, ps1.parse(ByteArray( 100, 1 )) );
+  	Construct s1 =  Struct( "Pojo", UBInt8("id"), UBInt8( "val") );
+  	assertEquals( c1, s1.parse(ByteArray( 100, 1 )) );
+  	assertArrayEquals( ByteArray( 100, 1 ), s1.build( c1) );
   	
-  	Construct ps2 =  BeanAdapter( Pojo.class, Struct( "Pojo", UBInt8("id"), UBInt8( "val") ));
-  	assertEquals( pojo, ps2.parse(ByteArray( 100, 1 )));
-  	
+  	Construct s2 =  BeanAdapter( Pojo.class, Struct( "Pojo", UBInt8("id"), UBInt8( "val") ));
+  	assertEquals( p, s2.parse(ByteArray( 100, 1 )));
+  	assertArrayEquals( ByteArray( 100, 1 ), s2.build( p ) );
+
+  	CompositePojo cp = new CompositePojo( 50, p );
+  	Construct cs =  BeanAdapter( CompositePojo.class, Struct( "CompositePojo", UBInt8("id"), s2 ));
+  	assertEquals( cp, cs.parse(ByteArray( 50, 100, 1 )));
+  	assertArrayEquals( ByteArray( 50, 100, 1 ), cs.build( cp ) );
+
   }
 
 }
