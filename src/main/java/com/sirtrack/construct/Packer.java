@@ -65,10 +65,10 @@ public class Packer {
     this.fmt = fmt;
   }
 
-  public Number unpack( ByteBuffer buf )
+  public Object unpack( ByteBuffer buf )
   {
       ArrayList<Object> result = new ArrayList<Object>();
-      Number obj;
+      Object obj;
       
       if( endianity == '>' )
         buf.order( ByteOrder.BIG_ENDIAN ); // optional, the initial order of a byte buffer is always BIG_ENDIAN.

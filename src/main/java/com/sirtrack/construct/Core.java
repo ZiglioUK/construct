@@ -285,11 +285,11 @@ static public Container Container( Object... pairs ){
 		 * 
 		 * Files, pipes, sockets, and other streaming sources of data are handled by this method.
 		 */
-		public <T>T parse_stream( ByteBuffer stream) {
+		public Object parse_stream( ByteBuffer stream) {
 			return _parse(stream, new Container());
 		}
 
-		abstract public <T>T _parse( ByteBuffer stream, Container context);
+		abstract public Object _parse( ByteBuffer stream, Container context);
 
 		/**
 		 * Build an object in memory.
@@ -365,7 +365,7 @@ static public Container Container( Object... pairs ){
     }
 
 		@Override
-		public <T>T _parse( ByteBuffer stream, Container context) {
+		public Object _parse( ByteBuffer stream, Container context) {
 			return subcon._parse(stream, context);
 		}
 
@@ -410,7 +410,7 @@ static public Container Container( Object... pairs ){
   	}
   
   	@Override
-  	public <T>T _parse( ByteBuffer stream, Container context) {
+  	public Object _parse( ByteBuffer stream, Container context) {
   		return decode(subcon._parse( stream, context ), context);
   	}
   
@@ -444,8 +444,8 @@ static public Container Container( Object... pairs ){
   		}
   
   		@Override
-  		public <T>T _parse( ByteBuffer stream, Container context) {
-  			return (T) _read_stream( stream, length);
+  		public Object _parse( ByteBuffer stream, Container context) {
+  			return _read_stream( stream, length);
   		}
   
   		@Override
@@ -491,7 +491,7 @@ static public Container Container( Object... pairs ){
   	}
   
   	@Override
-  	public Number _parse( ByteBuffer stream, Container context ) {
+  	public Object _parse( ByteBuffer stream, Container context ) {
   		try {
   			return packer.unpack(stream);
   		} catch (Exception e) {
@@ -549,7 +549,7 @@ static public Container Container( Object... pairs ){
   
   
   	@Override
-    public byte[] _parse(ByteBuffer stream, Container context) {
+    public Object _parse(ByteBuffer stream, Container context) {
       return _read_stream(stream, lengthfunc.length(context));
     }
   
@@ -628,7 +628,7 @@ public static class Range extends Subconstruct{
 	}
 	
 	@Override
-	public List<Object> _parse( ByteBuffer stream, Container context) {
+	public Object _parse( ByteBuffer stream, Container context) {
 //    obj = ListContainer()
 		List<Object> obj = ListContainer();
 		int c = 0;
@@ -729,7 +729,7 @@ public static class Range extends Subconstruct{
 	  }
 
 		@Override
-		public Container _parse( ByteBuffer stream, Container context) {
+		public Object _parse( ByteBuffer stream, Container context) {
 			
 			Container obj;
 			if( context.contains("<obj>")){
@@ -809,7 +809,7 @@ public static class Range extends Subconstruct{
 	public static Construct NoDefault = new Construct( null ){
 
 			@Override
-      public <T>T _parse(ByteBuffer stream, Container context) {
+      public Object _parse(ByteBuffer stream, Container context) {
 				throw new SwitchError("no default case defined");
       }
 
@@ -940,14 +940,14 @@ public static class Switch extends Construct{
 	}
 	
 	@Override
-  public <T>T _parse(ByteBuffer stream, Container context) {
+  public Object _parse(ByteBuffer stream, Container context) {
 		Object key = keyfunc.key(context);
 		Construct c = cases.get(key, defaultval);
 		Object obj = c._parse(stream, context);
 		if( include_key ){
-			return (T) Container( key, obj );
+			return Container( key, obj );
 		} else {
-			return (T) obj;
+			return obj;
 		}
   }
 
@@ -1020,7 +1020,7 @@ public static class Switch extends Construct{
 	    this.resizer = resizer;
     }
 		@Override
-		public <T>T _parse( ByteBuffer stream, Container context) {
+		public Object _parse( ByteBuffer stream, Container context) {
       byte[] data = _read_stream(stream, _sizeof(context));
       byte[] stream2 = decoder.decode(data);
 			return subcon._parse(ByteBuffer.wrap( stream2 ), context);
@@ -1292,8 +1292,8 @@ public static class Value extends Construct{
   }
 
 	@Override
-  public <T>T _parse(ByteBuffer stream, com.sirtrack.construct.lib.Containers.Container context) {
-	  return (T) func.get(context);
+  public Object _parse(ByteBuffer stream, com.sirtrack.construct.lib.Containers.Container context) {
+	  return func.get(context);
   }
 
 	@Override
