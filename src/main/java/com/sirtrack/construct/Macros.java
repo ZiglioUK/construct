@@ -4,6 +4,9 @@ import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.lib.Binary.*;
 import static com.sirtrack.construct.lib.Containers.*;
 
+import com.sirtrack.construct.Core.Adapter;
+import com.sirtrack.construct.Core.Construct;
+import com.sirtrack.construct.Core.CountFunc;
 import com.sirtrack.construct.Core.ValueFunc;
 import com.sirtrack.construct.lib.Resizer;
 import com.sirtrack.construct.lib.Containers.Container;
@@ -320,7 +323,67 @@ public class Macros {
 # arrays
 #===============================================================================
  */
-	  
+
+
+/**
+  Repeats the given unit a fixed number of times.
+  >>> c = Array(4, UBInt8("foo"))
+  >>> c.parse("\\x01\\x02\\x03\\x04")
+  [1, 2, 3, 4]
+  >>> c.parse("\\x01\\x02\\x03\\x04\\x05\\x06")
+  [1, 2, 3, 4]
+  >>> c.build([5,6,7,8])
+  '\\x05\\x06\\x07\\x08'
+  >>> c.build([5,6,7,8,9])
+  Traceback (most recent call last):
+    ...
+  construct.core.RangeError: expected 4..4, found 5
+ * @param countfunc a function that takes the context as a parameter and returns
+      the number of elements of the array (count)
+ * @param subcon construct to repeat
+ */
+public static MetaArray Array( CountFunc countfunc, Construct subcon){
+  return new MetaArray(countfunc, subcon);
+}
+
+/**
+  Repeats the given unit a fixed number of times.
+ * @param count number of times to repeat
+ * @param subcon construct to repeat
+ */
+public static MetaArray Array( final int count, Construct subcon ){
+	MetaArray con = MetaArray( new CountFunc(){
+		public int count(Container context) {
+			return count;
+		}
+  }, subcon);
+  con._clear_flag(con.FLAG_DYNAMIC);
+	return con;
+}
+
+/**
+ * @param subcon the subcon to be repeated
+ * @param length_field a construct returning an integer
+ * @return an array prefixed by a length field.
+ */
+public static Adapter PrefixedArray( Construct subcon, final StaticField length_field ){
+  return LengthValueAdapter(
+      Sequence( subcon.name,
+                length_field,
+                Array( new CountFunc(){
+									public int count(Container ctx) {
+										return ctx.get(length_field.name);
+									}},
+                  subcon
+                ))
+//                nested = False
+      );
+}
+
+public static Adapter PrefixedArray( Construct subcon ){
+	return PrefixedArray( subcon, UBInt8("length") );
+}
+
 public static Range OpenRange(int mincount, Construct subcon){
 	return Range( mincount, Integer.MAX_VALUE, subcon);
 }
