@@ -17,10 +17,32 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import com.sirtrack.construct.Core.Construct;
+import com.sirtrack.construct.Core.CountFunc;
+import com.sirtrack.construct.lib.Containers.Container;
+
 public class RepeatersTest  
 {
   @Rule
   public ExpectedException exception = ExpectedException.none();
+
+  @Test
+  public void MetaArrayTest(){
+  	MetaArray ma = MetaArray( new CountFunc(){ public int count(Container context){
+  			return 3;
+  		}
+  	},	UBInt8("metaarray"));
+  	
+  	assertEquals( ListContainer(1,2,3), ma.parse(ByteArray(1,2,3)));
+
+  	assertArrayEquals( ByteArray(1,2,3), ma.build(ListContainer( 1,2,3 )));
+  	
+  	exception.expect( ArrayError.class );
+  	assertArrayEquals( ByteArray(1,2,3), ma.build(ListContainer( 1,2 )));
+
+  	exception.expect( ArrayError.class );
+  	assertEquals( ListContainer(1,2,3), ma.parse(ByteArray(1,2)));
+  }
 
   @Test
   public void RangeTest() {

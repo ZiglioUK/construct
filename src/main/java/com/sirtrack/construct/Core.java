@@ -660,8 +660,6 @@ public static class MetaArray extends Subconstruct{
 		
 		List<Object> obj = (List<Object>)object;
 
-		subcon._build(obj, stream, context);
-	  
 		int count = countfunc.count(context);
 	  
 		if( obj.size() != count ){
