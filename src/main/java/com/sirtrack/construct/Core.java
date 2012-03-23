@@ -920,7 +920,7 @@ public static class Range extends Subconstruct{
 	/**
 	 * @param name the name of the structure
 	 * @param subcons a sequence of subconstructs that make up this structure.
-	 * @param a keyword-only argument that indicates whether this struct
+	 * @param nested: a keyword-only argument that indicates whether this struct
       creates a nested context. The default is True. This parameter is
       considered "advanced usage", and may be removed in the future.
 	 * @return A sequence of unnamed constructs. The elements are parsed and built in the
@@ -934,12 +934,12 @@ public static class Range extends Subconstruct{
         UBInt8("third_element"),
     )
 	 */
-	public static Sequence Sequence(String name, boolean nested, Construct... subcons){
-		return new Sequence( name, nested, subcons);
+	public static Sequence Sequence(String name, Construct... subcons){
+		return new Sequence( name, subcons);
 	}
 	
 	public static class Sequence extends Struct{
-		public Sequence(String name, boolean nested, Construct... subcons ) {
+		public Sequence(String name, Construct... subcons ) {
 	    super(name, subcons);
 	  }
 		
@@ -982,13 +982,18 @@ public static class Range extends Subconstruct{
       }
       
       Object subobj;
-      ListIterator objiter = ((List)obj).listIterator();
+      ListIterator objiter;
+      if( obj instanceof List )
+      	objiter = ((List)obj).listIterator();
+      else
+      	objiter = (ListIterator)obj;
+      
       for( Construct sc: subcons ){
         if(( sc.conflags & FLAG_EMBED ) != 0 ){
             context.set( "<unnested>", true );
             subobj = objiter;
         }
-        else if( sc.name != null ){
+        else if( sc.name == null ){
             subobj = null;
         }
         else {

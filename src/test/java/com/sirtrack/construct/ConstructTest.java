@@ -80,7 +80,28 @@ public class ConstructTest
   	  struct = Struct( "struct", UBInt8("a"), UBInt16("b"), Embedded( Struct("foo", UBInt8("c"), UBInt8("d"))));
   	  ba = struct.build( Container( "a", 1, "b", 2, "c", 3, "d", 4 ));
   	  assertArrayEquals( ByteArray(1,0,2,3,4), ba );
-	  
+  }
+  
+  @Test
+  public void sequenceTest(){
+  		Sequence s;
+  		s = Sequence("sequence", UBInt8("a"), UBInt16("b"));
+  		assertEquals( ListContainer(1,2), s.parse(ByteArray(1,0,2)));
+  		
+  		s = Sequence("sequence", UBInt8("a"), UBInt16("b"), Sequence("foo", UBInt8("c"), UBInt8("d")));
+  		assertEquals( ListContainer(1,2, ListContainer(3,4)), s.parse(ByteArray(1,0,2,3,4)));
+
+  		s = Sequence("sequence", UBInt8("a"), UBInt16("b"), Embedded( Sequence("foo", UBInt8("c"), UBInt8("d"))));
+  		assertEquals( ListContainer(1,2,3,4), s.parse(ByteArray(1,0,2,3,4)));
+
+  		s = Sequence("sequence", UBInt8("a"), UBInt16("b"));
+  		assertArrayEquals( ByteArray(1,0,2), s.build( ListContainer(1,2)));
+
+  		s = Sequence("sequence", UBInt8("a"), UBInt16("b"), Sequence("foo", UBInt8("c"), UBInt8("d")));
+  		assertArrayEquals( ByteArray(1,0,2,3,4), s.build( ListContainer(1,2, ListContainer(3,4))));
+
+  		s = Sequence("sequence", UBInt8("a"), UBInt16("b"), Embedded( Sequence("foo", UBInt8("c"), UBInt8("d"))));
+  		assertArrayEquals( ByteArray(1,0,2,3,4), s.build( ListContainer(1,2,3,4)));
   }
   
   @Test
