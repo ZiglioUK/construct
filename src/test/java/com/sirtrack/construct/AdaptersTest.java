@@ -100,6 +100,21 @@ public class AdaptersTest
   }
 
   @Test
+  public void LengthValueAdapterTest(){
+  	Sequence s = Sequence("lengthvalueadapter", UBInt8("length"), Field("value", new LengthFunc(){
+			public int length(Container ctx) {
+				return ctx.get("length");
+			}}));
+  	
+  	assertArrayEquals( ByteArray('a','b','c','d','e'), (byte[])LengthValueAdapter(s).parse(ByteArray(5,'a','b','c','d','e')));
+//  	
+  	//    [LengthValueAdapter(Sequence("lengthvalueadapter", UBInt8("length"), Field("value", lambda ctx: ctx.length))).parse,
+//     "\x05abcde", "abcde", None],
+// [LengthValueAdapter(Sequence("lengthvalueadapter", UBInt8("length"), Field("value", lambda ctx: ctx.length))).build,
+//     "abcde", "\x05abcde", None],
+  }
+  
+  @Test
   public void PaddingAdapterTest(){
   	assertArrayEquals( "abcd".getBytes(), (byte[])PaddingAdapter( Field("paddingadapter", 4) ).parse("abcd"));
 

@@ -153,6 +153,26 @@ public class Adapters
 }
 
   /**
+   * @param subcon the subcon returning a length-value pair
+   * @return Adapter for length-value pairs. It extracts only the value from the 
+    pair, and calculates the length based on the value.
+    See PrefixedArray and PascalString.
+   */
+  public static Adapter LengthValueAdapter( Construct subcon ){
+  	return new Adapter( subcon ){
+      public Object encode( Object obj, Container context) {
+      	List l = (List)obj;
+      	l.add(0, l.size());
+        return l;
+      }
+      public Object decode( Object obj, Container context) {
+      	List l = (List)obj;
+        return l.get(1);
+      }
+  	};
+  }
+
+  /**
    * @param subcon the subcon to validate
    * @param value the expected value
    * @return Adapter for enforcing a constant value ("magic numbers"). When decoding,
