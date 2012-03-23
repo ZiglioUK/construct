@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import com.sirtrack.construct.lib.*;
 import com.sirtrack.construct.lib.Containers.Container;
@@ -915,7 +916,91 @@ public static class Range extends Subconstruct{
     }
 	}
 
-/*
+	
+	/**
+	 * @param name the name of the structure
+	 * @param subcons a sequence of subconstructs that make up this structure.
+	 * @param a keyword-only argument that indicates whether this struct
+      creates a nested context. The default is True. This parameter is
+      considered "advanced usage", and may be removed in the future.
+	 * @return A sequence of unnamed constructs. The elements are parsed and built in the
+    order they are defined.
+    See also Embedded.
+    Example:
+    Sequence("foo",
+        UBInt8("first_element"),
+        UBInt16("second_element"),
+        Padding(2),
+        UBInt8("third_element"),
+    )
+	 */
+	public static Sequence Sequence(String name, boolean nested, Construct... subcons){
+		return new Sequence( name, nested, subcons);
+	}
+	
+	public static class Sequence extends Struct{
+		public Sequence(String name, boolean nested, Construct... subcons ) {
+	    super(name, subcons);
+	  }
+		
+		@Override
+		public Object _parse( ByteBuffer stream, Container context) {
+      List obj;
+			if( context.contains( "<obj>" )){
+        obj = context.get( "<obj>" );
+        context.del("<obj>");
+      }
+      else{
+        obj = ListContainer();
+        if( nested ){
+            context = Container( "_", context );
+        }
+      }
+      for( Construct sc: subcons ){
+        if(( sc.conflags & FLAG_EMBED ) != 0 ){
+            context.set( "<obj>", obj );
+            sc._parse(stream, context);
+        }
+        else{
+            Object subobj = sc._parse(stream, context);
+            if( sc.name != null ){
+                obj.add(subobj);
+                context.set(sc.name, subobj);
+            }
+        }
+      }
+      return obj;
+		}
+
+		@Override
+    protected void _build( Object obj, ByteArrayOutputStream stream, Container context ) {
+      if( context.contains("<unnested>")) {
+        context.del("<unnested>");
+      }
+      else if( nested ){
+        context = Container( "_", context);
+      }
+      
+      Object subobj;
+      ListIterator objiter = ((List)obj).listIterator();
+      for( Construct sc: subcons ){
+        if(( sc.conflags & FLAG_EMBED ) != 0 ){
+            context.set( "<unnested>", true );
+            subobj = objiter;
+        }
+        else if( sc.name != null ){
+            subobj = null;
+        }
+        else {
+            subobj = objiter.next();
+            context.set( sc.name, subobj );
+        }
+        sc._build(subobj, stream, context);
+		}
+	 }
+	}
+
+	/*
 #===============================================================================
 # conditional
 #===============================================================================
