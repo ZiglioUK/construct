@@ -235,8 +235,11 @@ static public Container Container( Object... pairs ){
   			else
   				return 4;
 //  				return Integer.SIZE/8;
-			} else if( data instanceof byte[] )
+			} 
+			else if( data instanceof byte[] ) 
 				return ((byte[])data).length;
+			else if( data instanceof List ) 
+				return ((List)data).size();
 			else 
 				throw new RuntimeException("Data length unknown for " + data);
 		}

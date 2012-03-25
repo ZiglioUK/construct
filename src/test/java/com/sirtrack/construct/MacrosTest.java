@@ -75,12 +75,10 @@ public class MacrosTest
   public void PrefixedArrayTest(){
   	assertEquals( ListContainer(1,1,1), PrefixedArray(UBInt8("array"), UBInt8("count")).parse(ByteArray(3,1,1,1)));
 
-  	assertEquals( ByteArray(3,1,1,1), PrefixedArray(UBInt8("array"), UBInt8("count")).build(ListContainer(1,1,1)));
+  	assertArrayEquals( ByteArray(3,1,1,1), PrefixedArray(UBInt8("array"), UBInt8("count")).build(ListContainer(1,1,1)));
 
     exception.expect( ArrayError.class );
   	assertEquals( ListContainer(1,1,1), PrefixedArray(UBInt8("array"), UBInt8("count")).parse(ByteArray(3,1,1)));
-
-//    [PrefixedArray(UBInt8("array"), UBInt8("count")).build, [1,1,1], "\x03\x01\x01\x01", None],
   }
   
   @Test
