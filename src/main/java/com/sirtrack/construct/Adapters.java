@@ -153,6 +153,12 @@ public class Adapters
   };
 }
 
+//  public static int getLength( Object obj ){
+//  	if( obj instanceof String)
+//  		return ((String)obj).length();
+//  	else if( obj instanceof Arrays )
+//  		
+//  }
   /**
    * @param subcon the subcon returning a length-value pair
    * @return Adapter for length-value pairs. It extracts only the value from the 
@@ -163,7 +169,7 @@ public class Adapters
   	return new Adapter( subcon ){
       public Object encode( Object obj, Container context) {
       	List l = new ArrayList();
-      	l.add(obj.toString().length());
+      	l.add(getDataLength(obj));
       	l.add(obj);
         return l;
       }

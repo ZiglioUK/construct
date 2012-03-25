@@ -6,6 +6,7 @@ package com.sirtrack.construct;
 
 import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.Macros.*;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -18,7 +19,7 @@ import com.sirtrack.construct.Core.Adapter;
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.KeyFunc;
 import com.sirtrack.construct.lib.Containers.Container;
-
+import static com.sirtrack.construct.lib.Containers.*;
 
 public class MacrosTest  
 {
@@ -69,6 +70,18 @@ public class MacrosTest
     exception.expect( MappingError.class );
     a.parse(ByteArray(7));
   }
+
+  @Test
+  public void PrefixedArrayTest(){
+  	assertEquals( ListContainer(1,1,1), PrefixedArray(UBInt8("array"), UBInt8("count")).parse(ByteArray(3,1,1,1)));
+
+  	assertEquals( ByteArray(3,1,1,1), PrefixedArray(UBInt8("array"), UBInt8("count")).build(ListContainer(1,1,1)));
+
+    exception.expect( ArrayError.class );
+  	assertEquals( ListContainer(1,1,1), PrefixedArray(UBInt8("array"), UBInt8("count")).parse(ByteArray(3,1,1)));
+
+//    [PrefixedArray(UBInt8("array"), UBInt8("count")).build, [1,1,1], "\x03\x01\x01\x01", None],
+  }
   
   @Test
   public void ifThenElseTest(){
@@ -85,7 +98,6 @@ public class MacrosTest
 
   	ifThenElse = IfThenElse("ifthenelse", new KeyFunc(){ public Object key(Container context){return false;}}, UBInt8("then"), UBInt16("else") );
   	assertArrayEquals(ByteArray(0,1), (byte[])ifThenElse.build(1));
-  	
   }
 }
 

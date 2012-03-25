@@ -224,7 +224,7 @@ static public Container Container( Object... pairs ){
 		static public int getDataLength( Object data ){
 			if( data instanceof String)
 				return ((String)data).length();
-			else if( data instanceof Byte )
+			else if( data instanceof Byte || data instanceof Character)
 				return 1;
 			else if( data instanceof Integer ){
 				int num = (Integer)data;
@@ -237,7 +237,8 @@ static public Container Container( Object... pairs ){
 //  				return Integer.SIZE/8;
 			} else if( data instanceof byte[] )
 				return ((byte[])data).length;
-			else return -1;
+			else 
+				throw new RuntimeException("Data length unknown for " + data);
 		}
 
 		static public void appendDataStream( ByteArrayOutputStream stream, Object data ){

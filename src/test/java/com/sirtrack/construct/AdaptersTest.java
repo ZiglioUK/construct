@@ -111,13 +111,6 @@ public class AdaptersTest
   }
 
   @Test
-  public void PrefixedArrayTest(){
-//    [PrefixedArray(UBInt8("array"), UBInt8("count")).parse, "\x03\x01\x01\x01", [1,1,1], None],
-//    [PrefixedArray(UBInt8("array"), UBInt8("count")).parse, "\x03\x01\x01", None, ArrayError],
-//    [PrefixedArray(UBInt8("array"), UBInt8("count")).build, [1,1,1], "\x03\x01\x01\x01", None],
-  }
-  
-  @Test
   public void PaddingAdapterTest(){
   	assertArrayEquals( "abcd".getBytes(), (byte[])PaddingAdapter( Field("paddingadapter", 4) ).parse("abcd"));
 
