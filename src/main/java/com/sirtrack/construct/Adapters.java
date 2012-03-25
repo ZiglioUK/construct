@@ -8,6 +8,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.sirtrack.construct.Core.Adapter;
@@ -161,8 +162,9 @@ public class Adapters
   public static Adapter LengthValueAdapter( Construct subcon ){
   	return new Adapter( subcon ){
       public Object encode( Object obj, Container context) {
-      	List l = (List)obj;
-      	l.add(0, l.size());
+      	List l = new ArrayList();
+      	l.add(obj.toString().length());
+      	l.add(obj);
         return l;
       }
       public Object decode( Object obj, Container context) {

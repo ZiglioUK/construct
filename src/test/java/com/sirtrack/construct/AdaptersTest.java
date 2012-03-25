@@ -107,11 +107,14 @@ public class AdaptersTest
 			}}));
   	
   	assertArrayEquals( ByteArray('a','b','c','d','e'), (byte[])LengthValueAdapter(s).parse(ByteArray(5,'a','b','c','d','e')));
-//  	
-  	//    [LengthValueAdapter(Sequence("lengthvalueadapter", UBInt8("length"), Field("value", lambda ctx: ctx.length))).parse,
-//     "\x05abcde", "abcde", None],
-// [LengthValueAdapter(Sequence("lengthvalueadapter", UBInt8("length"), Field("value", lambda ctx: ctx.length))).build,
-//     "abcde", "\x05abcde", None],
+  	assertArrayEquals( ByteArray(5,'a','b','c','d','e'),  LengthValueAdapter(s).build("abcde"));
+  }
+
+  @Test
+  public void PrefixedArrayTest(){
+//    [PrefixedArray(UBInt8("array"), UBInt8("count")).parse, "\x03\x01\x01\x01", [1,1,1], None],
+//    [PrefixedArray(UBInt8("array"), UBInt8("count")).parse, "\x03\x01\x01", None, ArrayError],
+//    [PrefixedArray(UBInt8("array"), UBInt8("count")).build, [1,1,1], "\x03\x01\x01\x01", None],
   }
   
   @Test
