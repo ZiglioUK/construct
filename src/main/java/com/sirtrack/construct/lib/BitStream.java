@@ -35,10 +35,10 @@ public class BitStream {
 		
 		@Override
 	  public int remaining() {
+			int r = substream.remaining() * 8;
 			if( bb != null && bb.remaining()>0 )
-				return bb.remaining();
-			else 
-				return substream.remaining() * 8;
+				r += bb.remaining();
+		  return r;
     }
 
 		@Override
@@ -66,26 +66,45 @@ public class BitStream {
       if( length < 0 )
         throw new ValueError("length cannot be negative");
 
-    int l = bb != null? bb.remaining() : 0;
+      if( length == 0 )
+      	return this;
       
-    if( bb != null && length <= l ){
-        bb.get( dst, 0, length );  
+    if( bb == null ){
+      int bytes = length / 8;
+      if(( length  & 7 ) != 0 ){
+          bytes += 1;
+      }
+    	bb = ByteBuffer.wrap(encode_bin(_read_stream( substream, bytes )));
+      bb.get( dst, 0, length );  
+      total_size += length;
     }
     else {
+      int l = bb.remaining();
+    	
+      if( length <= l ){
+      	bb.get( dst, 0, length );  
+        total_size += length;
+      }
+      else {
+        bb.get( dst, 0, l );  
+        total_size += l;
+        length -= l;
         int bytes = length / 8;
-        if(( length & 7 ) != 0 ){
+        if(( length  & 7 ) != 0 ){
             bytes += 1;
         }
-        
-        bb = ByteBuffer.wrap( encode_bin(_read_stream( substream, bytes )));
-        bb.get( dst, 0, length );  
+      	bb = ByteBuffer.wrap(encode_bin(_read_stream( substream, bytes )));
+        bb.get( dst, l, length );  
+        total_size += length;
+      }
     }
 
-    total_size += length;
+    if( bb.remaining() == 0 )
+    	bb = null;
     
     return this;
-	  }
-		
+	  
+		}
 	}
 	
 	public static class BitStreamWriter{

@@ -169,7 +169,11 @@ public class ConstructTest
   	assertEquals( "moo", val.parse(""));
   	assertArrayEquals( new byte[0], val.build(null));
   }
-  
+
+  @Test
+  public void RestreamTest(){
+  	
+  }
   /*
     [Restream(UBInt8("restream"), lambda x:x, lambda x:x, lambda x:x).parse,
         "\x07", 7, None],

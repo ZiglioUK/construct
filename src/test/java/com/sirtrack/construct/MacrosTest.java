@@ -49,8 +49,6 @@ public class MacrosTest
     
     // Test BitStream re-streamer with Arrays
     
-    assertArrayEquals( ByteArray(1,1,1,1,1,1,1,1), (byte[]) bw.parse( ByteArray( 0xFF )));
-
     bw = Bitwise( Array( new CountFunc(){
   		public int count(Container ctx) {
       return 8;
@@ -85,6 +83,13 @@ public class MacrosTest
       	}}, Bits("bitwise",2)));
      assertEquals( Container("Length", 2, "bitwise", ListContainer(0,1,2,3)), bw.parse( ByteArray( 2, 0x1B )));
 
+     bw = BitStruct( "mixed",
+    			Bits("Length", 4),
+      		Array( new CountFunc(){
+        		public int count(Container ctx) {
+            return 1;
+        	}}, Bits("bitwise",12)));
+     assertEquals( Container("Length", 1, "bitwise", ListContainer(0x1B)), bw.parse( ByteArray( 0x10, 0x1B )));
   }
   
   @Test 
