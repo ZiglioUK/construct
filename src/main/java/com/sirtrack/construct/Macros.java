@@ -374,7 +374,7 @@ public static Adapter PrefixedArray( Construct subcon, final StaticField length_
                 length_field,
                 Array( new CountFunc(){
 									public int count(Container ctx) {
-										return ctx.get(length_field.name);
+										return (Integer)ctx.get(length_field.name);
 									}},
                   subcon
                 ))
@@ -602,4 +602,31 @@ static public Construct EmbeddedBitStruct(Construct... subcons){
   public static Switch IfThenElse( String name, KeyFunc keyfunc, Construct then_subcon, Construct else_subcon ){
   	return Switch( name, keyfunc, true, then_subcon, false, else_subcon );
   }
+
+  /**
+   * @param keyfunc a function taking the context as an argument and returning
+      True or False
+   * @param subcon the subcon that will be used if the predicate returns True
+   * @param elsevalue the value that will be used should the predicate return False.
+   * @return an if-then conditional construct: if the predicate indicates True,
+    subcon will be used; otherwise, `elsevalue` will be returned instead.
+   */
+  public static Switch If( KeyFunc keyfunc, Construct subcon, final Object elsevalue ){
+  	return IfThenElse( subcon.name, keyfunc, subcon, Value("elsevalue", new ValueFunc(){
+      public Object get(Container ctx) {
+	      return elsevalue;
+      }}));
+  }
+
+  /**
+   * @param keyfunc a function taking the context as an argument and returning
+      True or False
+   * @param subcon the subcon that will be used if the predicate returns True
+   * @return an if-then conditional construct: if the predicate indicates True,
+    subcon will be used; otherwise, null will be returned instead.
+   */
+  public static Switch If( KeyFunc keyfunc, Construct subcon ){
+  	return If( keyfunc, subcon, null );
+  }
+  
 }
