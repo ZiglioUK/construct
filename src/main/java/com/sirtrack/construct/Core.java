@@ -8,42 +8,55 @@ import java.util.List;
 import java.util.ListIterator;
 
 import com.sirtrack.construct.lib.*;
+import com.sirtrack.construct.lib.BitStream.BitStreamReader;
+import com.sirtrack.construct.lib.BitStream.BitStreamWriter;
 import com.sirtrack.construct.lib.Containers.Container;
 
 import static com.sirtrack.construct.lib.Containers.*;
 
 public class Core {
-  public static class FieldError extends RuntimeException {
+	
+  public static class ConstructError extends RuntimeException {
+    public ConstructError(String string) {
+      super(string);
+    }
+    public ConstructError(String string, Exception e) {
+      super(string, e);
+    }
+  }
+	
+  public static class FieldError extends ConstructError
+  {
     public FieldError(String string) {
       super(string);
     }
   }
-  public static class SizeofError extends RuntimeException {
+  public static class SizeofError extends ConstructError {
     public SizeofError(String string) {
       super(string);
     }
   }
-  public static class ValueError extends RuntimeException {
+  public static class ValueError extends ConstructError {
     public ValueError(String string) {
       super(string);
     }
   }
-  public static class RangeError extends RuntimeException {
+  public static class RangeError extends ConstructError {
     public RangeError(String string) {
       super(string);
     }
   }
-  public static class TypeError extends RuntimeException {
+  public static class TypeError extends ConstructError {
     public TypeError(String string) {
       super(string);
     }
   }
-  public static class SwitchError extends RuntimeException {
+  public static class SwitchError extends ConstructError {
     public SwitchError(String string) {
       super(string);
     }
   }
-  public static class ArrayError extends RuntimeException {
+  public static class ArrayError extends ConstructError {
     public ArrayError(String string, Exception e) {
       super(string, e);
     }
@@ -95,6 +108,18 @@ static public Container Container( Object... pairs ){
  * # abstract constructs
  * #===============================================================================
  */
+public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
+	if (length < 0)
+		throw new FieldError("length must be >= 0 " + length);
+	{
+		int len = stream.remaining();
+		if (len < length)
+			throw new FieldError("expected " + length + " found " + len);
+		byte[] out = new byte[length];
+		stream.get(out, 0, length);
+		return out;
+	}
+}
 
 /**
   The mother of all constructs.
@@ -208,19 +233,6 @@ static public Container Container( Object... pairs ){
 			return (conflags & flag) == flag;
 		}
 
-		public byte[] _read_stream( ByteBuffer stream, int length) {
-			if (length < 0)
-				throw new FieldError("length must be >= 0 " + length);
-			{
-				int len = stream.remaining();
-				if (len < length)
-					throw new FieldError("expected " + length + " found " + len);
-				byte[] out = new byte[length];
-				stream.get(out, 0, length);
-				return out;
-			}
-		}
-
 		static public int getDataLength( Object data ){
 			if( data instanceof String)
 				return ((String)data).length();
@@ -283,11 +295,11 @@ static public Container Container( Object... pairs ){
 		 * @param data
 		 */
 		public <T>T parse(byte[] data) {
-			return (T)parse_stream( ByteBuffer.wrap( data ));
+			return (T)parse_stream( new ByteBufferWrapper().wrap( data ));
 		}
 
 		public <T>T parse(String text) {
-			return (T)parse_stream( ByteBuffer.wrap( text.getBytes() ));
+			return (T)parse_stream( new ByteBufferWrapper().wrap( text.getBytes() ));
 		}
 
 		/**
@@ -295,11 +307,11 @@ static public Container Container( Object... pairs ){
 		 * 
 		 * Files, pipes, sockets, and other streaming sources of data are handled by this method.
 		 */
-		public Object parse_stream( ByteBuffer stream) {
+		public Object parse_stream( ByteBufferWrapper stream) {
 			return _parse(stream, new Container());
 		}
 
-		abstract public Object _parse( ByteBuffer stream, Container context);
+		abstract public Object _parse( ByteBufferWrapper stream, Container context);
 
 		/**
 		 * Build an object in memory.
@@ -375,7 +387,7 @@ static public Container Container( Object... pairs ){
     }
 
 		@Override
-		public Object _parse( ByteBuffer stream, Container context) {
+		public Object _parse( ByteBufferWrapper stream, Container context) {
 			return subcon._parse(stream, context);
 		}
 
@@ -420,7 +432,7 @@ static public Container Container( Object... pairs ){
   	}
   
   	@Override
-  	public Object _parse( ByteBuffer stream, Container context) {
+  	public Object _parse( ByteBufferWrapper stream, Container context) {
   		return decode(subcon._parse( stream, context ), context);
   	}
   
@@ -457,7 +469,7 @@ static public Container Container( Object... pairs ){
   		}
   
   		@Override
-  		public Object _parse( ByteBuffer stream, Container context) {
+  		public Object _parse( ByteBufferWrapper stream, Container context) {
   			return _read_stream( stream, length);
   		}
   
@@ -504,9 +516,9 @@ static public Container Container( Object... pairs ){
   	}
   
   	@Override
-  	public Object _parse( ByteBuffer stream, Container context ) {
+  	public Object _parse( ByteBufferWrapper stream, Container context ) {
   		try {
-  			return packer.unpack(stream);
+  			return packer.unpack(stream.bb);
   		} catch (Exception e) {
   			throw new FieldError(e.getMessage());
   		}
@@ -562,7 +574,7 @@ static public Container Container( Object... pairs ){
   
   
   	@Override
-    public Object _parse(ByteBuffer stream, Container context) {
+    public Object _parse(ByteBufferWrapper stream, Container context) {
       return _read_stream(stream, lengthfunc.length(context));
     }
   
@@ -636,7 +648,7 @@ public static class MetaArray extends Subconstruct{
   }
 
 	@Override
-	public Object _parse( ByteBuffer stream, Container context) {
+	public Object _parse( ByteBufferWrapper stream, Container context) {
     List obj = ListContainer();
     int c = 0;
     int count = countfunc.count(context);
@@ -748,7 +760,7 @@ public static class Range extends Subconstruct{
 	}
 	
 	@Override
-	public Object _parse( ByteBuffer stream, Container context) {
+	public Object _parse( ByteBufferWrapper stream, Container context) {
 //    obj = ListContainer()
 		List<Object> obj = ListContainer();
 		int c = 0;
@@ -849,7 +861,7 @@ public static class Range extends Subconstruct{
 	  }
 
 		@Override
-		public Object _parse( ByteBuffer stream, Container context) {
+		public Object _parse( ByteBufferWrapper stream, Container context) {
 			
 			Container obj;
 			if( context.contains("<obj>")){
@@ -948,7 +960,7 @@ public static class Range extends Subconstruct{
 	  }
 		
 		@Override
-		public Object _parse( ByteBuffer stream, Container context) {
+		public Object _parse( ByteBufferWrapper stream, Container context) {
       List obj;
 			if( context.contains( "<obj>" )){
         obj = context.get( "<obj>" );
@@ -1018,7 +1030,7 @@ public static class Range extends Subconstruct{
 	public static Construct NoDefault = new Construct( null ){
 
 			@Override
-      public Object _parse(ByteBuffer stream, Container context) {
+      public Object _parse(ByteBufferWrapper stream, Container context) {
 				throw new SwitchError("no default case defined");
       }
 
@@ -1149,7 +1161,7 @@ public static class Switch extends Construct{
 	}
 	
 	@Override
-  public Object _parse(ByteBuffer stream, Container context) {
+  public Object _parse(ByteBufferWrapper stream, Container context) {
 		Object key = keyfunc.key(context);
 		Construct c = cases.get(key, defaultval);
 		Object obj = c._parse(stream, context);
@@ -1229,10 +1241,10 @@ public static class Switch extends Construct{
 	    this.resizer = resizer;
     }
 		@Override
-		public Object _parse( ByteBuffer stream, Container context) {
+		public Object _parse( ByteBufferWrapper stream, Container context) {
       byte[] data = _read_stream(stream, _sizeof(context));
       byte[] stream2 = decoder.decode(data);
-			return subcon._parse(ByteBuffer.wrap( stream2 ), context);
+			return subcon._parse(new ByteBufferWrapper().wrap( stream2 ), context);
 		}
 
 		@Override
@@ -1245,6 +1257,68 @@ public static class Switch extends Construct{
 				throw new RuntimeException( "Wrong data length: " + data.length );
 			_write_stream(stream, size, data);
 		}
+		@Override
+    protected int _sizeof(Container context) {
+			return resizer.resize( subcon._sizeof(context));
+    }
+	}
+	
+	/**
+    Wraps the stream with a read-wrapper (for parsing) or a
+    write-wrapper (for building). The stream wrapper can buffer the data
+    internally, reading it from- or writing it to the underlying stream
+    as needed. For example, BitByteBufferWrapper reads whole bytes from the
+    underlying stream, but returns them as individual bits.
+    See also Bitwise.
+
+    When the parsing or building is done, the stream's close method
+    will be invoked. It can perform any finalization needed for the stream
+    wrapper, but it must not close the underlying stream.
+
+    Note:
+    * Do not use pointers inside Restream
+
+    Example:
+    Restream(BitField("foo", 16),
+        stream_reader = BitByteBufferWrapper,
+        stream_writer = BitStreamWriter,
+        resizer = lambda size: size / 8,
+    )
+	 */
+	public static class Restream extends Subconstruct{
+		BitStreamReader stream_reader; 
+		BitStreamWriter stream_writer;
+		Resizer resizer;
+		
+		/**
+  	 * @param subcon the subcon
+  	 * @param stream_reader the read-wrapper
+  	 * @param stream_writer the write wrapper
+  	 * @param resizer a function that takes the size of the subcon and "adjusts"
+        or "resizes" it according to the encoding/decoding process.
+		 */
+		public Restream(Construct subcon, BitStreamReader stream_reader, BitStreamWriter stream_writer, Resizer resizer ) {
+	    super(subcon);
+	    this.stream_reader = stream_reader;
+	    this.stream_writer = stream_writer;
+	    this.resizer = resizer;
+    }
+		
+		@Override
+		public Object _parse( ByteBufferWrapper stream, Container context) {
+      stream_reader.init(stream);
+      Object obj = subcon._parse(stream_reader, context);
+      stream_reader.close();
+      return obj;
+		}
+		
+		@Override
+		protected void _build( Object obj, ByteArrayOutputStream stream, Container context) {
+			ByteArrayOutputStream stream2 = stream_writer.init(stream);
+      subcon._build(obj, stream2, context);
+      stream_writer.close();
+		}
+
 		@Override
     protected int _sizeof(Container context) {
 			return resizer.resize( subcon._sizeof(context));
@@ -1370,53 +1444,6 @@ class OnDemand(Subconstruct):
         elif self.advance_stream:
             stream.seek(self.subcon._sizeof(context), 1)
 
-class Restream(Subconstruct):
-    """
-    Wraps the stream with a read-wrapper (for parsing) or a
-    write-wrapper (for building). The stream wrapper can buffer the data
-    internally, reading it from- or writing it to the underlying stream
-    as needed. For example, BitStreamReader reads whole bytes from the
-    underlying stream, but returns them as individual bits.
-    See also Bitwise.
-
-    When the parsing or building is done, the stream's close method
-    will be invoked. It can perform any finalization needed for the stream
-    wrapper, but it must not close the underlying stream.
-
-    Note:
-    * Do not use pointers inside Restream
-
-    Parameters:
-    * subcon - the subcon
-    * stream_reader - the read-wrapper
-    * stream_writer - the write wrapper
-    * resizer - a function that takes the size of the subcon and "adjusts"
-      or "resizes" it according to the encoding/decoding process.
-
-    Example:
-    Restream(BitField("foo", 16),
-        stream_reader = BitStreamReader,
-        stream_writer = BitStreamWriter,
-        resizer = lambda size: size / 8,
-    )
-    """
-    __slots__ = ["stream_reader", "stream_writer", "resizer"]
-    def __init__(self, subcon, stream_reader, stream_writer, resizer):
-        Subconstruct.__init__(self, subcon)
-        self.stream_reader = stream_reader
-        self.stream_writer = stream_writer
-        self.resizer = resizer
-    def _parse(self, stream, context):
-        stream2 = self.stream_reader(stream)
-        obj = self.subcon._parse(stream2, context)
-        stream2.close()
-        return obj
-    def _build(self, obj, stream, context):
-        stream2 = self.stream_writer(stream)
-        self.subcon._build(obj, stream2, context)
-        stream2.close()
-    def _sizeof(self, context):
-        return self.resizer(self.subcon._sizeof(context))
  */
 	
 /*
@@ -1501,7 +1528,7 @@ public static class Value extends Construct{
   }
 
 	@Override
-  public Object _parse(ByteBuffer stream, com.sirtrack.construct.lib.Containers.Container context) {
+  public Object _parse(ByteBufferWrapper stream, com.sirtrack.construct.lib.Containers.Container context) {
 	  return func.get(context);
   }
 
@@ -1546,7 +1573,7 @@ public static class Value extends Construct{
     }
 
 		@Override
-    public Object _parse(ByteBuffer stream, Container context) {
+    public Object _parse(ByteBufferWrapper stream, Container context) {
 	    return null;
     }
 

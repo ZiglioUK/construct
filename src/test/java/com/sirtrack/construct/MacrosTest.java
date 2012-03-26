@@ -4,6 +4,7 @@ package com.sirtrack.construct;
 //from construct import Container, Byte
 //from construct import FieldError, SizeofError
 
+import static com.sirtrack.construct.Adapters.LengthValueAdapter;
 import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.Macros.*;
 import static org.junit.Assert.*;
@@ -17,6 +18,7 @@ import org.junit.rules.ExpectedException;
 import com.sirtrack.construct.Adapters.MappingError;
 import com.sirtrack.construct.Core.Adapter;
 import com.sirtrack.construct.Core.Construct;
+import com.sirtrack.construct.Core.CountFunc;
 import com.sirtrack.construct.Core.KeyFunc;
 import com.sirtrack.construct.lib.Containers.Container;
 import static com.sirtrack.construct.lib.Containers.*;
@@ -29,15 +31,64 @@ public class MacrosTest
   @Test
   public void BitIntegerAdapterTest() {
   	Construct bw;
+  	Object o;
+
+    bw = BitStruct( "mixed",
+  			Bits("Length", 8),
+    		Array( new CountFunc(){
+      		public int count(Container ctx) {
+          return 4;
+      	}}, Bits("bitwise",2)));
+  o = bw.parse( ByteArray( 2, 0x1B ));
+  assertEquals( Container("Length", 2, "bitwise", ListContainer(0,1,2,3)), bw.parse( ByteArray( 2, 0x1B )));
+
+
+    bw = Bitwise( Array( new CountFunc(){
+  		public int count(Container ctx) {
+      return 4;
+  	}}, Bits("bitwise",2)) );
+    o = bw.parse( ByteArray( 0x1B ));
+    assertEquals( ListContainer(0,1,2,3), bw.parse( ByteArray( 0x1B )));
+
+    bw = Struct( "mixed",
+    			UBInt8("Length"),
+      		Bitwise( Array( new CountFunc(){
+        		public int count(Container ctx) {
+            return 4;
+        	}}, Bits("bitwise",2)) ));
+    o = bw.parse( ByteArray( 2, 0x1B ));
+    assertEquals( Container("Length", 2, "bitwise", ListContainer(0,1,2,3)), bw.parse( ByteArray( 2, 0x1B )));
+
+
+    bw = Bitwise( Array( new CountFunc(){
+  		public int count(Container ctx) {
+      return 8;
+  	}}, Bits("bitwise",1)) );
+    assertEquals( ListContainer(1,1,1,1,1,1,1,1), bw.parse( ByteArray( 0xFF )));
+
+    bw = Bitwise( Array( new CountFunc(){
+  		public int count(Container ctx) {
+      return 4;
+  	}}, Bits("bitwise",2)) );
+    assertEquals( ListContainer(3,3,3,3), bw.parse( ByteArray( 0xFF )));
     
     bw = Bitwise( Field("bitwise",8) );
     assertArrayEquals( ByteArray(1,1,1,1,1,1,1,1), (byte[]) bw.parse( ByteArray( 0xFF )));
     assertEquals( (byte)0xFF, bw.build(ByteArray(1,1,1,1,1,1,1,1))[0]);
     
-/*    
-    [Bitwise(Field("bitwise", lambda ctx: 8)).parse, "\xff", "\x01" * 8, None],
+    bw = Bitwise( Field("bitwise", new LengthFunc(){
+      public int length(Container context) {
+	      return 8;
+      }} ));
+    assertArrayEquals( ByteArray(1,1,1,1,1,1,1,1), (byte[]) bw.parse( ByteArray( 0xFF )));
+
+    /*    
     [Bitwise(Field("bitwise", lambda ctx: 8)).build, "\x01" * 8, "\xff", None],
-*/
+    */
+    
+    
+    assertArrayEquals( ByteArray(1,1,1,1,1,1,1,1), (byte[]) bw.parse( ByteArray( 0xFF )));
+
   }
   
   @Test 

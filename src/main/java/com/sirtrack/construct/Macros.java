@@ -8,6 +8,8 @@ import com.sirtrack.construct.Core.Adapter;
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.CountFunc;
 import com.sirtrack.construct.Core.ValueFunc;
+import com.sirtrack.construct.lib.BitStream.BitStreamReader;
+import com.sirtrack.construct.lib.BitStream.BitStreamWriter;
 import com.sirtrack.construct.lib.Resizer;
 import com.sirtrack.construct.lib.Containers.Container;
 
@@ -469,14 +471,12 @@ static public Subconstruct Bitwise(Construct subcon) {
       con = new Buffered( subcon,
               						BinaryEncoder(),
               						BinaryDecoder(),
-              						resizer
-          							);
+              						resizer );
     } else {
-    	throw new RuntimeException("unimplemented");
-//      con = Restream(subcon,
-//          stream_reader = BitStreamReader,
-//          stream_writer = BitStreamWriter,
-//          resizer = resizer)
+      con = new Restream( subcon,
+                          new BitStreamReader(),
+                          new BitStreamWriter(),
+                          resizer);
     }
     return con;
 }
