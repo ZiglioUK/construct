@@ -15,20 +15,15 @@ public class BitStream {
 	public static class BitStreamReader extends ByteBufferWrapper{
 
 		ByteBufferWrapper substream;
-
 		int total_size = 0;
-		byte[] buffer;
-		
+
 		public BitStreamReader(){
 			super();
 		}
 		
 		public ByteBufferWrapper init( ByteBufferWrapper substream ){
 			this.substream = substream;
-			this.buffer = new byte[ 8*substream.remaining() ];
 			this.total_size = 0;
-			bb = ByteBuffer.wrap(buffer);
-			
 			return this;
 		}
 
@@ -40,7 +35,10 @@ public class BitStream {
 		
 		@Override
 	  public int remaining() {
-		  return bb.remaining();
+			if( bb != null && bb.remaining()>0 )
+				return bb.remaining();
+			else 
+				return substream.remaining() * 8;
     }
 
 		@Override
@@ -68,32 +66,22 @@ public class BitStream {
       if( length < 0 )
         throw new ValueError("length cannot be negative");
 
-    int l = bb.position();
-    int bytes;
+    int l = bb != null? bb.remaining() : 0;
       
-    if( length == 0 ){
-//        dst = "";
-    }
-    else if( length <= l ){
+    if( bb != null && length <= l ){
         bb.get( dst, 0, length );  
     }
     else {
-        length -= l;
-        bytes = length / 8;
+        int bytes = length / 8;
         if(( length & 7 ) != 0 ){
             bytes += 1;
         }
         
-        byte[] buf = encode_bin(_read_stream( substream, bytes ));
-        
-        bb.position(0);
-        bb.put(buf);
-        bb.position(0);
+        bb = ByteBuffer.wrap( encode_bin(_read_stream( substream, bytes )));
         bb.get( dst, 0, length );  
-
-        total_size += buf.length;
     }
-//    total_size += len(dst);
+
+    total_size += length;
     
     return this;
 	  }
