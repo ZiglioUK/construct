@@ -21,12 +21,8 @@ public class arp {
     		new KeyFunc(){ public Object key(Container ctx) {
     			return ctx.get("hardware_type").equals("ETHERNET");
         }},
-        MacAddressAdapter( Field( "data", new LengthFunc(){ public int length(Container ctx){
-        				return (Integer)ctx.get("hwaddr_length");
-        }})),
-        Field( "data", new LengthFunc(){ public int length(Container ctx){
-        	return (Integer)ctx.get("hwaddr_length");
-        }})
+        MacAddressAdapter( Field( "data", LengthField("hwaddr_length"))),
+        Field( "data", LengthField("hwaddr_length"))
      );
 	};
 
@@ -36,13 +32,10 @@ public class arp {
     		new KeyFunc(){ public Object key(Container ctx) {
     			return ctx.get("protocol_type").equals("IP");
         }},
-        IpAddressAdapter( 
-        		Field("data", new LengthFunc(){ public int length(Container ctx){
-              return (Integer)ctx.get("protoaddr_length");
-        		}})),
-        		Field( "data", new LengthFunc(){ public int length(Container ctx){
-        			return (Integer)ctx.get("protoaddr_length");
-        		}})
+        IpAddressAdapter(
+        		Field("data", LengthField("protoaddr_length"))
+        ),
+        Field("data", LengthField("protoaddr_length"))
         );
 	};
 

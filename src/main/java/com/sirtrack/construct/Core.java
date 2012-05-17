@@ -12,6 +12,7 @@ import com.sirtrack.construct.lib.BitStream.BitStreamReader;
 import com.sirtrack.construct.lib.BitStream.BitStreamWriter;
 import com.sirtrack.construct.lib.Containers.Container;
 
+import static com.sirtrack.construct.Macros.Field;
 import static com.sirtrack.construct.lib.Containers.*;
 
 public class Core {
@@ -538,6 +539,18 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
   	 abstract int length(Container context);
   }
 
+  /**
+   * @param name context field name
+   * @return get length from context field 
+   */
+  static public LengthFunc LengthField( final String name ) {
+ 	  return new LengthFunc(){
+  		public int length(Container ctx) {
+  			return (Integer)ctx.get(name);
+		  }
+  	};
+ 	}
+		
 	/**
     A variable-length field. The length is obtained at runtime from a
     function.

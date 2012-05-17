@@ -101,10 +101,7 @@ public class AdaptersTest
 
   @Test
   public void LengthValueAdapterTest(){
-  	Sequence s = Sequence("lengthvalueadapter", UBInt8("length"), Field("value", new LengthFunc(){
-			public int length(Container ctx) {
-				return (Integer)ctx.get("length");
-			}}));
+  	Sequence s = Sequence("lengthvalueadapter", UBInt8("length"), Field("value", LengthField("length")));
   	
   	assertArrayEquals( ByteArray('a','b','c','d','e'), (byte[])LengthValueAdapter(s).parse(ByteArray(5,'a','b','c','d','e')));
   	assertArrayEquals( ByteArray(5,'a','b','c','d','e'),  LengthValueAdapter(s).build("abcde"));

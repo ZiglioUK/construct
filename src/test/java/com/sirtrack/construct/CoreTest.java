@@ -86,11 +86,7 @@ public class CoreTest
 
   @Test
   public void testMetaFieldStruct(){
-  	MetaField mf = MetaField("data", new LengthFunc(){
-  		public int length(Container context){
-  			return (Integer)context.get("length");
-  		}
-  	});
+  	MetaField mf = MetaField("data", LengthField("length"));
   	Construct s = Struct("foo", UBInt8("length"), mf );
   	Container c;
   	
