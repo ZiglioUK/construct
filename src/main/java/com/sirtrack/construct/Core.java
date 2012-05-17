@@ -1065,6 +1065,27 @@ public static class Range extends Subconstruct{
   public static interface KeyFunc{
   	 Object key(Container context);
   }
+
+  /**
+   * @param key a context key
+   * @param val a value
+   * @return A KeyFunc that evaluates ctx.get(key).equals(val)
+   */
+  public static KeyFunc Equals( final String key, final Object val){ 
+		return new KeyFunc(){ public Object key(Container ctx) {
+			return ctx.get( key ).equals(val);
+		};};
+  }	
+
+  /**
+   * @param key a context key
+   * @return ctx.get(key)
+   */
+  public static KeyFunc KeyVal( final String key ){ 
+		return new KeyFunc(){ public Object key(Container ctx) {
+			return ctx.get( key );
+		};};
+  }	
   
   /**
   A conditional branch. Switch will choose the case to follow based on

@@ -18,9 +18,7 @@ public class arp {
 	static Switch HwAddress(String name){
     return IfThenElse( 
     		name, 
-    		new KeyFunc(){ public Object key(Container ctx) {
-    			return ctx.get("hardware_type").equals("ETHERNET");
-        }},
+    		Equals("hardware_type", "ETHERNET"),
         MacAddressAdapter( Field( "data", LengthField("hwaddr_length"))),
         Field( "data", LengthField("hwaddr_length"))
      );
@@ -29,12 +27,8 @@ public class arp {
 	static Switch ProtoAddress(String name){
     return IfThenElse( 
     		name, 
-    		new KeyFunc(){ public Object key(Container ctx) {
-    			return ctx.get("protocol_type").equals("IP");
-        }},
-        IpAddressAdapter(
-        		Field("data", LengthField("protoaddr_length"))
-        ),
+    		Equals("protocol_type", "IP"),
+        IpAddressAdapter( Field("data", LengthField("protoaddr_length"))),
         Field("data", LengthField("protoaddr_length"))
         );
 	};

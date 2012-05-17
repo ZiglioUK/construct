@@ -56,9 +56,7 @@ public class ipstack {
 
 	static Construct layer3_payload = Switch(
 				"next", 
-				new KeyFunc(){ public Object key(Container context){
-					return context.get("protocol");
-				}}, 
+				KeyVal("protocol"), 
 				Container( "TCP", layer4_tcp,
 									 "UDP", layer4_udp ),
 			  Pass,
@@ -79,9 +77,7 @@ public class ipstack {
 	    Rename("header", ethernet_header),
 	    Switch(
 					"next", 
-					new KeyFunc(){ public Object key(Container context){
-						return context.get("type");
-					}}, 
+					KeyVal("type"), 
 					Container( "IPv4", layer3_ipv4,
 										 "IPv6", layer3_ipv6 ),
 				  Pass,
