@@ -282,14 +282,14 @@ class MappingAdapter(Adapter):
   }
 
   /**
+   A generic adapter that accepts 'encoder' and 'decoder' as parameters. You
+    can use ExprAdapter instead of writing a full-blown class when only a 
+    simple expression is needed.
     Example:
     ExprAdapter(UBInt8("foo"), 
         encoder = lambda obj, ctx: obj / 4,
         decoder = lambda obj, ctx: obj * 4,
     )
-   A generic adapter that accepts 'encoder' and 'decoder' as parameters. You
-    can use ExprAdapter instead of writing a full-blown class when only a 
-    simple expression is needed.
    * @param subcon the subcon to adapt
    * @param encoder a function that takes (obj, context) and returns an encoded 
       version of obj
