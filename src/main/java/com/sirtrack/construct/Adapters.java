@@ -339,7 +339,7 @@ class MappingAdapter(Adapter):
 	    return decode(obj, context);
     }
 
-    abstract boolean validate( Object obj, Container context);
+    abstract public boolean validate( Object obj, Container context);
 
   }
   
@@ -364,7 +364,7 @@ class MappingAdapter(Adapter):
   public static Validator OneOf( Construct subcon, final List valids  ){
   	return new Validator(subcon){
 			@Override
-      boolean validate(Object obj, Container context) {
+			public boolean validate(Object obj, Container context) {
 	      return valids.contains(obj);
       }
   	};
