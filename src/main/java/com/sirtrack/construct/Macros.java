@@ -4,12 +4,17 @@ import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.lib.Binary.*;
 import static com.sirtrack.construct.lib.Containers.*;
 
+import java.io.ByteArrayOutputStream;
+
 import com.sirtrack.construct.Core.Adapter;
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.CountFunc;
+import com.sirtrack.construct.Core.StaticField;
+import com.sirtrack.construct.Core.Subconstruct;
 import com.sirtrack.construct.Core.ValueFunc;
 import com.sirtrack.construct.lib.BitStream.BitStreamReader;
 import com.sirtrack.construct.lib.BitStream.BitStreamWriter;
+import com.sirtrack.construct.lib.ByteBufferWrapper;
 import com.sirtrack.construct.lib.Resizer;
 import com.sirtrack.construct.lib.Containers.Container;
 
@@ -513,6 +518,72 @@ static public Construct Alias(String newname, final String oldname){
   		return ctx.get(oldname);
   }});
 }
+
+/**
+ * You can pass your CRC implementation here
+ * Use check and/or compute when parsing and building
+ */
+public static interface CRCFunc {
+	int compute(byte[] data);
+
+	boolean check(byte[] data, int crcval);
+}
+
+/**
+ * @param subcon the Subconstruct the CRC is calculated on
+ * @param crcfield the field that contains the computed CRC
+ * @param crcfunc the function to compute the CRC
+ * @return an instance of the CRC Subconstruct
+ */
+static public CRC CRC(Construct subcon, StaticField crcfield, CRCFunc crcfunc) {
+	return new CRC(subcon, crcfield, crcfunc);
+}
+
+static public class CRC extends Subconstruct {
+	CRCFunc crcfunc;
+	StaticField crcfield;
+
+	public CRC(Construct subcon, StaticField crcfield, CRCFunc crcfunc) {
+		super(subcon);
+		this.crcfield = crcfield;
+		this.crcfunc = crcfunc;
+	}
+
+	@Override
+	public Object _parse(ByteBufferWrapper stream, Container context) {
+		byte[] data = _read_stream(stream, _sizeof(context));
+		int crcval = (Integer) crcfield._parse(stream, context);
+		boolean crccheck = crcfunc.check(data, crcval);
+
+		context.set(crcfield.name, crccheck); // set CRC value to false, could throw an Exception instead
+
+		if (crccheck)
+			return subcon._parse(stream, context);
+		else
+			return context;
+	}
+
+	@Override
+	protected void _build(Object obj, ByteArrayOutputStream stream, Container context) {
+//		 TODO needs testing
+		 ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
+		 subcon.build_stream(obj, stream2);
+		 byte[] data = stream2.toByteArray();
+		 int size = _sizeof(context);
+		 if( data.length != size )
+		 throw new RuntimeException( "Wrong data length: " + data.length );
+		
+		 int crcval = crcfunc.compute(data);
+		 _write_stream(stream, size, data);
+		 crcfield.build_stream(crcval, stream);
+	}
+
+	@Override
+	protected int _sizeof(Container context) {
+		return subcon.sizeof(context);
+	}
+}
+
 /*
 #===============================================================================
 # mapping
