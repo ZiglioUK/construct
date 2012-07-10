@@ -1260,6 +1260,12 @@ public static class Switch extends Construct{
 		Decoder decoder;
 		Resizer resizer;
 		/**
+      Creates an in-memory buffered stream, which can undergo encoding and
+      decoding prior to being passed on to the subconstruct.
+      See also Bitwise.<br/>
+      <br/>
+      Note:
+      * Do not use pointers inside Buffered
 		 * @param subcon the subcon which will operate on the buffer
 		 * @param encoder a function that takes a string and returns an encoded
       string (used after building)
@@ -1325,6 +1331,19 @@ public static class Switch extends Construct{
 		Resizer resizer;
 		
 		/**
+        Wraps the stream with a read-wrapper (for parsing) or a
+        write-wrapper (for building). The stream wrapper can buffer the data
+        internally, reading it from- or writing it to the underlying stream
+        as needed. For example, BitByteBufferWrapper reads whole bytes from the
+        underlying stream, but returns them as individual bits.
+        See also Bitwise.<br/>
+        <br/>
+        When the parsing or building is done, the stream's close method
+        will be invoked. It can perform any finalization needed for the stream
+        wrapper, but it must not close the underlying stream.<br/>
+        <br/>
+        Note:
+        * Do not use pointers inside Restream
   	 * @param subcon the subcon
   	 * @param stream_reader the read-wrapper
   	 * @param stream_writer the write wrapper
