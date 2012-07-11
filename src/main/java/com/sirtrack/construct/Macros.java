@@ -555,12 +555,17 @@ static public class CRC extends Subconstruct {
 		int crcval = (Integer) crcfield._parse(stream, context);
 		boolean crccheck = crcfunc.check(data, crcval);
 
-		context.set(crcfield.name, crccheck); // set CRC value to false, could throw an Exception instead
-
-		if (crccheck)
-			return subcon._parse(stream, context);
-		else
-			return context;
+		if (crccheck) {
+			Container c = (Container)(subcon._parse(new ByteBufferWrapper().wrap( data ), context));
+			c.set(crcfield.name, crccheck); // set CRC value to true
+			return c;
+		}
+		else{
+			return Container(
+					crcfield.name, crccheck, 				// set CRC value to false, could throw an Exception instead
+					crcfield.name + " data", data 	// return also invalid data
+			);
+		}
 	}
 
 	@Override
