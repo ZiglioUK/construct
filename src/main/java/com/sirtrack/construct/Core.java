@@ -1062,8 +1062,22 @@ public static class Range extends Subconstruct{
 	/**
    * a function that takes the context and returns a key	 
   */
-  public static interface KeyFunc{
-  	 Object key(Container context);
+  public abstract static class KeyFunc{
+  	public final String key;
+  	
+  	public KeyFunc( String key ){
+  		this.key = key;
+  	}
+
+  	public KeyFunc(){
+  		this.key = null;
+  	}
+
+  	public String key(){
+  		return key;
+  	}
+
+  	abstract Object get(Container context);
   }
 
   /**
@@ -1072,7 +1086,7 @@ public static class Range extends Subconstruct{
    * @return A KeyFunc that evaluates ctx.get(key).equals(val)
    */
   public static KeyFunc Equals( final String key, final Object val){ 
-		return new KeyFunc(){ public Object key(Container ctx) {
+  	return new KeyFunc(key){ public Object get(Container ctx) {
 			return ctx.get( key ).equals(val);
 		};};
   }	
@@ -1082,7 +1096,7 @@ public static class Range extends Subconstruct{
    * @return ctx.get(key)
    */
   public static KeyFunc KeyVal( final String key ){ 
-		return new KeyFunc(){ public Object key(Container ctx) {
+		return new KeyFunc(key){ public Object get(Container ctx) {
 			return ctx.get( key );
 		};};
   }	
@@ -1196,7 +1210,7 @@ public static class Switch extends Construct{
 	
 	@Override
   public Object _parse(ByteBufferWrapper stream, Container context) {
-		Object key = keyfunc.key(context);
+		Object key = keyfunc.get(context);
 		Construct c = cases.get(key, defaultval);
 		Object obj = c._parse(stream, context);
 		if( include_key ){
@@ -1214,7 +1228,7 @@ public static class Switch extends Construct{
 			key = list.get(0);
 			obj = list.get(1);
 		} else {
-			key = keyfunc.key( context );
+			key = keyfunc.get( context );
 		}
 		
 		Construct casestruct = cases.get(key, defaultval);
@@ -1230,7 +1244,7 @@ public static class Switch extends Construct{
 	}
 	@Override
   protected int _sizeof( Container context) {
-		Construct casestruct = cases.get(keyfunc.key( context ), defaultval);
+		Construct casestruct = cases.get(keyfunc.get( context ), defaultval);
 		return casestruct._sizeof(context);
   }
 }

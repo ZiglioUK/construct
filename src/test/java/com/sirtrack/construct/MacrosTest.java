@@ -137,16 +137,16 @@ public class MacrosTest
   public void ifThenElseTest(){
   	Switch ifThenElse;
   	
-  	ifThenElse = IfThenElse("ifthenelse", new KeyFunc(){ public Object key(Container context){return true;}}, UBInt8("then"), UBInt16("else") );
+  	ifThenElse = IfThenElse("ifthenelse", new KeyFunc(){ public Object get(Container context){return true;}}, UBInt8("then"), UBInt16("else") );
   	assertEquals(1, ifThenElse.parse(ByteArray(1)));
 
-  	ifThenElse = IfThenElse("ifthenelse", new KeyFunc(){ public Object key(Container context){return false;}}, UBInt8("then"), UBInt16("else") );
+  	ifThenElse = IfThenElse("ifthenelse", new KeyFunc(){ public Object get(Container context){return false;}}, UBInt8("then"), UBInt16("else") );
   	assertEquals(1, ifThenElse.parse(ByteArray(0,1)));
 
-  	ifThenElse = IfThenElse("ifthenelse", new KeyFunc(){ public Object key(Container context){return true;}}, UBInt8("then"), UBInt16("else") );
+  	ifThenElse = IfThenElse("ifthenelse", new KeyFunc(){ public Object get(Container context){return true;}}, UBInt8("then"), UBInt16("else") );
   	assertArrayEquals(ByteArray(1), (byte[])ifThenElse.build(1));
 
-  	ifThenElse = IfThenElse("ifthenelse", new KeyFunc(){ public Object key(Container context){return false;}}, UBInt8("then"), UBInt16("else") );
+  	ifThenElse = IfThenElse("ifthenelse", new KeyFunc(){ public Object get(Container context){return false;}}, UBInt8("then"), UBInt16("else") );
   	assertArrayEquals(ByteArray(0,1), (byte[])ifThenElse.build(1));
   }
 }
