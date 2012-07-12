@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import com.sirtrack.construct.Core.Adapter;
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.CountFunc;
+import com.sirtrack.construct.Core.KeyFunc;
 import com.sirtrack.construct.Core.StaticField;
 import com.sirtrack.construct.Core.Subconstruct;
 import com.sirtrack.construct.Core.ValueFunc;
@@ -539,8 +540,19 @@ static public CRC CRC(Construct subcon, StaticField crcfield, CRCFunc crcfunc) {
 	return new CRC(subcon, crcfield, crcfunc);
 }
 
+/**
+ * @param subcon the Subconstruct the CRC is calculated on
+ * @param keyfunc gets the CRC field from name and context
+ * @param crcfunc the function to compute the CRC
+ * @return an instance of the CRC Subconstruct
+ */
+static public CRC CRC(Construct subcon, KeyFunc keyfunc, CRCFunc crcfunc) {
+	return new CRC(subcon, keyfunc, crcfunc);
+}
+
 static public class CRC extends Subconstruct {
 	CRCFunc crcfunc;
+	KeyFunc keyfunc;
 	StaticField crcfield;
 
 	public CRC(Construct subcon, StaticField crcfield, CRCFunc crcfunc) {
@@ -549,8 +561,21 @@ static public class CRC extends Subconstruct {
 		this.crcfunc = crcfunc;
 	}
 
+	public CRC(Construct subcon, KeyFunc keyfunc, CRCFunc crcfunc) {
+		super(subcon);
+		this.keyfunc = keyfunc;
+		this.crcfunc = crcfunc;
+	}
+
 	@Override
 	public Object _parse(ByteBufferWrapper stream, Container context) {
+		if( crcfield != null )
+			return _parseCrcField(stream, context);
+		else
+			return _parseKeyFuncField(stream,context);
+	}
+	
+	public Object _parseCrcField(ByteBufferWrapper stream, Container context) {
 		byte[] data = _read_stream(stream, _sizeof(context));
 		int crcval = (Integer) crcfield._parse(stream, context);
 		boolean crccheck = crcfunc.check(data, crcval);
@@ -568,8 +593,36 @@ static public class CRC extends Subconstruct {
 		}
 	}
 
+	public Object _parseKeyFuncField(ByteBufferWrapper stream, Container context) {
+		byte[] data = _read_stream(stream, _sizeof(context));
+		
+		// parse first 
+		Container c = (Container)(subcon._parse(new ByteBufferWrapper().wrap( data ), context));
+		// then retrieve the CRC value from the Context
+		int crcval = (Integer) this.keyfunc.get(c);
+		boolean crccheck = crcfunc.check(data, crcval);
+
+		if (crccheck) {
+			c.set(keyfunc.key, crccheck); // set CRC value to true
+			return c;
+		}
+		else{
+			return Container(
+					keyfunc.key, crccheck, 				// set CRC value to false, could throw an Exception instead
+					keyfunc.key + " data", data 	// return also invalid data
+			);
+		}
+	}
+	
 	@Override
 	protected void _build(Object obj, ByteArrayOutputStream stream, Container context) {
+		if( crcfield != null )
+			 _buildCrcField(obj, stream, context);
+		else
+			 _buildKeyFuncField(obj, stream, context);
+	}
+	
+	protected void _buildCrcField(Object obj, ByteArrayOutputStream stream, Container context) {
 //		 TODO needs testing
 		 ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
 		 subcon.build_stream(obj, stream2);
@@ -583,6 +636,10 @@ static public class CRC extends Subconstruct {
 		 crcfield.build_stream(crcval, stream);
 	}
 
+	protected void _buildKeyFuncField(Object obj, ByteArrayOutputStream stream, Container context) {
+		throw new RuntimeException( "Unimplemented method _buildKeyFuncField" ); 
+	}
+	
 	@Override
 	protected int _sizeof(Container context) {
 		return subcon.sizeof(context);
