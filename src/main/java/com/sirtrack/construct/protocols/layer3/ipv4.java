@@ -5,6 +5,7 @@ import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.Macros.*;
 import static com.sirtrack.construct.lib.Binary.*;
 import static com.sirtrack.construct.lib.Containers.*;
+import static com.sirtrack.construct.lib.Checksum.*;
 import static com.sirtrack.construct.protocols.layer3.ipv4.CRC16;
 import static com.sirtrack.construct.protocols.layer3.ipv4.ipv4_header;
 import static org.junit.Assert.assertTrue;
@@ -36,19 +37,17 @@ public class ipv4 {
 
 	static CRCFunc CRC16 = new CRCFunc() {
 		public boolean check(byte[] bytes, int crcval) {
-//			int crc = 0xFFFF;
-//			for (byte b : bytes) {
-//				crc = (crc >>> 8) ^ table[(crc ^ b) & 0xff];
-//			}
-//			
-//			return crcval == crc; 
-			return true;
+			int cs = compute(bytes);
+			return crcval == cs;
 		}
 
 		@Override
-		public int compute(byte[] data) {
-			// TODO Auto-generated method stub
-			return 0;
+		public int compute(byte[] bytes) {
+			// zero the checksum bytes 
+			bytes[10] = 0;
+			bytes[11] = 0;
+		
+			return (int)calculateChecksum(bytes);
 		}
 	};
 
