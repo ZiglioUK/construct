@@ -1077,7 +1077,7 @@ public static class Range extends Subconstruct{
   		return key;
   	}
 
-  	abstract Object get(Container context);
+  	public abstract Object get(Container context);
   }
 
   /**
