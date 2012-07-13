@@ -625,7 +625,7 @@ static public class CRC extends Subconstruct {
 	protected void _buildCrcField(Object obj, ByteArrayOutputStream stream, Container context) {
 //		 TODO needs testing
 		 ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
-		 subcon.build_stream(obj, stream2);
+		 subcon._build(obj, stream2, context);
 		 byte[] data = stream2.toByteArray();
 		 int size = _sizeof(context);
 		 if( data.length != size )
@@ -637,7 +637,20 @@ static public class CRC extends Subconstruct {
 	}
 
 	protected void _buildKeyFuncField(Object obj, ByteArrayOutputStream stream, Container context) {
-		throw new RuntimeException( "Unimplemented method _buildKeyFuncField" ); 
+  	 // set initial CRC to 0 
+	   ((Container)obj).set( keyfunc.key, 0 );
+		
+		 ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
+		 subcon._build(obj, stream2, context);
+		 byte[] data = stream2.toByteArray();
+		 int size = _sizeof(context);
+		 if( data.length != size )
+		   throw new RuntimeException( "Wrong data length: " + data.length );
+
+		 // the compute function will compute the CRC on the byte array
+		 // and will also set the CRC bytes into the array itself
+		 int crcval = crcfunc.compute(data);
+		 _write_stream(stream, size, data);
 	}
 	
 	@Override

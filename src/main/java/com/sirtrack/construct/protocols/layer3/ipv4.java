@@ -8,17 +8,14 @@ import static com.sirtrack.construct.lib.Containers.*;
 import static com.sirtrack.construct.lib.Checksum.*;
 import static com.sirtrack.construct.protocols.layer3.ipv4.CRC16;
 import static com.sirtrack.construct.protocols.layer3.ipv4.ipv4_header;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.junit.Test;
 
-import com.sirtrack.construct.Core.AdapterDecoder;
-import com.sirtrack.construct.Core.AdapterEncoder;
-import com.sirtrack.construct.Core.Construct;
-import com.sirtrack.construct.Core.ValueFunc;
+import com.sirtrack.construct.Core.*;
 import com.sirtrack.construct.Macros.CRCFunc;
 import com.sirtrack.construct.lib.Containers.Container;
 
@@ -47,13 +44,19 @@ public class ipv4 {
 			bytes[10] = 0;
 			bytes[11] = 0;
 		
-			return (int)calculateChecksum(bytes);
+			int cs = (int)calculateChecksum(bytes);
+			
+			//set the checksum bytes when building
+			bytes[10] = (byte)(cs >> 8);
+			bytes[11] = (byte)(cs & 0xFF);
+			
+			return cs;
 		}
 	};
 
 
 	public static Construct ipv4_header = Struct("ip_header",
-			Embedded(CRC( Struct( "ip_header1",
+			Embedded( CRC( Struct( "ip_header1",
   	    EmbeddedBitStruct( 
   	    		Const( Nibble("version"), 4), 
   	    		ExprAdapter( 
@@ -115,6 +118,8 @@ public class ipv4 {
 	public void CRCTest() {
   	Container c = ipv4_header.parse(cap);
   	assertTrue( (Boolean)c.get("checksum"));
+		byte[] ba = ipv4_header.build(c);
+		assertArrayEquals( cap,ba);
 	}
 
 	public static void main(String[] args) {
