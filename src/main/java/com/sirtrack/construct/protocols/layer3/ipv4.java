@@ -4,23 +4,13 @@ import static com.sirtrack.construct.Adapters.*;
 import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.Macros.*;
 import static com.sirtrack.construct.lib.Binary.*;
-import static com.sirtrack.construct.lib.Containers.*;
-import static com.sirtrack.construct.lib.Checksum.*;
-import static com.sirtrack.construct.protocols.layer3.ipv4.CRC16;
-import static com.sirtrack.construct.protocols.layer3.ipv4.ipv4_header;
+import static com.sirtrack.construct.lib.Checksum.calculateChecksum;
+import com.sirtrack.construct.*;
+import com.sirtrack.construct.lib.Containers.*;
+
+import org.junit.*;
 import static org.junit.Assert.*;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
-import org.junit.Test;
-
-import com.sirtrack.construct.Core.*;
-import com.sirtrack.construct.Adapter;
-import com.sirtrack.construct.AdapterDecoder;
-import com.sirtrack.construct.AdapterEncoder;
-import com.sirtrack.construct.Macros.CRCFunc;
-import com.sirtrack.construct.lib.Containers.Container;
 
 /**
  * Ethernet (TCP/IP protocol stack)
