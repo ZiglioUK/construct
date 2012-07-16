@@ -580,10 +580,14 @@ static public class CRC extends Subconstruct {
 
 		boolean crccheck = crcfunc.check(data, crcval);
 
-		c.set(keyfunc.key, crccheck); // set CRC value to true/false
+		// set CRC value to true/false
+		if( crcfield != null )
+			c.set(crcfield.name, crccheck); 
+		else
+			c.set(keyfunc.key, crccheck); 
 
+	  // also return invalid data
 		if(!crccheck) {
-		  // also return invalid data
 			c.set( keyfunc.key + " data", data ); 	
 		}
 		return c;
