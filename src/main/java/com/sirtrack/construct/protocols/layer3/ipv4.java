@@ -58,39 +58,45 @@ public class ipv4 {
   };
 
   public static Construct ipv4_header = Struct( "ip_header",
-   Embedded( CRC( Struct( "ip_header1", EmbeddedBitStruct( 
-      Const( Nibble("version"), 4 ),
-      
-      ExprAdapter( 
-        Nibble("header_length"), 
-        new AdapterEncoder() {
-          public Object encode(Object obj, Container context) {
-            return (Integer) obj / 4;
-          }}, 
-        new AdapterDecoder() {
-          public Object decode(Object obj, Container context) {
-            return (Integer) obj * 4;
-          }
-        })
-      ),
-
-      BitStruct( "tos", 
-        Bits("precedence", 3), 
-        Flag("minimize_delay"),
-        Flag("high_throuput"), 
-        Flag("high_reliability"),
-        Flag("minimize_cost"), Padding(1)),
+   
+    Embedded( CRC( Struct( "ip_header1", 
+     
+        EmbeddedBitStruct( 
+          Const( Nibble("version"), 4 ),
+        
+          ExprAdapter( 
+            Nibble("header_length"), 
+            new AdapterEncoder() {
+              public Object encode(Object obj, Container context) {
+                return (Integer) obj / 4;
+              }}, 
+            new AdapterDecoder() {
+              public Object decode(Object obj, Container context) {
+                return (Integer) obj * 4;
+              }
+            })
+        ),
+  
+        BitStruct( "tos", 
+          Bits("precedence", 3), 
+          Flag("minimize_delay"),
+          Flag("high_throuput"), 
+          Flag("high_reliability"),
+          Flag("minimize_cost"), 
+          Padding(1)
+        ),
+        
         UBInt16("total_length"),
-
+  
         Value("payload_length", new ValueFunc() {
           public Object get(Container ctx) {
             return (Integer) ctx.get("total_length")
-                - (Integer) ctx.get("header_length");
+                 - (Integer) ctx.get("header_length");
           }
         }),
-
+  
         UBInt16("identification"),
-        
+          
         EmbeddedBitStruct(
           Struct( "flags", 
             Padding(1), 
@@ -99,22 +105,25 @@ public class ipv4 {
           ), 
           Bits("frame_offset", 13)
         ),
-
+  
         UBInt8("ttl"), 
         ProtocolEnum( UBInt8("protocol") ),
         UBInt16("checksum"), 
         IpAddress("source"),
         IpAddress("destination")
-     ), 
-     KeyVal("checksum"), 
-     CRC16
-  )),
+      ), 
+    
+      KeyVal("checksum"), 
+      
+      CRC16
+    )),
 
-  Field("options", new LengthFunc() {
-        public int length(Container context) {
-          return (Integer) context.get("header_length") - 20;
-        }
-  }));
+    Field("options", new LengthFunc() {
+      public int length(Container context) {
+        return (Integer) context.get("header_length") - 20;
+      }
+    })
+  );
 
   static byte[] cap = hexStringToByteArray("4500003ca0e3000080116185c0a80205d474a126");
 
