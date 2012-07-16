@@ -569,49 +569,24 @@ static public class CRC extends Subconstruct {
 
 	@Override
 	public Object _parse(ByteBufferWrapper stream, Container context) {
-		if( crcfield != null )
-			return _parseCrcField(stream, context);
-		else
-			return _parseKeyFuncField(stream,context);
-	}
-	
-	public Object _parseCrcField(ByteBufferWrapper stream, Container context) {
 		byte[] data = _read_stream(stream, _sizeof(context));
-		int crcval = (Integer) crcfield._parse(stream, context);
-		boolean crccheck = crcfunc.check(data, crcval);
-
-		if (crccheck) {
-			Container c = (Container)(subcon._parse(new ByteBufferWrapper().wrap( data ), context));
-			c.set(crcfield.name, crccheck); // set CRC value to true
-			return c;
-		}
-		else{
-			return Container(
-					crcfield.name, crccheck, 				// set CRC value to false, could throw an Exception instead
-					crcfield.name + " data", data 	// return also invalid data
-			);
-		}
-	}
-
-	public Object _parseKeyFuncField(ByteBufferWrapper stream, Container context) {
-		byte[] data = _read_stream(stream, _sizeof(context));
-		
-		// parse first 
 		Container c = (Container)(subcon._parse(new ByteBufferWrapper().wrap( data ), context));
-		// then retrieve the CRC value from the Context
-		int crcval = (Integer) this.keyfunc.get(c);
+		
+		int crcval;
+		if( crcfield != null )
+			crcval = (Integer) crcfield._parse(stream, context);
+		else
+			crcval = (Integer) this.keyfunc.get(c);
+
 		boolean crccheck = crcfunc.check(data, crcval);
 
-		if (crccheck) {
-			c.set(keyfunc.key, crccheck); // set CRC value to true
-			return c;
+		c.set(keyfunc.key, crccheck); // set CRC value to true/false
+
+		if(!crccheck) {
+		  // also return invalid data
+			c.set( keyfunc.key + " data", data ); 	
 		}
-		else{
-			return Container(
-					keyfunc.key, crccheck, 				// set CRC value to false, could throw an Exception instead
-					keyfunc.key + " data", data 	// return also invalid data
-			);
-		}
+		return c;
 	}
 	
 	@Override
