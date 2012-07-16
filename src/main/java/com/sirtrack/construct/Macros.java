@@ -6,7 +6,6 @@ import static com.sirtrack.construct.lib.Containers.*;
 
 import java.io.ByteArrayOutputStream;
 
-import com.sirtrack.construct.Core.Adapter;
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.CountFunc;
 import com.sirtrack.construct.Core.KeyFunc;

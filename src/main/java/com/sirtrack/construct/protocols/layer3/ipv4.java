@@ -16,6 +16,9 @@ import java.net.UnknownHostException;
 import org.junit.Test;
 
 import com.sirtrack.construct.Core.*;
+import com.sirtrack.construct.Adapter;
+import com.sirtrack.construct.AdapterDecoder;
+import com.sirtrack.construct.AdapterEncoder;
 import com.sirtrack.construct.Macros.CRCFunc;
 import com.sirtrack.construct.lib.Containers.Container;
 

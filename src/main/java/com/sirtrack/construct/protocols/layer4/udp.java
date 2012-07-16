@@ -3,17 +3,16 @@
 */
 package com.sirtrack.construct.protocols.layer4;
 
-import static com.sirtrack.construct.Adapters.*;
-import static com.sirtrack.construct.Core.*;
-import static com.sirtrack.construct.Macros.*;
-import static com.sirtrack.construct.lib.Binary.*;
-import static com.sirtrack.construct.lib.Containers.*;
+import static com.sirtrack.construct.Adapters.ExprAdapter;
+import static com.sirtrack.construct.Core.Struct;
+import static com.sirtrack.construct.Core.Value;
+import static com.sirtrack.construct.Macros.UBInt16;
+import static com.sirtrack.construct.lib.Binary.byteArrayToHexString;
+import static com.sirtrack.construct.lib.Binary.hexStringToByteArray;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
-import com.sirtrack.construct.Core.AdapterDecoder;
-import com.sirtrack.construct.Core.AdapterEncoder;
+import com.sirtrack.construct.AdapterDecoder;
+import com.sirtrack.construct.AdapterEncoder;
+import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.ValueFunc;
 import com.sirtrack.construct.lib.Containers.Container;
 

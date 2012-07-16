@@ -1,12 +1,15 @@
 package com.sirtrack.construct;
 
-import com.sirtrack.construct.Core.*;
+import com.sirtrack.construct.lib.*;
+import com.sirtrack.construct.lib.Containers.*;
+
 import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.Macros.Field;
 import static com.sirtrack.construct.lib.Binary.*;
-import com.sirtrack.construct.Core.Adapter;
-import com.sirtrack.construct.lib.Containers.Container;
+import com.sirtrack.construct.Core.Construct;
+import com.sirtrack.construct.Core.Subconstruct;
 
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
@@ -42,7 +45,7 @@ public class Adapters
       super(string);
     }
   }
-  
+
   /**
   """
   Adapter for bit-integers (converts bitstrings to integers, and vice versa).

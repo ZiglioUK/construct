@@ -1,14 +1,12 @@
 package com.sirtrack.construct.lib;
 
-import java.io.ByteArrayOutputStream;
-import java.nio.BufferUnderflowException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.sirtrack.construct.Core.ValueError;
 import static com.sirtrack.construct.Core._read_stream;
 import static com.sirtrack.construct.lib.Binary.encode_bin;
+
+import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
+
+import com.sirtrack.construct.Core.ValueError;
 
 public class BitStream {
 

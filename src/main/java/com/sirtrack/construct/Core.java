@@ -405,48 +405,6 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
 
 	
 /*
-#===============================================================================
-# arrays and repeaters
-#===============================================================================
- */
-
-	public static interface AdapterEncoder{
-		public Object encode(Object obj, Container context);
-	}
-	
-	public static interface AdapterDecoder{
-		public Object decode(Object obj, Container context);
-  }
-
-	/**
-   * """ Abstract adapter: calls _decode for parsing and _encode for building. """
-   * 
-   */
-  public static abstract class Adapter extends Subconstruct implements AdapterEncoder, AdapterDecoder {
-  	/**
-  	 * @param name
-  	 * @param subcon
-  	 *          the construct to wrap
-  	 */
-  	public Adapter(Construct subcon) {
-  		super(subcon);
-  	}
-  
-  	@Override
-  	public Object _parse( ByteBufferWrapper stream, Container context) {
-  		return decode(subcon._parse( stream, context ), context);
-  	}
-  
-  	public void _build(Object obj, ByteArrayOutputStream stream, Container context) {
-  		subcon._build(encode(obj, context), stream, context);
-  	}
-  
-  	abstract public Object decode(Object obj, Container context);
-  	abstract public Object encode(Object obj, Container context);
-
-  }
-
-/*
  * ===============================================================================
  * * Fields
  * ===============================================================================

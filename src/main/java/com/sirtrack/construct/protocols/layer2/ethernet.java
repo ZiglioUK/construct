@@ -8,6 +8,8 @@ import static com.sirtrack.construct.lib.Containers.*;
 
 import java.util.Arrays;
 
+import com.sirtrack.construct.Adapter;
+
 /**
  * Ethernet (TCP/IP protocol stack) 
 */

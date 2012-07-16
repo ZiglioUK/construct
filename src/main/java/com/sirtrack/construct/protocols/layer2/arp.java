@@ -1,14 +1,21 @@
 package com.sirtrack.construct.protocols.layer2;
 
-import static com.sirtrack.construct.Adapters.*;
-import static com.sirtrack.construct.Core.*;
-import static com.sirtrack.construct.Macros.*;
-import static com.sirtrack.construct.lib.Binary.*;
-import static com.sirtrack.construct.lib.Containers.*;
+import static com.sirtrack.construct.Adapters.IpAddressAdapter;
+import static com.sirtrack.construct.Core.Equals;
+import static com.sirtrack.construct.Core.LengthField;
+import static com.sirtrack.construct.Core.Struct;
+import static com.sirtrack.construct.Macros.Enum;
+import static com.sirtrack.construct.Macros.Field;
+import static com.sirtrack.construct.Macros.IfThenElse;
+import static com.sirtrack.construct.Macros.Rename;
+import static com.sirtrack.construct.Macros.UBInt16;
+import static com.sirtrack.construct.Macros.UBInt8;
+import static com.sirtrack.construct.lib.Binary.byteArrayToHexString;
+import static com.sirtrack.construct.lib.Binary.hexStringToByteArray;
 import static com.sirtrack.construct.protocols.layer2.ethernet.MacAddressAdapter;
 
-import com.sirtrack.construct.Core.Adapter;
-import com.sirtrack.construct.Core.KeyFunc;
+import com.sirtrack.construct.Core.Construct;
+import com.sirtrack.construct.Core.Switch;
 import com.sirtrack.construct.lib.Containers.Container;
 
 /**

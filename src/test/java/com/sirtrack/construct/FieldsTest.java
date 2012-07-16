@@ -1,19 +1,24 @@
 package com.sirtrack.construct;
 
-import static com.sirtrack.construct.Core.*;
-import static com.sirtrack.construct.Macros.*;
+import static com.sirtrack.construct.Core.ByteArray;
+import static com.sirtrack.construct.Macros.SBInt16;
+import static com.sirtrack.construct.Macros.SBInt32;
+import static com.sirtrack.construct.Macros.SBInt8;
+import static com.sirtrack.construct.Macros.SLInt16;
+import static com.sirtrack.construct.Macros.SLInt32;
+import static com.sirtrack.construct.Macros.SLInt8;
+import static com.sirtrack.construct.Macros.UBInt16;
+import static com.sirtrack.construct.Macros.UBInt32;
+import static com.sirtrack.construct.Macros.UBInt8;
+import static com.sirtrack.construct.Macros.ULInt16;
+import static com.sirtrack.construct.Macros.ULInt32;
+import static com.sirtrack.construct.Macros.ULInt8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
-import com.sirtrack.construct.Adapters.MappingError;
-import com.sirtrack.construct.Core.Adapter;
-import com.sirtrack.construct.Core.Construct;
-import com.sirtrack.construct.Core.KeyFunc;
-import com.sirtrack.construct.lib.Containers.Container;
+import com.sirtrack.construct.Core.FormatField;
 
 
 

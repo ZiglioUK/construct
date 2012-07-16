@@ -4,10 +4,21 @@ package com.sirtrack.construct;
 //from construct import Container, Byte
 //from construct import FieldError, SizeofError
 
-import static com.sirtrack.construct.Adapters.LengthValueAdapter;
-import static com.sirtrack.construct.Core.*;
-import static com.sirtrack.construct.Macros.*;
-import static org.junit.Assert.*;
+import static com.sirtrack.construct.Core.ByteArray;
+import static com.sirtrack.construct.Core.Container;
+import static com.sirtrack.construct.Core.Pass;
+import static com.sirtrack.construct.Core.Struct;
+import static com.sirtrack.construct.Macros.Array;
+import static com.sirtrack.construct.Macros.BitStruct;
+import static com.sirtrack.construct.Macros.Bits;
+import static com.sirtrack.construct.Macros.Bitwise;
+import static com.sirtrack.construct.Macros.Enum;
+import static com.sirtrack.construct.Macros.Field;
+import static com.sirtrack.construct.Macros.IfThenElse;
+import static com.sirtrack.construct.Macros.PrefixedArray;
+import static com.sirtrack.construct.Macros.UBInt16;
+import static com.sirtrack.construct.Macros.UBInt8;
+import static com.sirtrack.construct.lib.Containers.ListContainer;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -16,12 +27,13 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.sirtrack.construct.Adapters.MappingError;
-import com.sirtrack.construct.Core.Adapter;
+import com.sirtrack.construct.Core.ArrayError;
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.CountFunc;
 import com.sirtrack.construct.Core.KeyFunc;
+import com.sirtrack.construct.Core.LengthFunc;
+import com.sirtrack.construct.Core.Switch;
 import com.sirtrack.construct.lib.Containers.Container;
-import static com.sirtrack.construct.lib.Containers.*;
 
 public class MacrosTest  
 {
