@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.sirtrack</groupId>
   <artifactId>javaconstruct</artifactId>
-  <version>1.1.2</version>
+  <version>1.1.3-SNAPSHOT</version>
   <name>Java Construct</name>
   <description>A Java version of "Construct" a python library for parsing and building of binary data structures </description>
   <organization>
