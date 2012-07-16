@@ -573,22 +573,24 @@ static public class CRC extends Subconstruct {
 		Container c = (Container)(subcon._parse(new ByteBufferWrapper().wrap( data ), context));
 		
 		int crcval;
-		if( crcfield != null )
+		String name;
+		if( crcfield != null ){
 			crcval = (Integer) crcfield._parse(stream, context);
-		else
+			name = crcfield.name;
+		}
+		else{
 			crcval = (Integer) this.keyfunc.get(c);
-
+			name = keyfunc.key;
+		}
+		
 		boolean crccheck = crcfunc.check(data, crcval);
 
 		// set CRC value to true/false
-		if( crcfield != null )
-			c.set(crcfield.name, crccheck); 
-		else
-			c.set(keyfunc.key, crccheck); 
+		c.set(name, crccheck); 
 
 	  // also return invalid data
 		if(!crccheck) {
-			c.set( keyfunc.key + " data", data ); 	
+			c.set( name + "_data", data ); 	
 		}
 		return c;
 	}
