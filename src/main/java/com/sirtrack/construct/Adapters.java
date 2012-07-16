@@ -1,8 +1,11 @@
 package com.sirtrack.construct;
 
+import com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.Macros.Field;
 import static com.sirtrack.construct.lib.Binary.*;
+import com.sirtrack.construct.Core.Adapter;
+import com.sirtrack.construct.lib.Containers.Container;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -10,10 +13,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.sirtrack.construct.Core.Adapter;
-import com.sirtrack.construct.Core.Construct;
-import com.sirtrack.construct.lib.Containers.Container;
 
 
 public class Adapters
