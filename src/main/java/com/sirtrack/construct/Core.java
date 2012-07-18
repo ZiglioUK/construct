@@ -303,12 +303,23 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
 			return (T)parse_stream( new ByteBufferWrapper().wrap( text.getBytes() ));
 		}
 
+    /**
+     * Parse an in-memory buffer.
+     * Also accepts a context, useful for passing initial values 
+     * @param data
+     * @param context
+     * @return
+     */
+    public <T>T parse( byte[] data, Container context ) {
+      return (T)_parse( new ByteBufferWrapper().wrap( data ), context );
+    }
+		
 		/**
 		 * Parse a stream.
 		 * 
 		 * Files, pipes, sockets, and other streaming sources of data are handled by this method.
 		 */
-		public Object parse_stream( ByteBufferWrapper stream) {
+		public Object parse_stream( ByteBufferWrapper stream ) {
 			return _parse(stream, new Container());
 		}
 
@@ -320,7 +331,7 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
 		 * @param obj
 		 * @return
 		 */
-		public byte[] build( Object obj) {
+		public byte[] build( Object obj ) {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			build_stream(obj, stream);
 
