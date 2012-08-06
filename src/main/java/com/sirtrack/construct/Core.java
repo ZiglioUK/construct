@@ -2,7 +2,6 @@ package com.sirtrack.construct;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -12,7 +11,6 @@ import com.sirtrack.construct.lib.BitStream.BitStreamReader;
 import com.sirtrack.construct.lib.BitStream.BitStreamWriter;
 import com.sirtrack.construct.lib.Containers.Container;
 
-import static com.sirtrack.construct.Macros.Field;
 import static com.sirtrack.construct.lib.Containers.*;
 
 public class Core {
@@ -175,7 +173,7 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
   For example, if FLAG_COPY_CONTEXT is set, repeaters will pass a copy of
   the context for each iteration, which is necessary for OnDemand parsing.
 */
-	static public abstract class Construct {
+	static public abstract class Construct<A extends Construct<A>> {
 		
     public static final int FLAG_COPY_CONTEXT          = 0x0001;
     public static final int FLAG_DYNAMIC               = 0x0002;
@@ -469,7 +467,7 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
   	/**
   	 * @param name
   	 *          name of the field
-  	 * @param endianness
+  	 * @char endianity
   	 *          : format endianness string; one of "<", ">", or "="
   	 * @param format
   	 *          : a single format character
@@ -615,12 +613,9 @@ public static class MetaArray extends Subconstruct{
 	
 	/**
     Parameters:
-    * countfunc - a function that takes the context as a parameter and returns
-      the number of elements of the array (count)
-    * subcon - the subcon to repeat `countfunc()` times
-	 * @param length
-	 * @param name
-	 * @param subcon
+     * @param countfunc a function that takes the context as a parameter and returns
+    the number of elements of the array (count)
+	 * @param subcon the subcon to repeat `countfunc()` times
 	 */
 	protected MetaArray( CountFunc countfunc, Construct subcon) {
 	  	super(subcon);
@@ -918,9 +913,6 @@ public static class Range extends Subconstruct{
 	/**
 	 * @param name the name of the structure
 	 * @param subcons a sequence of subconstructs that make up this structure.
-	 * @param nested: a keyword-only argument that indicates whether this struct
-      creates a nested context. The default is True. This parameter is
-      considered "advanced usage", and may be removed in the future.
 	 * @return A sequence of unnamed constructs. The elements are parsed and built in the
     order they are defined.
     See also Embedded.
@@ -1491,8 +1483,6 @@ class OnDemand(Subconstruct):
 	/**
 	 * @param name the new name
 	 * @param subcon the subcon to reconfigure
-	 * @param setflags the flags to set (default is 0)
-	 * @param clearflags the flags to clear (default is 0)
 	 */
 	static public Reconfig Reconfig(String name, Construct subcon ) {
 		return new Reconfig(name, subcon);
