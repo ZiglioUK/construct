@@ -31,6 +31,10 @@ public class Core {
     public FieldError(String string) {
       super(string);
     }
+
+    public FieldError(String string, Exception e) {
+      super(string, e);
+    }
   }
   public static class SizeofError extends ConstructError {
     public SizeofError(String string) {
@@ -490,7 +494,7 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
   		try {
   			return packer.unpack(stream.bb);
   		} catch (Exception e) {
-  			throw new FieldError(e.getMessage());
+  			throw new FieldError(e.getMessage(), e);
   		}
   	}
   
