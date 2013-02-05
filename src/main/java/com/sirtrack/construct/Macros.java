@@ -568,7 +568,7 @@ static public class CRC extends Subconstruct {
 
 	@Override
 	public Object _parse(ByteBufferWrapper stream, Container context) {
-		byte[] data = _read_stream(stream, _sizeof(context));
+		byte[] data = _read_stream(stream, subcon._sizeof(context));
 		Container c = (Container)(subcon._parse(new ByteBufferWrapper().wrap( data ), context));
 		
 		int crcval;
@@ -635,7 +635,12 @@ static public class CRC extends Subconstruct {
 	
 	@Override
 	protected int _sizeof(Container context) {
-		return subcon.sizeof(context);
+	  int size = subcon.sizeof(context);
+	  if( this.crcfield != null ){
+	    size += this.crcfield.sizeof();
+	  }
+	    
+		return size;
 	}
 }
 
