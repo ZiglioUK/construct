@@ -34,12 +34,12 @@ public class CoreTest
   public void testStaticField() {
     StaticField sf = new StaticField("staticfield", 2);
     
-    assertArrayEquals( "ab".getBytes(), (byte[])sf.parse("ab") );
+    assertArrayEquals( ByteArray(0xab, 0xcd), (byte[])sf.parse("abcd") );
 
     assertArrayEquals( ByteArray( 'a','b' ), sf.build("ab") );
 
     exception.expect( FieldError.class );
-    sf.parse("a");
+    sf.parse("ab");
 
     exception.expect( FieldError.class );
     sf.build("a");
@@ -69,13 +69,13 @@ public class CoreTest
   public void testMetaField(){
   	MetaField mf = MetaField("metafield", new LengthFunc(){
   		public int length(Container context){
-  			return 3;
+  			return 2;
   		}
   	});
 
-  	assertArrayEquals( "abc".getBytes(), (byte[])mf.parse("abc") );
-    assertArrayEquals( ByteArray('a','b','c'), mf.build("abc") );
-    assertEquals( 3, mf.sizeof());
+  	assertArrayEquals( ByteArray(0xab, 0xcd), (byte[])mf.parse("abcd") );
+    assertArrayEquals( ByteArray('a','b'), mf.build("ab") );
+    assertEquals( 2, mf.sizeof());
     
     exception.expect( FieldError.class );
   	mf.build("ab");

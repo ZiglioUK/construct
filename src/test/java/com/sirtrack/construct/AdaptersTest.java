@@ -109,10 +109,10 @@ public class AdaptersTest
 
   @Test
   public void PaddingAdapterTest(){
-  	assertArrayEquals( "abcd".getBytes(), (byte[])PaddingAdapter( Field("paddingadapter", 4) ).parse("abcd"));
+  	assertArrayEquals( ByteArray(0xab, 0xcd), (byte[])PaddingAdapter( Field("paddingadapter", 2) ).parse("abcd"));
 
     exception.expect( PaddingError.class );
-  	assertArrayEquals( "abcd".getBytes(), (byte[])PaddingAdapter( Field("paddingadapter", 4), (byte)0x00, true ).parse("abcd"));
+  	assertArrayEquals( ByteArray(0xab, 0xcd), (byte[])PaddingAdapter( Field("paddingadapter", 2), (byte)0x00, true ).parse("abcd"));
 
   	assertArrayEquals( ByteArray(0,0,0,0), (byte[])PaddingAdapter( Field("paddingadapter", 4), (byte)0x00, true ).parse( ByteArray(0,0,0,0)));
 
