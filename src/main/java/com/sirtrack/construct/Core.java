@@ -13,6 +13,7 @@ import com.sirtrack.construct.lib.BitStream.BitStreamWriter;
 import com.sirtrack.construct.lib.Containers.Container;
 
 import static com.sirtrack.construct.Macros.Field;
+import static com.sirtrack.construct.lib.Binary.hexStringToByteArray;
 import static com.sirtrack.construct.lib.Containers.*;
 
 public class Core {
@@ -303,8 +304,13 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
 			return (T)parse_stream( new ByteBufferWrapper().wrap( data ));
 		}
 
-		public <T>T parse(String text) {
-			return (T)parse_stream( new ByteBufferWrapper().wrap( text.getBytes() ));
+		/**
+		 * @param hex a string representation of hex bytes: 65535 = "FFFF"
+		 * @return
+		 */
+		public <T>T parse(String hex) {
+	    byte[] data = hexStringToByteArray(hex); 
+			return (T)parse( data );
 		}
 
     /**

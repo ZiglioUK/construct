@@ -10,6 +10,7 @@ import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.CountFunc;
 import com.sirtrack.construct.Core.KeyFunc;
 import com.sirtrack.construct.Core.StaticField;
+import com.sirtrack.construct.Core.Struct;
 import com.sirtrack.construct.Core.Subconstruct;
 import com.sirtrack.construct.Core.ValueFunc;
 import com.sirtrack.construct.lib.BitStream.BitStreamReader;
@@ -710,12 +711,21 @@ static public Construct BitStruct( String name, Construct... subcons ){
 */
 
 /**
+ * A Struct with no name
+ * @param subcons
+ * @return
+ */
+static public Construct EmbeddedStruct(Construct... subcons){
+    return Embedded( Struct( null, subcons ));
+}
+
+/**
  * an embedded BitStruct. no name is necessary.
  * @param subcons the subcons that make up this structure
  * @return
  */
 static public Construct EmbeddedBitStruct(Construct... subcons){
-  return Bitwise(Embedded(Struct( null, subcons)));
+  return Bitwise(EmbeddedStruct(subcons));
 }
 /*
 #===============================================================================
