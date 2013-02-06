@@ -49,8 +49,7 @@ public class ipv4 {
 
   public static Construct ipv4_header = Struct( "ip_header",
    
-    Embedded( CRC( Struct( "ip_header1", 
-     
+    CRC( EmbeddedStruct(  
         EmbeddedBitStruct( 
           Const( Nibble("version"), 4 ),
         
@@ -106,7 +105,7 @@ public class ipv4 {
       KeyVal("checksum"), 
       
       CRC16
-    )),
+    ),
 
     Field("options", new LengthFunc() {
       public int length(Container context) {
