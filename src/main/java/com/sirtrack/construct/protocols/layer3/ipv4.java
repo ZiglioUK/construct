@@ -117,14 +117,6 @@ public class ipv4 {
 
   static byte[] cap = hexStringToByteArray("4500003ca0e3000080116185c0a80205d474a126");
 
-  @Test
-  public void CRCTest() {
-    Container c = ipv4_header.parse(cap);
-    assertTrue((Boolean) c.get("checksum"));
-    byte[] ba = ipv4_header.build(c);
-    assertArrayEquals(cap, ba);
-  }
-
   public static void main(String[] args) {
     Container c = ipv4_header.parse(cap);
     System.out.println(c);
