@@ -37,7 +37,7 @@ public class AdaptersTest
     assertEquals( -1, ba.parse( ByteArray(1,1,1,1,1,1,1,1) ));
 
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8, true, false, 4 );
-    assertEquals( 0x0f, ba.parse( ByteArray(1,1,1,1,0,0,0,0) ));
+    assertEquals( 0x0d, ba.parse( ByteArray(1,1,0,1,0,0,0,0) ));
 
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8 );
     assertArrayEquals( ByteArray(1,1,1,1,1,1,1,1), ba.build(255) );
@@ -46,7 +46,7 @@ public class AdaptersTest
     assertArrayEquals( ByteArray(1,1,1,1,1,1,1,1), ba.build(-1) );
 
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8, true, false, 4 );
-    assertArrayEquals( ByteArray(1,1,1,1,0,0,0,0), ba.build(0x0f) );
+    assertArrayEquals( ByteArray(1,1,0,1,0,0,0,0), ba.build(0x0d) );
 
     exception.expect( BitIntegerError.class );
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8 );
