@@ -187,7 +187,7 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
     public static final int FLAG_EMBED                 = 0x0004;
     public static final int FLAG_NESTING               = 0x0008;
 		
-		int conflags;
+		protected int conflags;
 		public String name;
 
 		public Construct(String name) {
@@ -840,7 +840,7 @@ public static class Range extends Subconstruct{
 	}
 	static public class Struct extends Construct{
 		public boolean nested = true;
-		Construct[] subcons;
+		protected Construct[] subcons;
 		/**
 		 * @param name the name of the structure
 		 * @param subcons a sequence of subconstructs that make up this structure.
