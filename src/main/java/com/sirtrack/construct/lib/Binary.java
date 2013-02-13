@@ -12,7 +12,7 @@ import com.sirtrack.construct.lib.*;
  */
 public class Binary {
 
-	static byte[][] _char_to_bin = new byte[256][8];
+	public static final byte[][] _char_to_bin = new byte[256][8];
 	static{
 		for( int i = 0; i<256; i++)
 		{

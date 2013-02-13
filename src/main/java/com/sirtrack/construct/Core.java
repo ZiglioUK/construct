@@ -1249,9 +1249,9 @@ public static class Switch extends Construct{
     )
 	 */
 	static public class Buffered extends Subconstruct{
-		Encoder encoder;
-		Decoder decoder;
-		Resizer resizer;
+	  public Encoder encoder;
+	  public Decoder decoder;
+	  public Resizer resizer;
 		/**
       Creates an in-memory buffered stream, which can undergo encoding and
       decoding prior to being passed on to the subconstruct.
