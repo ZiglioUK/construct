@@ -323,7 +323,12 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
     public <T>T parse( byte[] data, Container context ) {
       return (T)_parse( new ByteBufferWrapper().wrap( data ), context );
     }
-		
+
+    public <T>T parse( String hex, Container context ) {
+      byte[] data = hexStringToByteArray(hex); 
+      return (T)_parse( new ByteBufferWrapper().wrap( data ), context );
+    }
+
 		/**
 		 * Parse a stream.
 		 * 
