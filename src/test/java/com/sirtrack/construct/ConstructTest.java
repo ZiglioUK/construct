@@ -81,7 +81,38 @@ public class ConstructTest
   	  ba = struct.build( Container( "a", 1, "b", 2, "c", 3, "d", 4 ));
   	  assertArrayEquals( ByteArray(1,0,2,3,4), ba );
   }
-  
+
+  @Test
+  public void sizeofTest() {
+      LengthFunc foo = new LengthFunc(){
+
+        @Override
+        public int length(Container ctx) {
+          return (Integer)((Container)ctx.get("_")).get("length") + (Integer)ctx.get("inner_length");
+        }   
+      };
+      
+      Struct pstring = Struct("pstring", 
+          UBInt8("length"),
+          Struct("inner",
+              UBInt8("inner_length"),
+              Field("data", foo)
+          )
+      );
+
+      Container obj = pstring.parse("03020A0B0C0D0E"); //"\x03\x02helloXXX"
+      // TODO I should really implement a ByteArray class with equals() and toString() methods
+//      assertEquals( (Container)obj, Container( "length", 3, "inner", Container( "inner_length", 2, "data", ByteArray(0xA,0xB,0xC,0xD,0xE))) ); 
+      assertEquals( 3, obj.get("length"));
+      Container inner = obj.get("inner");
+      assertEquals( 2, inner.get("inner_length"));
+      byte[] data = inner.get("data");
+      assertArrayEquals( ByteArray(0xA,0xB,0xC,0xD,0xE), data);
+      
+      int size = pstring._sizeof(Container("inner_length", 2, "_", Container("length", 3)));
+      assertEquals(7, size);
+  }
+
   @Test
   public void sequenceTest(){
   		Sequence s;

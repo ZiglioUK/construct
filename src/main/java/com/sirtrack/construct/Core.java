@@ -918,8 +918,8 @@ public static class Range extends Subconstruct{
 		@Override
     protected int _sizeof(Container context) {
         int sum = 0;
-				if( nested )
-            context = Container( "_", context );
+//				if( nested )
+//            context = Container( "_", context );
         
         for( Construct sc: subcons ){
         	sum += sc._sizeof(context);
