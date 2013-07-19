@@ -596,7 +596,7 @@ static public class CRC extends Subconstruct {
 	}
 	
 	@Override
-	protected void _build(Object obj, ByteArrayOutputStream stream, Container context) {
+	public void _build(Object obj, ByteArrayOutputStream stream, Container context) {
 		if( crcfield != null )
 			 _buildCrcField(obj, stream, context);
 		else
@@ -635,7 +635,7 @@ static public class CRC extends Subconstruct {
 	}
 	
 	@Override
-	protected int _sizeof(Container context) {
+	public int _sizeof(Container context) {
 	  int size = subcon.sizeof(context);
 	  if( this.crcfield != null ){
 	    size += this.crcfield.sizeof();

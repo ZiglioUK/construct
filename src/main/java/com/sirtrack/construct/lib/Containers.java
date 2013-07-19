@@ -49,7 +49,11 @@ public class Containers{
   	public void del( Object name ){
   		dict.remove( name );
   	}
-  	
+
+    public void clear(){
+      dict.clear();
+    }
+
   	public void set( Object name, Object value ){
   		dict.put( name, value);
   	}

@@ -187,7 +187,7 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
     public static final int FLAG_EMBED                 = 0x0004;
     public static final int FLAG_NESTING               = 0x0008;
 		
-		protected int conflags;
+		public int conflags;
 		public String name;
 
 		public Construct(String name) {
@@ -211,7 +211,7 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
         Set the given flag or flags.
 		 * @param flag flag to set; may be OR'd combination of flags
 		 */
-		protected void _set_flag(int flag){
+		void _set_flag(int flag){
 			conflags |= flag;
 		}
 		
@@ -219,12 +219,12 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
         Clear the given flag or flags.
 		 * @param flag flag to clear; may be OR'd combination of flags
 		 */
-		protected void _clear_flag( int flag ){
+		public void _clear_flag( int flag ){
 			conflags &= ~flag;
 		}
 		
 		/**Pull flags from subconstructs.*/
-		protected void _inherit_flags( Construct... subcons ){
+		public void _inherit_flags( Construct... subcons ){
 			for( Construct sc : subcons ){
 				_set_flag(sc.conflags);
 			}
@@ -235,7 +235,7 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
 		 * @param flag flag to check
 		 * @return
 		 */
-		protected boolean _is_flag( int flag ){
+		boolean _is_flag( int flag ){
 			return (conflags & flag) == flag;
 		}
 
@@ -363,9 +363,9 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
 			_build(obj, stream, new Container());
 		}
 
-		// abstract void _build( String obj, OutputStream stream, Container
+		// abstract public void _build( String obj, OutputStream stream, Container
 		// context);
-		protected abstract void _build( Object obj, ByteArrayOutputStream stream, Container context);
+		public abstract void _build( Object obj, ByteArrayOutputStream stream, Container context);
 
 		/**
 		 * Calculate the size of this object, optionally using a context. Some constructs have no fixed size and can only know their size for a given hunk of data;
@@ -390,7 +390,7 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
 			return sizeof(null);
 		}
 
-		abstract protected int _sizeof(Container context);
+		public abstract int _sizeof(Container context);
 	}
 
 	/** 
@@ -398,7 +398,7 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
 	 */
 	public static abstract class Subconstruct extends Construct {
 
-		protected Construct subcon;
+		Construct subcon;
 
 		/**
 		 * @param subcon the construct to wrap
@@ -408,7 +408,7 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
 			this.subcon = subcon;
 		}
 
-		protected Subconstruct(String name, Construct subcon) {
+		Subconstruct(String name, Construct subcon) {
 			super(name, subcon.conflags);
 			this.subcon = subcon;
     }
@@ -419,12 +419,12 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
 		}
 
 		@Override
-		protected void _build( Object obj, ByteArrayOutputStream stream, Container context) {
+		public void _build( Object obj, ByteArrayOutputStream stream, Container context) {
 			subcon._build(obj, stream, context);
 		}
 
 		@Override
-		protected int _sizeof(Container context){
+		public int _sizeof(Container context){
 			return subcon._sizeof(context);
 		}
 	}
@@ -459,12 +459,12 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
   		}
   
   		@Override
-  		protected void _build( Object obj, ByteArrayOutputStream stream, Container context) {
+  		public void _build( Object obj, ByteArrayOutputStream stream, Container context) {
   			_write_stream(stream, length, obj);
   		}
   		
   		@Override
-      protected int _sizeof(Container context) {
+      public int _sizeof(Container context) {
   			return length;
       }
   
@@ -576,12 +576,12 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
     }
   
   	@Override
-    protected void _build(Object obj, ByteArrayOutputStream stream, Container context) {
+    public void _build(Object obj, ByteArrayOutputStream stream, Container context) {
   		_write_stream(stream, lengthfunc.length(context), obj);
     }
   
   	@Override
-    protected int _sizeof(Container context) {
+    public int _sizeof(Container context) {
       return lengthfunc.length(context);
     }
   	
@@ -637,7 +637,7 @@ public static class MetaArray extends Subconstruct{
 	 * @param name
 	 * @param subcon
 	 */
-	protected MetaArray( CountFunc countfunc, Construct subcon) {
+	MetaArray( CountFunc countfunc, Construct subcon) {
 	  	super(subcon);
       this.countfunc = countfunc;
       _clear_flag(FLAG_COPY_CONTEXT);
@@ -670,7 +670,7 @@ public static class MetaArray extends Subconstruct{
 	}
 
 	@Override
-	protected void _build( Object object, ByteArrayOutputStream stream, Container context) {
+	public void _build( Object object, ByteArrayOutputStream stream, Container context) {
 		
 		List<Object> obj = (List<Object>)object;
 
@@ -693,7 +693,7 @@ public static class MetaArray extends Subconstruct{
 	}
 		
 	@Override
-	protected int _sizeof(Container context){
+	public int _sizeof(Container context){
     return subcon._sizeof(context) * countfunc.count(context);
 	}
 		
@@ -788,7 +788,7 @@ public static class Range extends Subconstruct{
 	}
 
 	@Override
-	protected void _build( Object object, ByteArrayOutputStream stream, Container context) {
+	public void _build( Object object, ByteArrayOutputStream stream, Container context) {
 
 		if( !(object instanceof List ))
 			throw new TypeError( "Expected object array" );
@@ -817,7 +817,7 @@ public static class Range extends Subconstruct{
 	}
 
 	@Override
-	protected int _sizeof(Container context){
+	public int _sizeof(Container context){
     throw new SizeofError("can't calculate size");
 	}
 	
@@ -845,7 +845,7 @@ public static class Range extends Subconstruct{
 	}
 	static public class Struct extends Construct{
 		public boolean nested = true;
-		protected Construct[] subcons;
+		Construct[] subcons;
 		/**
 		 * @param name the name of the structure
 		 * @param subcons a sequence of subconstructs that make up this structure.
@@ -887,7 +887,7 @@ public static class Range extends Subconstruct{
     }
 
 		@Override
-    protected void _build( Object obj, ByteArrayOutputStream stream, Container context ) {
+    public void _build( Object obj, ByteArrayOutputStream stream, Container context ) {
 			if( context.contains("<unnested>")){
 				context.del("<unnested>");
 			} else if( nested ){
@@ -916,7 +916,7 @@ public static class Range extends Subconstruct{
     }
 
 		@Override
-    protected int _sizeof(Container context) {
+    public int _sizeof(Container context) {
         int sum = 0;
 //				if( nested )
 //            context = Container( "_", context );
@@ -986,7 +986,7 @@ public static class Range extends Subconstruct{
 		}
 
 		@Override
-    protected void _build( Object obj, ByteArrayOutputStream stream, Container context ) {
+    public void _build( Object obj, ByteArrayOutputStream stream, Container context ) {
       if( context.contains("<unnested>")) {
         context.del("<unnested>");
       }
@@ -1032,13 +1032,13 @@ public static class Range extends Subconstruct{
       }
 
 			@Override
-      protected void _build(Object obj, ByteArrayOutputStream stream, com.sirtrack.construct.lib.Containers.Container context) {
+      public void _build(Object obj, ByteArrayOutputStream stream, com.sirtrack.construct.lib.Containers.Container context) {
 				throw new SwitchError("no default case defined");
 	      
       }
 
 			@Override
-      protected int _sizeof(com.sirtrack.construct.lib.Containers.Container context) {
+      public int _sizeof(com.sirtrack.construct.lib.Containers.Container context) {
 				throw new SwitchError("no default case defined");
       }
 	};
@@ -1205,7 +1205,7 @@ public static class Switch extends Construct{
   }
 
 	@Override
-  protected void _build(Object obj, ByteArrayOutputStream stream, Container context) {
+  public void _build(Object obj, ByteArrayOutputStream stream, Container context) {
 		Object key;
 		if( include_key ){
 			List list = (List)obj;
@@ -1227,7 +1227,7 @@ public static class Switch extends Construct{
  */
 	}
 	@Override
-  protected int _sizeof( Container context) {
+  public int _sizeof( Container context) {
 		Construct casestruct = cases.get(keyfunc.get( context ), defaultval);
 		return casestruct._sizeof(context);
   }
@@ -1286,7 +1286,7 @@ public static class Switch extends Construct{
 		}
 
 		@Override
-		protected void _build( Object obj, ByteArrayOutputStream stream, Container context) {
+		public void _build( Object obj, ByteArrayOutputStream stream, Container context) {
 			int size = _sizeof(context);
 			ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
 			subcon._build(obj, stream2, context);
@@ -1296,7 +1296,7 @@ public static class Switch extends Construct{
 			_write_stream(stream, size, data);
 		}
 		@Override
-    protected int _sizeof(Container context) {
+    public int _sizeof(Container context) {
 			return resizer.resize( subcon._sizeof(context));
     }
 	}
@@ -1364,14 +1364,14 @@ public static class Switch extends Construct{
 		}
 		
 		@Override
-		protected void _build( Object obj, ByteArrayOutputStream stream, Container context) {
+		public void _build( Object obj, ByteArrayOutputStream stream, Container context) {
 			ByteArrayOutputStream stream2 = stream_writer.init(stream);
       subcon._build(obj, stream2, context);
       stream_writer.close();
 		}
 
 		@Override
-    protected int _sizeof(Container context) {
+    public int _sizeof(Container context) {
 			return resizer.resize( subcon._sizeof(context));
     }
 	}
@@ -1584,12 +1584,12 @@ public static class Value extends Construct{
   }
 
 	@Override
-  protected void _build(Object obj, ByteArrayOutputStream stream, com.sirtrack.construct.lib.Containers.Container context) {
+  public void _build(Object obj, ByteArrayOutputStream stream, com.sirtrack.construct.lib.Containers.Container context) {
 	  context.set( name, func.get(context) );
   }
 
 	@Override
-  protected int _sizeof(com.sirtrack.construct.lib.Containers.Container context) {
+  public int _sizeof(com.sirtrack.construct.lib.Containers.Container context) {
 	  return 0;
   }
 	
@@ -1629,12 +1629,12 @@ public static class Value extends Construct{
     }
 
 		@Override
-    protected void _build(Object obj, ByteArrayOutputStream stream, Container context) {
+    public void _build(Object obj, ByteArrayOutputStream stream, Container context) {
 	    // assert obj is None
     }
 
 		@Override
-    protected int _sizeof(Container context) {
+    public int _sizeof(Container context) {
 	    return 0;
     }
 		
