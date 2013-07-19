@@ -1,176 +1,140 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.sirtrack</groupId>
-  <artifactId>javaconstruct</artifactId>
-  <version>1.1.3-SNAPSHOT</version>
-  <name>Java Construct</name>
-  <description>A Java version of "Construct" a python library for parsing and building of binary data structures </description>
-  <organization>
-  	<name>Sirtrack Ltd.</name>
-  	<url>http://www.sirtrack.com</url>
-  </organization>
-  <url>https://github.com/ZiglioNZ/construct</url>
-  <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>7</version>
-  </parent>  
-  <scm>
-  	<url>scm:git:git@github.com:ZiglioNZ/construct.git</url>
-  	<connection>scm:git:git@github.com:ZiglioNZ/construct.git</connection>
-  	<developerConnection>scm:git:git@github.com:ZiglioNZ/construct.git</developerConnection>
-  </scm>
-  
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
-        <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-          <verbose>true</verbose>
-        </configuration>
-      </plugin>    
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        </plugin>
-    
-      <!-- Check code style -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <configuration>
-          <consoleOutput>false</consoleOutput>
-          <outputFileFormat>plain</outputFileFormat>
-        </configuration>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.sirtrack</groupId>
+	<artifactId>javaconstruct</artifactId>
+	<version>1.1.3-SNAPSHOT</version>
+	<name>Java Construct</name>
+	<description>A Java version of "Construct" a python library for parsing and building of binary data structures </description>
+	<organization>
+		<name>Sirtrack Ltd.</name>
+		<url>http://www.sirtrack.com</url>
+	</organization>
+	<url>https://github.com/ZiglioNZ/construct</url>
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+	<scm>
+		<url>scm:git:git@github.com:ZiglioNZ/construct.git</url>
+		<connection>scm:git:git@github.com:ZiglioNZ/construct.git</connection>
+		<developerConnection>scm:git:git@github.com:ZiglioNZ/construct.git</developerConnection>
+	</scm>
 
-      </plugin>
-      <!-- Code analysis -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <configuration>
-          <format>txt</format>
-        </configuration>
-        <version>2.3</version>
-      </plugin>
+	<properties>
+		<maven.compiler.source>1.6</maven.compiler.source>
+		<maven.compiler.target>1.6</maven.compiler.target>
+		<encoding>UTF-8</encoding>
+		<scala.tools.version>2.10</scala.tools.version>
+		<scala.version>2.10.0</scala.version>
+	</properties>
 
-      <!-- Test cases -->
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-      
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>2.1.2</version>
+	<dependencies>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>${scala.version}</version>
+		</dependency>
+
+		<!-- Test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<!--scope>test</scope -->
+		</dependency>
+		<dependency>
+			<groupId>org.specs2</groupId>
+			<artifactId>specs2_${scala.tools.version}</artifactId>
+			<version>1.13</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.scalatest</groupId>
+			<artifactId>scalatest_${scala.tools.version}</artifactId>
+			<version>2.0.M6-SNAP8</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<!-->sourceDirectory>src/main/java</sourceDirectory>
+		<testSourceDirectory>src/test/java</testSourceDirectory-->
+
+		<plugins>
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+				<version>3.1.5</version>
 				<executions>
-				    <execution>
-				      <id>attach-sources</id>
-				      <goals>
-				        <goal>jar</goal>
-				      </goals>
-				    </execution>
-				  </executions>        
-      </plugin>      
-    
-    <plugin>
-		  <groupId>org.apache.maven.plugins</groupId>
-		  <artifactId>maven-javadoc-plugin</artifactId>
-		  <executions>
-		    <execution>
-		      <id>attach-javadocs</id>
-		      <goals>
-		        <goal>jar</goal>
-		      </goals>
-		    </execution>
-		  </executions>
-		</plugin>
-
-    </plugins>
-  </build>
-
-  <dependencies>
-    <!-- Test -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.8.1</version>
-      <!--scope>test</scope-->
-    </dependency>
-  </dependencies>
-
-  <reporting>
-    <plugins>
-      <!-- Code analysis -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <version>1.1.1</version>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>2.3</version>
-      </plugin>
-
-
-      <!-- Check the cobertura of the test cases -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>cobertura-maven-plugin</artifactId>
-        <version>2.2</version>
-      </plugin>
-
-
-      <plugin>
-        <!--  >groupId>org.apache.maven.plugins</groupId-->
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <show>private</show>
-          <source>1.5</source>
-          <aggregate>true</aggregate>
-
-          <!-- >doclet>
-            gr.spinellis.umlgraph.doclet.UmlGraphDoc
-            </doclet>
-            
-            <docletArtifact>
-            <groupId>gr.spinellis</groupId>
-            <artifactId>UmlGraph</artifactId>
-            <version>4.6</version>
-            </docletArtifact>
-            
-            <additionalparam>
-            -inferrel -inferdep -quiet -hide java.*
-            -collpackages java.util.* -qualify
-            -postfixpackage -nodefontsize 9
-            -nodefontpackagesize 7
-            
-            </additionalparam -->
-
-          <links>
-            <link>
-              http://java.sun.com/j2se/1.5.0/docs/api
-            </link>
-            <link>
-              http://commons.apache.org/dbcp/apidocs/
-            </link>
-
-          </links>
-
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
- 
+					<execution>
+						<id>compile</id>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<phase>compile</phase>
+					</execution>
+					<execution>
+						<id>test-compile</id>
+						<goals>
+							<goal>testCompile</goal>
+						</goals>
+						<phase>test-compile</phase>
+					</execution>
+					<execution>
+						<id>project-resources-execution</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.13</version>
+				<configuration>
+					<useFile>false</useFile>
+					<disableXmlReport>true</disableXmlReport>
+					<!-- If you have classpath issue like NoDefClassError,... -->
+					<!-- useManifestOnlyJar>false</useManifestOnlyJar -->
+					<includes>
+						<include>**/*Test.*</include>
+						<include>**/*Suite.*</include>
+					</includes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>
