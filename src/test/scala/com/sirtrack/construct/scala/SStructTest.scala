@@ -63,4 +63,36 @@ class SStructTest {
       ba = struct.build( C( "a", 1:Integer, "b", 2:Integer, "c", 3:Integer, "d", 4:Integer ))
       assertArrayEquals( ByteArray(1:Integer,0,2:Integer,3,4), ba )
   }
+
+  @Test
+  def sstructTest() {
+      var struct = new SStruct( "struct", UBInt8("a"), UBInt16("b") )
+      var ca = struct.parse( ByteArray(1,0,2) ) : Container
+      var cb = C( "a", 1:Integer, "b", 2:Integer )
+      assertTrue( ca.equals(cb) )
+
+      struct = SStruct( "struct", UBInt8("a"), UBInt16("b"), 
+               SStruct( "foo", UBInt8("c"), UBInt8("d") ))
+      ca = struct.parse( ByteArray(1,0,2,3,4) )
+      cb = C( "a",1:Integer, "b",2:Integer, "foo", C( "c",3: Integer,"d",4: Integer))
+      assertTrue( ca.equals(cb) )
+
+      struct = SStruct( "struct", UBInt8("a"), UBInt16("b"))
+      var ba = struct.build( C( "a", 1:Integer, "b", 2:Integer))
+      assertArrayEquals( ByteArray(1,0,2), ba )
+
+      var foo = SStruct( "foo", UBInt8("c"), UBInt8("d") )
+      struct = SStruct( "struct", UBInt8("a"), UBInt16("b"), foo )
+      ba = struct.build( C( "a",1:Integer, "b", 2:Integer, "foo", C("c", 3:Integer, "d",4:Integer)))
+      assertArrayEquals( ByteArray(1:Integer,0,2:Integer,3,4), ba )
+      
+      struct = SStruct( "struct", UBInt8("a"), UBInt16("b"), Embedded( SStruct("foo", UBInt8("c"), UBInt8("d"))))
+      ca = struct.parse( ByteArray(1:Integer,0,2:Integer,3,4) )
+      cb = C( "a", 1:Integer, "b", 2:Integer, "c", 3:Integer, "d", 4:Integer )
+      assertEquals( cb, ca )
+
+      struct = SStruct( "struct", UBInt8("a"), UBInt16("b"), Embedded( SStruct("foo", UBInt8("c"), UBInt8("d"))))
+      ba = struct.build( C( "a", 1:Integer, "b", 2:Integer, "c", 3:Integer, "d", 4:Integer ))
+      assertArrayEquals( ByteArray(1:Integer,0,2:Integer,3,4), ba )
+  }
 }

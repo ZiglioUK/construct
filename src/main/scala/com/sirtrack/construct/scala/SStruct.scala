@@ -119,5 +119,7 @@ import com.sirtrack.construct.Core._
     }
   } 
 
-object Core {
+object SStruct{
+  def apply( name: String, subcons: Construct* ) = new SStruct( name, subcons:_* )
 }
+
