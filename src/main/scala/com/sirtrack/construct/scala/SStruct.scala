@@ -1,25 +1,14 @@
-package com.sirtrack.construct.scalacore
+package com.sirtrack.construct.scala
 
-import com.sirtrack.construct.Core._
 import java.io.ByteArrayOutputStream
-import java.io.IOException
-import java.nio.ByteBuffer
-import java.util.ArrayList
-import java.util.List
-import java.util.ListIterator
-
-import com.sirtrack.construct.lib._
-import com.sirtrack.construct.lib.BitStream.BitStreamReader
-import com.sirtrack.construct.lib.BitStream.BitStreamWriter
-import com.sirtrack.construct.lib.Containers.Container
-
+import com.sirtrack.construct.Core._
 import com.sirtrack.construct.Core.Construct._
-
-//import com.sirtrack.construct.Macros.Field_
-import com.sirtrack.construct.lib.Binary.hexStringToByteArray
+import com.sirtrack.construct.lib._
+import com.sirtrack.construct.lib.Containers.Container
 import com.sirtrack.construct.lib.Containers._
+import com.sirtrack.construct.Core._
 
-object Core {
+
 /*
 * #===============================================================================
 * # structures and sequences
@@ -45,7 +34,7 @@ object Core {
      * @param name the name of the structure
      * @param subcons a sequence of subconstructs that make up this structure.
    */
- class scalaStruct( name: String, subcons: Construct* ) extends Construct(name) {
+  class SStruct( name: String, subcons: Construct* ) extends Construct(name) {
     var nested = true
 
       _inherit_flags(subcons.toArray : _*)
@@ -129,4 +118,6 @@ object Core {
         sum
     }
   } 
+
+object Core {
 }

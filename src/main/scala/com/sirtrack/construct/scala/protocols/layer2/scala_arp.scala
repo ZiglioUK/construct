@@ -1,15 +1,10 @@
-package com.sirtrack.construct.protocols.layer2
+package com.sirtrack.construct.scala.protocols.layer2
 
 import com.sirtrack.construct.Adapters.IpAddressAdapter
 import com.sirtrack.construct.Core.Equals
 import com.sirtrack.construct.Core.LengthField
 import com.sirtrack.construct.Core.Struct
-import com.sirtrack.construct.Macros.Enum
-import com.sirtrack.construct.Macros.Field
-import com.sirtrack.construct.Macros.IfThenElse
-import com.sirtrack.construct.Macros.Rename
-import com.sirtrack.construct.Macros.UBInt16
-import com.sirtrack.construct.Macros.UBInt8
+import com.sirtrack.construct.Macros._
 import com.sirtrack.construct.lib.Binary.byteArrayToHexString
 import com.sirtrack.construct.lib.Binary.hexStringToByteArray
 import com.sirtrack.construct.protocols.layer2.ethernet.MacAddressAdapter

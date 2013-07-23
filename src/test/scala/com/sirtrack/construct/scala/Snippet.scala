@@ -1,30 +1,23 @@
-package com.sirtrack.construct
+package com.sirtrack.construct.scala
 
 import com.sirtrack.construct.Adapters._
 import com.sirtrack.construct.Core._
 import com.sirtrack.construct.Macros._
 import com.sirtrack.construct.lib.Containers._
-import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
-
-import java.net.InetAddress
-import java.net.UnknownHostException
-
-import org.junit.Rule
+import com.sirtrack.construct.Pojo
 import org.junit.Test
-import org.junit.rules.ExpectedException
-
 import com.sirtrack.construct.Core.Container
 
-object Snippet {
+class Snippet {
   
   @Test 
   def BeanAdapterTest() {
-  	val p = new Pojo ( 100, 1 )
-//  	val c1 = Container( "id", 100, "val", 1 )
+  	val p = new Pojo( 100, 1 )
+  	val c1 = Container( "id", 100.asInstanceOf[Integer], "val", 1.asInstanceOf[Integer] )
   	
-//  	val adapter = BeanAdapter( Pojo , Pass )
-//  	assertEquals( p, adapter.decode( c1, null))
+  	val adapter = BeanAdapter( classOf[Pojo], Pass )
+  	assertEquals( p, adapter.decode( c1, null))
 //  	
 //  	val s1 =  Struct( "Pojo", UBInt8("id"), UBInt8( "val") )
 //  	assertEquals( c1, s1.parse(ByteArray( 100, 1 )) )
