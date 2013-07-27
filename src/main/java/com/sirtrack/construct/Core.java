@@ -105,7 +105,7 @@ static public byte[] ByteArray( byte[]... bas ){
 
   Containers are the common way to express parsed data.
  */
-static public Container Container( Object... pairs ){
+static public <T>Container Container( T... pairs ){
 	return new Container( pairs );
 }
   
@@ -182,10 +182,10 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
 */
 	static public abstract class Construct {
 		
-    public final int FLAG_COPY_CONTEXT          = 0x0001;
-    public final int FLAG_DYNAMIC               = 0x0002;
-    public final int FLAG_EMBED                 = 0x0004;
-    public final int FLAG_NESTING               = 0x0008;
+    public static final int FLAG_COPY_CONTEXT          = 0x0001;
+    public static final int FLAG_DYNAMIC               = 0x0002;
+    public static final int FLAG_EMBED                 = 0x0004;
+    public static final int FLAG_NESTING               = 0x0008;
 		
 		public int conflags;
 		public String name;
@@ -398,7 +398,7 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
 	 */
 	public static abstract class Subconstruct extends Construct {
 
-		Construct subcon;
+		public Construct subcon;
 
 		/**
 		 * @param subcon the construct to wrap

@@ -21,9 +21,9 @@ class SStructTest {
 //  case class Embedded( subcon: Construct ) extends Reconfig( subcon.name, subcon, subcon.FLAG_EMBED, 0 );
   
   object C{
-    implicit def javaToScalaInt(d: java.lang.Integer) = d.intValue
-    implicit def scalaToJavaInteger(d: Int ) = d.asInstanceOf[java.lang.Integer]
-    def apply(pairs: Any*) = new Container(pairs)
+//    implicit def javaToScalaInt(d: java.lang.Integer) = d.intValue
+//    implicit def scalaToJavaInteger(d: Int ) = d.asInstanceOf[java.lang.Integer]
+    def apply(pairs: Any*) = new Container(pairs:_*)
   } 
 
   @Test
@@ -92,22 +92,24 @@ class SStructTest {
  
 
   @Test
-  def caseClasssesSStructTest() {
+  def fieldSStructTest() {
     
   /*
       * @return unsigned, big endian 8-bit integer
       */
-      class UBInt8 extends FormatField(null, '>', 'B')
+      case class UBInt8 extends FormatField( "a", '>', 'B')
       /**
       * @return unsigned, big endian 16-bit integer
       */
-      class UBInt16 extends FormatField( null, '>', 'H' )
+      case class UBInt16 extends FormatField( "b", '>', 'H' )
     
-      case class CCStruct( a: UBInt8, b:UBInt16 ) extends SStruct(null, a, b)
-      
+//      struct = Struct( "struct", UBInt8("a"), UBInt16("b") );
 //      var ca = struct.parse( ByteArray(1,0,2) ) : Container
-//      var cb = C( "a", 1, "b", 2 )
-//      assertTrue( ca.equals(cb) )
+       val cb = C( "a", 1, "b", 2 )
+
+       case class ca( a: UBInt8, b:UBInt16 ) extends SStruct("ca", a, b)
+       assertTrue( ca( UBInt8(), UBInt16() ).parse(ByteArray(1,0,2)).equals(cb))
+      
 
 //      struct = SStruct( "struct", UBInt8("a"), UBInt16("b"), 
 //               SStruct( "foo", UBInt8("c"), UBInt8("d") ))
