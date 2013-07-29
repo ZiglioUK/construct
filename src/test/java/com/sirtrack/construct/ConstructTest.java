@@ -82,25 +82,6 @@ public class ConstructTest
   	  assertArrayEquals( ByteArray(1,0,2,3,4), ba );
   }
 
-  class UBInt8 extends FormatField{
-    public UBInt8(String name){
-      super (name, '>', 'B');
-    }
-  }
-  class UBInt16 extends FormatField{
-    public UBInt16(String name){
-      super (name, '>', 'H');
-    }
-  }
-
-  static class Struct1 extends Struct {
-    public UBInt8 a;
-    public UBInt16 b;
-
-    public Struct1(String name){
-      super(name);
-    }
-  }
 
   @Test
   public void fieldStructTest() {
@@ -108,6 +89,25 @@ public class ConstructTest
       Container ca, cb;
       byte[] ba;
       
+      class UBInt8 extends FormatField{
+        public UBInt8(String name){
+          super (name, '>', 'B');
+        }
+      }
+      class UBInt16 extends FormatField{
+        public UBInt16(String name){
+          super (name, '>', 'H');
+        }
+      }
+
+      class Struct1 extends Struct {
+        public UBInt8 a;
+        public UBInt16 b;
+
+        public Struct1(String name){
+          super(name);
+        }
+      }
       
       Struct1 struct = new Struct1("struct");
 //      struct = Struct( "struct", UBInt8("a"), UBInt16("b") );
@@ -118,6 +118,9 @@ public class ConstructTest
       cb = Container( "a", 1, "b", 2 );
       assertTrue( ca.equals(cb) );
 
+      assertEquals( 1, struct.a.get() );
+      assertEquals( 2, struct.b.get() );
+      
 //      struct = Struct( "struct", UBInt8("a"), UBInt16("b"), 
 //                        Struct( "foo", UBInt8("c"), UBInt8("d") ));
 //      ca = struct.parse( ByteArray(1,0,2,3,4) );

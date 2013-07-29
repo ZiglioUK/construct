@@ -191,7 +191,8 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
 		
 		public int conflags;
 		public String name;
-
+		public Object val;
+		
 		public Construct(String name) {
 			this( name, 0 );
 		}
@@ -207,8 +208,13 @@ public static byte[] _read_stream( ByteBufferWrapper stream, int length) {
 		
 		@Override
 		public String toString(){
-			return getClass().getName() + "(" + name + ")";
+			return getClass().getName() + "(" + name + "): " + val;
 		}
+		
+    public Object get(){
+      return val;
+    }
+		
 		/**
         Set the given flag or flags.
 		 * @param flag flag to set; may be OR'd combination of flags
@@ -873,10 +879,13 @@ public static class Range extends Subconstruct{
           try{
 //          Constructor ctor = clazz.getDeclaredConstructor(String.class);
           Constructor ctor = clazz.getConstructors()[0];
-          Construct inst = ctor.getParameterTypes().length>1?  
-              (Construct) ctor.newInstance(null, fname)
-             :(Construct) ctor.newInstance(fname);
-              
+          Construct inst;
+          switch(ctor.getParameterTypes().length){  
+            case 2: inst = (Construct) ctor.newInstance(null, fname); break;
+            case 1: inst = (Construct) ctor.newInstance(fname); break;
+            case 0: inst = (Construct) ctor.newInstance(); break;
+            default: throw new Exception("No default case: " + ctor );
+          }
           field.set( this, inst );
           subconf.add(inst);
         }
@@ -888,6 +897,10 @@ public static class Range extends Subconstruct{
       _clear_flag(FLAG_EMBED);
     }
 
+    public Struct() {
+      this((String)null);
+    }
+    
 		@Override
 		public Object _parse( ByteBufferWrapper stream, Container context) {
 			
@@ -907,10 +920,10 @@ public static class Range extends Subconstruct{
 					context.set("<obj>", obj);
 					sc._parse(stream, context);
 				} else {
-				  Object subobj = sc._parse(stream, context);
+				  sc.val = sc._parse(stream, context);
 					if( sc.name != null ){
-						obj.set( sc.name, subobj );
-						context.set( sc.name, subobj );
+						obj.set( sc.name, sc.val );
+						context.set( sc.name, sc.val );
 					}
 				}
 			}
