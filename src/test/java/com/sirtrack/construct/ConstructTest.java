@@ -82,6 +82,67 @@ public class ConstructTest
   	  assertArrayEquals( ByteArray(1,0,2,3,4), ba );
   }
 
+  class UBInt8 extends FormatField{
+    public UBInt8(String name){
+      super (name, '>', 'B');
+    }
+  }
+  class UBInt16 extends FormatField{
+    public UBInt16(String name){
+      super (name, '>', 'H');
+    }
+  }
+
+  static class Struct1 extends Struct {
+    public UBInt8 a;
+    public UBInt16 b;
+
+    public Struct1(String name){
+      super(name);
+    }
+  }
+
+  @Test
+  public void fieldStructTest() {
+//      Struct struct, foo;
+      Container ca, cb;
+      byte[] ba;
+      
+      
+      Struct1 struct = new Struct1("struct");
+//      struct = Struct( "struct", UBInt8("a"), UBInt16("b") );
+      assertEquals( "a", struct.a.name );
+      assertEquals( "b", struct.b.name );
+      
+      ca = struct.parse( ByteArray(1,0,2) );
+      cb = Container( "a", 1, "b", 2 );
+      assertTrue( ca.equals(cb) );
+
+//      struct = Struct( "struct", UBInt8("a"), UBInt16("b"), 
+//                        Struct( "foo", UBInt8("c"), UBInt8("d") ));
+//      ca = struct.parse( ByteArray(1,0,2,3,4) );
+//      cb = Container( "a",1, "b",2, "foo", Container( "c",3,"d",4));
+//      assertTrue( ca.equals(cb) );
+//
+//      struct = Struct( "struct", UBInt8("a"), UBInt16("b"));
+//      ba = struct.build( Container( "a",1, "b", 2));
+//      assertArrayEquals( ByteArray(1,0,2), ba );
+//
+//      foo = Struct( "foo", UBInt8("c"), UBInt8("d") );
+//      struct = Struct( "struct", UBInt8("a"), UBInt16("b"), foo );
+//      ba = struct.build( Container( "a",1, "b", 2, "foo", Container("c", 3, "d",4)));
+//      assertArrayEquals( ByteArray(1,0,2,3,4), ba );
+//      
+//      struct = Struct( "struct", UBInt8("a"), UBInt16("b"), Embedded( Struct("foo", UBInt8("c"), UBInt8("d"))));
+//      ca = struct.parse( ByteArray(1,0,2,3,4) );
+//      cb = Container( "a", 1, "b", 2, "c", 3, "d", 4 );
+//      assertEquals( cb, ca );
+//
+//      struct = Struct( "struct", UBInt8("a"), UBInt16("b"), Embedded( Struct("foo", UBInt8("c"), UBInt8("d"))));
+//      ba = struct.build( Container( "a", 1, "b", 2, "c", 3, "d", 4 ));
+//      assertArrayEquals( ByteArray(1,0,2,3,4), ba );
+  }
+
   @Test
   public void sizeofTest() {
       LengthFunc foo = new LengthFunc(){

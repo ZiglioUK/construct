@@ -2,6 +2,8 @@ package com.sirtrack.construct;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,7 +107,7 @@ static public byte[] ByteArray( byte[]... bas ){
 
   Containers are the common way to express parsed data.
  */
-static public <T>Container Container( T... pairs ){
+static public <T>Container Container( Object... pairs ){
 	return new Container( pairs );
 }
   
@@ -856,6 +858,35 @@ public static class Range extends Subconstruct{
 	    _inherit_flags(subcons);
 	    _clear_flag(FLAG_EMBED);
 	  }
+
+    public Struct(String name) {
+      super(name);
+      Field[] fields = getClass().getDeclaredFields();
+      List<Construct> subconf = new ArrayList<Construct>();
+      for( Field field : fields ){
+          field.setAccessible(true);
+          Class clazz = field.getType();
+          if( !Construct.class.isAssignableFrom(clazz))
+            continue;
+          
+          String fname = field.getName();
+          try{
+//          Constructor ctor = clazz.getDeclaredConstructor(String.class);
+          Constructor ctor = clazz.getConstructors()[0];
+          Construct inst = ctor.getParameterTypes().length>1?  
+              (Construct) ctor.newInstance(null, fname)
+             :(Construct) ctor.newInstance(fname);
+              
+          field.set( this, inst );
+          subconf.add(inst);
+        }
+        catch( Exception e ){ throw new RuntimeException(e);}
+      }
+      subcons = new Construct[subconf.size()];
+      subcons = subconf.toArray(subcons);
+      _inherit_flags(subcons);
+      _clear_flag(FLAG_EMBED);
+    }
 
 		@Override
 		public Object _parse( ByteBufferWrapper stream, Container context) {
