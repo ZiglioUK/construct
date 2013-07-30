@@ -151,8 +151,8 @@ public class ConstructTest {
 
     assertEquals(1, s.a.get());
     assertEquals(2, s.b.get());
-    assertEquals(1, s.foo.c.get());
-    assertEquals(2, s.foo.d.get());
+    assertEquals(3, s.foo.c.get());
+    assertEquals(4, s.foo.d.get());
 
     //
     // struct = Struct( "struct", UBInt8("a"), UBInt16("b"));
