@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.rules.ExpectedException;
 
 import com.sirtrack.construct.Core.RangeError;
@@ -12,6 +13,7 @@ import com.sirtrack.construct.lib.Containers.Container;
 import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.Macros.*;
 import static com.sirtrack.construct.lib.Containers.*;
+
 
 public class ConstructTest {
   @Rule
@@ -153,24 +155,83 @@ public class ConstructTest {
     assertEquals(2, s.b.get());
     assertEquals(3, s.foo.c.get());
     assertEquals(4, s.foo.d.get());
+  }
+
+  @Test
+  public void fieldStructTest3() {
+    Container ca, cb;
+    byte[] ba;
 
     //
     // struct = Struct( "struct", UBInt8("a"), UBInt16("b"));
-    // ba = struct.build( Container( "a",1, "b", 2));
-    // assertArrayEquals( ByteArray(1,0,2), ba );
-    //
+    
+    class S extends Struct {
+      public UBInt8 a;
+      public UBInt16 b;
+    }
+
+    S s = new S();
+    
+    // TODO assign values to fields using set()
+    ba = s.build( Container( "a",1, "b", 2));
+    assertArrayEquals( ByteArray(1,0,2), ba );
+  }
+
+  @Test
+  public void fieldStructTest4() {
+    Container ca, cb;
+    byte[] ba;
+
     // foo = Struct( "foo", UBInt8("c"), UBInt8("d") );
     // struct = Struct( "struct", UBInt8("a"), UBInt16("b"), foo );
-    // ba = struct.build( Container( "a",1, "b", 2, "foo", Container("c", 3,
-    // "d",4)));
-    // assertArrayEquals( ByteArray(1,0,2,3,4), ba );
-    //
+
+    class Foo extends Struct {
+      public Foo(String name ){super(name);}
+      public UBInt8 c;
+      public UBInt8 d;
+    }
+
+    class S extends Struct {
+      public UBInt8 a;
+      public UBInt16 b;
+      public Foo foo;
+    }
+
+     ba = new S().build( Container( "a",1, "b", 2, "foo", Container("c", 3,"d",4)));
+     assertArrayEquals( ByteArray(1,0,2,3,4), ba );
+  }
+
+  @Test
+  @Ignore // there's no way to implement Embedded in a statically typed manner
+  public void fieldStructTest5() {
+    Container ca, cb;
+    byte[] ba;
+
     // struct = Struct( "struct", UBInt8("a"), UBInt16("b"), Embedded(
     // Struct("foo", UBInt8("c"), UBInt8("d"))));
-    // ca = struct.parse( ByteArray(1,0,2,3,4) );
-    // cb = Container( "a", 1, "b", 2, "c", 3, "d", 4 );
-    // assertEquals( cb, ca );
-    //
+
+    class Foo extends Struct {
+      public Foo(String name){super(name);}
+      public UBInt8 c;
+      public UBInt16 d;
+    }
+    
+    class Emb extends Embedded {
+      public Emb(){ 
+        super( 
+          new Foo("foo"));
+      } 
+    }
+    class S extends Struct {
+      public UBInt8 a;
+      public UBInt16 b;
+      public Emb e;
+    }
+
+     ca = new S().parse( ByteArray(1,0,2,3,4) );
+     cb = Container( "a", 1, "b", 2, "c", 3, "d", 4 );
+     assertEquals( cb, ca );
+    
     // struct = Struct( "struct", UBInt8("a"), UBInt16("b"), Embedded(
     // Struct("foo", UBInt8("c"), UBInt8("d"))));
     // ba = struct.build( Container( "a", 1, "b", 2, "c", 3, "d", 4 ));

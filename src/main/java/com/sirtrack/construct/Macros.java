@@ -495,10 +495,22 @@ static public Subconstruct Embed( Construct subcon ){
  * @param subcon the struct to embed
  * @return
  */
-static public Subconstruct Embedded( Construct subcon ){
-	return Reconfig( subcon.name, subcon, subcon.FLAG_EMBED, 0 );
+static public Embedded Embedded( Construct subcon ){
+	return new Embedded( subcon );
 }
 
+/**
+ * embeds a struct into the enclosing struct.
+ */
+static public class Embedded extends Reconfig {
+  /*
+  * @param subcon the struct to embed
+  * @return
+  */
+  public Embedded( Construct subcon ){
+    super( subcon.name, subcon, Construct.FLAG_EMBED, 0 );
+  }
+}
 /**
  * renames an existing construct
  * @param newname the new name
