@@ -128,7 +128,7 @@ public class Adapters {
    * @return Adapter that maps objects to other objects. See SymmetricMapping
    *         and Enum.
    */
-  static public MappingAdapter MappingAdapter(Construct subcon,
+  static public MappingAdapter MappingAdapter(Construct subcon, 
       Container decoding, Container encoding, Object decdefault,
       Object encdefault) {
     return new MappingAdapter(subcon, decoding, encoding, decdefault,
