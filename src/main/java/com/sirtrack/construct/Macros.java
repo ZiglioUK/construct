@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.CountFunc;
+import com.sirtrack.construct.Core.FormatField;
 import com.sirtrack.construct.Core.KeyFunc;
 import com.sirtrack.construct.Core.StaticField;
 import com.sirtrack.construct.Core.Struct;
@@ -34,7 +35,7 @@ public class Macros {
     returns the length (MetaField)
    * @return
    */
-  static public Construct Field( String name, LengthFunc length ){
+  public static Construct Field( String name, LengthFunc length ){
     return MetaField(name, length);
   }
   /**
@@ -45,7 +46,7 @@ public class Macros {
     returns the length (MetaField)
    * @return
    */
-  static public Construct Field( String name, int length ){
+  public static Construct Field( String name, int length ){
       return new StaticField(name, length);
   }
 
@@ -85,7 +86,7 @@ public class Macros {
 	 * @param bytesize number of bits per byte, for byte-swapping
 	 * @return
 	 */
-  static public Adapter BitField( final String name, final int length, boolean swapped, boolean signed, int bytesize ) {
+  public static Adapter BitField( final String name, final int length, boolean swapped, boolean signed, int bytesize ) {
    return BitIntegerAdapter( Field(name, length),
         length,
         swapped,
@@ -97,11 +98,11 @@ public class Macros {
   /**
    * Bits is just an alias for BitField
    */
-  static public Adapter Bits( final String name, final int length ) {
+  public static Adapter Bits( final String name, final int length ) {
      return BitField( name, length, false, false, 8 );
   }
 
-  static public Adapter Bits( final String name, final int length, boolean swapped, boolean signed, int bytesize ) {
+  public static Adapter Bits( final String name, final int length, boolean swapped, boolean signed, int bytesize ) {
     return BitIntegerAdapter( Field(name, length),
          length,
          swapped,
@@ -110,7 +111,7 @@ public class Macros {
      );
    }
     
-   static public Adapter BitField( final String name, final int length ) {
+   public static Adapter BitField( final String name, final int length ) {
       return BitField( name, length, false, false, 8 );
    }
   /**
@@ -122,14 +123,14 @@ public class Macros {
       pattern mismatches the desired pattern. default is False.
    * @return a padding field (value is discarded)
    */
-  static public Adapter Padding( int length, byte pattern, boolean strict ){
+  public static Adapter Padding( int length, byte pattern, boolean strict ){
   	return PaddingAdapter( Field( null, length ), pattern, strict ); 
   }
-  static public Adapter Padding( int length  ){
+  public static Adapter Padding( int length  ){
   	return Padding( length, (byte)0x00, false );
   }
 
-  static public Adapter Flag( String name ){
+  public static Adapter Flag( String name ){
   	return Flag( name, (byte)1, (byte)0, false );
   }
   
@@ -150,7 +151,7 @@ public class Macros {
         in the future.
 
    */
-  static public Adapter Flag( String name, byte truth, byte falsehood, Object defaultmapping ){
+  public static Adapter Flag( String name, byte truth, byte falsehood, Object defaultmapping ){
 
   	return SymmetricMapping(Field(name, 1),
   													Container( true, truth, false, falsehood ),
@@ -164,165 +165,186 @@ public class Macros {
   /**
   * @return a 1-bit BitField; must be enclosed in a BitStruct
   */
-  static public Adapter Bit(String name){
+  public static Adapter Bit(String name){
   	return BitField( name, 1 );
   }
   /**
   * @return a 4-bit BitField; must be enclosed in a BitStruct
   */
-  static public Adapter Nibble(String name){
+  public static Adapter Nibble(String name){
   	return BitField( name, 4 );
   }
   /**
   * @return an 8-bit BitField; must be enclosed in a BitStruct
   */
-  static public Adapter Octet(String name){
+  public static Adapter Octet(String name){
   	return BitField( name, 8 );
   }
   /**
   * @return unsigned, big endian 8-bit integer
   */
-  static public FormatField UBInt8(String name){
+  public static FormatField UBInt8(String name){
    	return new FormatField( name, '>', 'B' );
   }
   /**
 	  * @return unsigned, big endian 16-bit integer
 	  */
-	  static public FormatField UBInt16(String name){
+	  public static FormatField UBInt16(String name){
 	   	return new FormatField( name, '>', 'H' );
 	  }
   /**
 	  * @return unsigned, big endian 32-bit integer
 	  */
-	  static public FormatField UBInt32(String name){
+	  public static FormatField UBInt32(String name){
 	   	return new FormatField( name, '>', 'L' );
 	  }
 
   /**
 	  * @return unsigned, big endian 64-bit integer
 	  */
-	  static public FormatField UBInt64(String name){
+	  public static FormatField UBInt64(String name){
 	   	return new FormatField( name, '>', 'Q' );
 	  }
 
   /**
 	  * @return signed, big endian 8-bit integer
 	  */
-	  static public FormatField SBInt8(String name){
-	   	return new FormatField( name, '>', 'b' );
+	  public static UBInt8 SBInt8(String name){
+	   	return new UBInt8( name );
 	  }
+	  static class UBInt8 extends FormatField {
+	    public UBInt8(String name) {
+	      super(name, '>', 'b');
+	    }
+	  }
+
   /**
 	  * @return signed, big endian 16-bit integer
 	  */
-	  static public FormatField SBInt16(String name){
-	   	return new FormatField( name, '>', 'h' );
+	  public static UBInt16 SBInt16(String name){
+	   	return new UBInt16( name );
 	  }
+    static class UBInt16 extends FormatField {
+      public UBInt16(String name) {
+        super(name, '>', 'h');
+      }
+    }
   /**
 	  * @return signed, big endian 32-bit integer
 	  */
-	  static public FormatField SBInt32(String name){
+	  public static FormatField SBInt32(String name){
 	   	return new FormatField( name, '>', 'l' );
 	  }
   /**
 	  * @return signed, big endian 64-bit integer
 	  */
-	  static public FormatField SBInt64(String name){
+	  public static FormatField SBInt64(String name){
 	   	return new FormatField( name, '>', 'q' );
 	  }
   /**
 	  * @return unsigned, little endian 8-bit integer
 	  */
-	  static public FormatField ULInt8(String name){
-	   	return new FormatField( name, '<', 'B' );
+    public static ULInt8 ULInt8(String name){
+      return new ULInt8( name );
+    }
+	  public static class ULInt8 extends FormatField {
+      public ULInt8(String name){
+        super( name, '<', 'B' );
+      }
 	  }
   /**
 	  * @return unsigned, little endian 16-bit integer
 	  */
-	  static public FormatField ULInt16(String name){
-	   	return new FormatField( name, '<', 'H' );
+	  public static ULInt16 ULInt16(String name){
+	   	return new ULInt16( name );
+	  }
+	  public static class ULInt16 extends FormatField{
+	    public ULInt16(String name){
+	      super( name, '<', 'H' );
+	    }
 	  }
   /**
 	  * @return unsigned, little endian 32-bit integer
 	  */
-	  static public FormatField ULInt32(String name){
+	  public static FormatField ULInt32(String name){
 	   	return new FormatField( name, '<', 'L' );
 	  }
   /**
 	  * @return unsigned, little endian 64-bit integer
 	  */
-	  static public FormatField ULInt64(String name){
+	  public static FormatField ULInt64(String name){
 	   	return new FormatField( name, '<', 'Q' );
 	  }
   /**
 	  * @return signed, little endian 8-bit integer
 	  */
-	  static public FormatField SLInt8(String name){
+	  public static FormatField SLInt8(String name){
 	   	return new FormatField( name, '<', 'b' );
 	  }
   /**
 	  * @return signed, little endian 16-bit integer
 	  */
-	  static public FormatField SLInt16(String name){
+	  public static FormatField SLInt16(String name){
 	   	return new FormatField( name, '<', 'h' );
 	  }
   /**
 	  * @return signed, little endian 32-bit integer
 	  */
-	  static public FormatField SLInt32(String name){
+	  public static FormatField SLInt32(String name){
 	   	return new FormatField( name, '<', 'l' );
 	  }
   /**
 	  * @return signed, little endian 64-bit integer
 	  */
-	  static public FormatField SLInt64(String name){
+	  public static FormatField SLInt64(String name){
 	   	return new FormatField( name, '<', 'q' );
 	  }
   /**
 	  * @return unsigned, native endianity 8-bit integer
 	  */
-	  static public FormatField UNInt8(String name){
+	  public static FormatField UNInt8(String name){
 	   	return new FormatField( name, '=', 'B' );
 	  }
   /**
 	  * @return unsigned, native endianity 16-bit integer
 	  */
-	  static public FormatField UNInt16(String name){
+	  public static FormatField UNInt16(String name){
 	   	return new FormatField( name, '=', 'H' );
 	  }
   /**
 	  * @return unsigned, native endianity 32-bit integer
 	  */
-	  static public FormatField UNInt32(String name){
+	  public static FormatField UNInt32(String name){
 	   	return new FormatField( name, '=', 'L' );
 	  }
   /**
 	  * @return unsigned, native endianity 64-bit integer
 	  */
-	  static public FormatField UNInt64(String name){
+	  public static FormatField UNInt64(String name){
 	   	return new FormatField( name, '=', 'Q' );
 	  }
   /**
 	  * @return signed, native endianity 8-bit integer
 	  */
-	  static public FormatField SNInt8(String name){
+	  public static FormatField SNInt8(String name){
 	   	return new FormatField( name, '=', 'b' );
 	  }
   /**
 	  * @return signed, native endianity 16-bit integer
 	  */
-	  static public FormatField SNInt16(String name){
+	  public static FormatField SNInt16(String name){
 	   	return new FormatField( name, '=', 'h' );
 	  }
   /**
 	  * @return signed, native endianity 32-bit integer
 	  */
-	  static public FormatField SNInt32(String name){
+	  public static FormatField SNInt32(String name){
 	   	return new FormatField( name, '=', 'l' );
 	  }
   /**
 	  * @return signed, native endianity 64-bit integer
 	  */
-	  static public FormatField SNInt64(String name){
+	  public static FormatField SNInt64(String name){
 	   	return new FormatField( name, '=', 'q' );
 	  }
 	  
@@ -458,7 +480,7 @@ public static Range OptionalGreedyRange(Construct subcon){
  * @param subcon a bitwise construct (usually BitField)
  * @return
  */
-static public Subconstruct Bitwise(Construct subcon) {
+public static Subconstruct Bitwise(Construct subcon) {
 	/*
     # subcons larger than MAX_BUFFER will be wrapped by Restream instead
     # of Buffered. implementation details, don't stick your nose in :)*/
@@ -487,7 +509,7 @@ static public Subconstruct Bitwise(Construct subcon) {
     return con;
 }
 
-static public Subconstruct Embed( Construct subcon ){
+public static Subconstruct Embed( Construct subcon ){
 	return Embedded( subcon );
 }
 /**
@@ -495,14 +517,14 @@ static public Subconstruct Embed( Construct subcon ){
  * @param subcon the struct to embed
  * @return
  */
-static public Embedded Embedded( Construct subcon ){
+public static Embedded Embedded( Construct subcon ){
 	return new Embedded( subcon );
 }
 
 /**
  * embeds a struct into the enclosing struct.
  */
-static public class Embedded extends Reconfig {
+public static class Embedded extends Reconfig {
   /*
   * @param subcon the struct to embed
   * @return
@@ -516,7 +538,7 @@ static public class Embedded extends Reconfig {
  * @param newname the new name
  * @param subcon the subcon to rename
  */
-static public Subconstruct Rename( String newname, Construct subcon ){
+public static Subconstruct Rename( String newname, Construct subcon ){
 	return Reconfig( newname, subcon, subcon.FLAG_EMBED, 0 );
 }
 
@@ -525,7 +547,7 @@ static public Subconstruct Rename( String newname, Construct subcon ){
  * @param newname the new name
  * @param oldname the name of an existing element
  */
-static public Construct Alias(String newname, final String oldname){
+public static Construct Alias(String newname, final String oldname){
   return Value( newname, new ValueFunc(){
   	public Object get(Container ctx) {
   		return ctx.get(oldname);
@@ -548,7 +570,7 @@ public static interface CRCFunc {
  * @param crcfunc the function to compute the CRC
  * @return an instance of the CRC Subconstruct
  */
-static public CRC CRC(Construct subcon, StaticField crcfield, CRCFunc crcfunc) {
+public static CRC CRC(Construct subcon, StaticField crcfield, CRCFunc crcfunc) {
 	return new CRC(subcon, crcfield, crcfunc);
 }
 
@@ -558,11 +580,11 @@ static public CRC CRC(Construct subcon, StaticField crcfield, CRCFunc crcfunc) {
  * @param crcfunc the function to compute the CRC
  * @return an instance of the CRC Subconstruct
  */
-static public CRC CRC(Construct subcon, KeyFunc keyfunc, CRCFunc crcfunc) {
+public static CRC CRC(Construct subcon, KeyFunc keyfunc, CRCFunc crcfunc) {
 	return new CRC(subcon, keyfunc, crcfunc);
 }
 
-static public class CRC extends Subconstruct {
+public static class CRC extends Subconstruct {
 	CRCFunc crcfunc;
 	KeyFunc keyfunc;
 	StaticField crcfield;
@@ -671,7 +693,7 @@ static public class CRC extends Subconstruct {
       return the value "as is" (unmapped)
  * @return a symmetrical mapping: a->b, b->a.
  */
-static public Adapter SymmetricMapping( Construct subcon, final Container mapping, Object mappingdefault ){
+public static Adapter SymmetricMapping( Construct subcon, final Container mapping, Object mappingdefault ){
 	return MappingAdapter( subcon, mapping.reverse(), mapping, mappingdefault, mappingdefault );
 }
 
@@ -684,7 +706,7 @@ static public Adapter SymmetricMapping( Construct subcon, final Container mappin
       pass the unmapped value as-is
  * @return a set of named values mapping.
  */
-static public Adapter Enum( Construct subcon, Object... pairs ){
+public static Adapter Enum( Construct subcon, Object... pairs ){
 	// we could do some static type checks, making sure that names are String
 	// and that the size of values matches the size of subcon
 	// Let's keep things simple for now
@@ -703,7 +725,7 @@ static public Adapter Enum( Construct subcon, Object... pairs ){
  * @param subcons the subcons that make up this structure
  * @return a struct of bitwise fields
  */
-static public Construct BitStruct( String name, Construct... subcons ){
+public static Construct BitStruct( String name, Construct... subcons ){
   return Bitwise(Struct(name, subcons));
 }
 	  /*
@@ -727,7 +749,7 @@ static public Construct BitStruct( String name, Construct... subcons ){
  * @param subcons
  * @return
  */
-static public Construct EmbeddedStruct(Construct... subcons){
+public static Construct EmbeddedStruct(Construct... subcons){
     return Embedded( Struct( null, subcons ));
 }
 
@@ -736,7 +758,7 @@ static public Construct EmbeddedStruct(Construct... subcons){
  * @param subcons the subcons that make up this structure
  * @return
  */
-static public Construct EmbeddedBitStruct(Construct... subcons){
+public static Construct EmbeddedBitStruct(Construct... subcons){
   return Bitwise(EmbeddedStruct(subcons));
 }
 /*
