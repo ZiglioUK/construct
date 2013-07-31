@@ -713,11 +713,16 @@ public static class SymmetricMapping extends MappingAdapter{
  * @return a set of named values mapping.
  */
 public static Adapter Enum( Construct subcon, Object... pairs ){
-	// we could do some static type checks, making sure that names are String
-	// and that the size of values matches the size of subcon
-	// Let's keep things simple for now
-	final Container kw = Container(pairs);
-	return SymmetricMapping( subcon, kw, kw.get("_default_") );
+	return new Enum( subcon, pairs );
+}
+
+public static class Enum extends SymmetricMapping {
+  public Enum( Construct subcon, Object... pairs ){
+    // we could do some static type checks, making sure that names are String
+    // and that the size of values matches the size of subcon
+    // Let's keep things simple for now
+    super( subcon, Container(pairs), Container(pairs).get("_default_") );
+  }
 }
 
 //  return SymmetricMapping(subcon, kw, kw.pop(, NotImplemented));
