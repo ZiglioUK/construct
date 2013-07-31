@@ -889,43 +889,51 @@ public class Core {
 
     public Struct(String name) {
       super(name);
-      Field[] fields = getClass().getDeclaredFields();
-      List<Construct> subconf = new ArrayList<Construct>();
-      for( Field field : fields ) try {
-        
+      try {
+        Field[] fields = getClass().getDeclaredFields();
+        List<Construct> subconf = new ArrayList<Construct>();
+
+        Object enclosingInst = null;
+
+        for (Field field : fields) {
+          Constructor fctor;
+          String fname;
+
           field.setAccessible(true);
           Class clazz = field.getType();
-          if( !Construct.class.isAssignableFrom(clazz))
+          if (!Construct.class.isAssignableFrom(clazz))
             continue;
-          
-          String fname = field.getName();
-          Constructor ctor = clazz.getConstructors()[0];
+
+          fname = field.getName();
+          fctor = clazz.getConstructors()[0];
           Construct inst;
-          switch(ctor.getParameterTypes().length){  
-            case 2: // inner class
-              // TODO should check that the first instance is of the right type
-              Class parc = ctor.getParameterTypes()[0];
-              Object enclosingInst = getClass().getDeclaredField("this$0").get(this);
-              inst = (Construct) ctor.newInstance(enclosingInst, fname); 
-              break;
-            case 1: 
-                inst = (Construct) ctor.newInstance(fname); 
-                break;
-            case 0: 
-                inst = (Construct) ctor.newInstance(); 
-                break;
-            default: throw new Exception("No default case: " + ctor );
-            }
-            field.set( this, inst );
-            subconf.add(inst);
+          switch (fctor.getParameterTypes().length) {
+          // TODO should check that the first instance is of the right type: enclosing type or String
+          case 2: // inner class
+            // Class parc = fctor.getParameterTypes()[0];
+            if (enclosingInst == null)
+              enclosingInst = getClass().getDeclaredField("this$0").get(this);
+            inst = (Construct) fctor.newInstance(enclosingInst, fname);
+            break;
+          case 1:
+            inst = (Construct) fctor.newInstance(fname);
+            break;
+          case 0:
+            inst = (Construct) fctor.newInstance();
+            break;
+          default:
+            throw new Exception("No default case: " + fctor);
+          }
+          field.set(this, inst);
+          subconf.add(inst);
         }
-        catch( Exception e ){ 
-          throw new RuntimeException(e);
+        subcons = new Construct[subconf.size()];
+        subcons = subconf.toArray(subcons);
+        _inherit_flags(subcons);
+        _clear_flag(FLAG_EMBED);
+      } catch (Exception e) {
+        throw new RuntimeException(e);
       }
-      subcons = new Construct[subconf.size()];
-      subcons = subconf.toArray(subcons);
-      _inherit_flags(subcons);
-      _clear_flag(FLAG_EMBED);
     }
 
     public Struct() {
