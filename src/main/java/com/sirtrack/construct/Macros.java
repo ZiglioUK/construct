@@ -693,8 +693,14 @@ public static class CRC extends Subconstruct {
       return the value "as is" (unmapped)
  * @return a symmetrical mapping: a->b, b->a.
  */
-public static Adapter SymmetricMapping( Construct subcon, final Container mapping, Object mappingdefault ){
-	return MappingAdapter( subcon, mapping.reverse(), mapping, mappingdefault, mappingdefault );
+public static SymmetricMapping SymmetricMapping( Construct subcon, final Container mapping, Object mappingdefault ){
+	return new SymmetricMapping( subcon, mapping, mappingdefault );
+}
+
+public static class SymmetricMapping extends MappingAdapter{
+  public SymmetricMapping( Construct subcon, final Container mapping, Object mappingdefault ){
+    super( subcon, mapping.reverse(), mapping, mappingdefault, mappingdefault );
+  }
 }
 
 /**
