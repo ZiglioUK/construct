@@ -8,10 +8,6 @@ import static com.sirtrack.construct.lib.Checksum.calculateChecksum;
 import com.sirtrack.construct.*;
 import com.sirtrack.construct.lib.Containers.*;
 
-import org.junit.*;
-import static org.junit.Assert.*;
-
-
 /**
  * Ethernet (TCP/IP protocol stack)
  */
