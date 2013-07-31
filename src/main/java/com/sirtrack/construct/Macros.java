@@ -712,7 +712,7 @@ public static class SymmetricMapping extends MappingAdapter{
       pass the unmapped value as-is
  * @return a set of named values mapping.
  */
-public static Adapter Enum( Construct subcon, Object... pairs ){
+public static Enum Enum( Construct subcon, Object... pairs ){
 	return new Enum( subcon, pairs );
 }
 

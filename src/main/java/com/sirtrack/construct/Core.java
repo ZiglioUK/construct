@@ -1187,7 +1187,7 @@ public class Core {
    *          values that may be returned by keyfunc.
    */
   public static Switch Switch(String name, KeyFunc keyfunc, Object... cases) {
-    return new Switch(name, keyfunc, Container(cases), NoDefault, false);
+    return new Switch(name, keyfunc, Container(cases));
   }
 
   /**
@@ -1262,6 +1262,10 @@ public class Core {
       Construct[] ca = cases.values(Construct.class);
       this._inherit_flags(ca);
       this._set_flag(FLAG_DYNAMIC);
+    }
+
+    public Switch(String name, KeyFunc keyfunc, Container cases) {
+      this(name, keyfunc, cases, NoDefault, false);
     }
 
     @Override
