@@ -298,19 +298,29 @@ class MappingAdapter(Adapter):
    * @param decoder a function that takes (obj, context) and returns an decoded 
       version of obj
    */
-  public static Adapter ExprAdapter( Construct subcon, final AdapterEncoder encoder, final AdapterDecoder decoder ){
-  	return new Adapter(subcon){
-
-			@Override
+  public static ExprAdapter ExprAdapter( Construct subcon, final AdapterEncoder encoder, final AdapterDecoder decoder ){
+  	return new ExprAdapter(subcon, encoder, decoder);
+  };
+  
+  public static class ExprAdapter extends Adapter {
+    AdapterEncoder encoder;
+    AdapterDecoder decoder;
+    
+    public ExprAdapter( Construct subcon, final AdapterEncoder encoder, final AdapterDecoder decoder ){
+      super(subcon);
+      this.encoder = encoder;
+      this.decoder = decoder;
+     }
+     
+      @Override
       public Object decode(Object obj, Container context) {
-	      return decoder.decode(obj, context);
+        return decoder.decode(obj, context);
       }
 
-			@Override
+      @Override
       public Object encode(Object obj, Container context) {
-	      return encoder.encode(obj, context);
+        return encoder.encode(obj, context);
       }
-  	};
   };
 /*
 #===============================================================================
