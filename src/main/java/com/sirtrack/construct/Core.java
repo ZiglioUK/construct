@@ -1230,10 +1230,10 @@ public class Core {
      * a function that takes the context and returns a key, which will ne used
      * to choose the relevant case.
      */
-    KeyFunc keyfunc;
-    Container cases;
-    Construct defaultval;
-    boolean include_key;
+    public KeyFunc keyfunc;
+    public Container cases;
+    public Construct defaultval;
+    public boolean include_key;
 
     /**
      * @param name
@@ -1271,13 +1271,13 @@ public class Core {
     @Override
     public Object _parse(ByteBufferWrapper stream, Container context) {
       Object key = keyfunc.get(context);
-      Construct c = cases.get(key, defaultval);
-      Object obj = c._parse(stream, context);
-      if (include_key) {
-        return Container(key, obj);
-      } else {
-        return obj;
-      }
+      /* assign the case Construct as a value for Switch
+       * users can then retrieve the case Construct with get()*/
+      val = cases.get(key, defaultval);
+      Object res = ((Construct)val)._parse(stream, context);
+      if (include_key) 
+        res = Container(key, res);
+     return res;
     }
 
     @Override
