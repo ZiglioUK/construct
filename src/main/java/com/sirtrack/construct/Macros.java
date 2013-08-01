@@ -86,34 +86,52 @@ public class Macros {
 	 * @param bytesize number of bits per byte, for byte-swapping
 	 * @return
 	 */
-  public static Adapter BitField( final String name, final int length, boolean swapped, boolean signed, int bytesize ) {
-   return BitIntegerAdapter( Field(name, length),
+  public static BitField BitField( String name, int length, boolean swapped, 
+      boolean signed, int bytesize ) {
+    return new BitField( name, length, swapped, signed, bytesize );
+  }
+
+  public static BitField BitField( final String name, final int length ) {
+    return new BitField( name, length, false, false, 8 );
+ }
+
+  public static class BitField extends BitIntegerAdapter {
+    public BitField( final String name, final int length, boolean swapped, boolean signed, int bytesize ) {
+          super ( Field(name, length),
         length,
         swapped,
         signed,
         bytesize
     );
-  }
-   
+   }
+  }  
   /**
    * Bits is just an alias for BitField
    */
-  public static Adapter Bits( final String name, final int length ) {
-     return BitField( name, length, false, false, 8 );
+  public static class Bits extends BitIntegerAdapter{
+    
+    public Bits( final String name, final int length, boolean swapped, boolean signed, int bytesize ) {
+      super( Field(name, length), length, swapped, signed, bytesize );
+    }
+
+    public Bits( final String name, final int length ) {
+      this( name, length, false, false, 8 );
+    }
   }
 
-  public static Adapter Bits( final String name, final int length, boolean swapped, boolean signed, int bytesize ) {
-    return BitIntegerAdapter( Field(name, length),
+  public static Bits Bits( final String name, final int length, boolean swapped, boolean signed, int bytesize ) {
+    return new Bits( name,
          length,
          swapped,
          signed,
          bytesize
      );
    }
-    
-   public static Adapter BitField( final String name, final int length ) {
-      return BitField( name, length, false, false, 8 );
-   }
+
+  public static Bits Bits( String name, int length ) {
+    return new Bits( name, length, false, false, 8 );
+  }
+  
   /**
    * @param length the length of the field. the length can be either an integer,
       or a function that takes the context as an argument and returns the

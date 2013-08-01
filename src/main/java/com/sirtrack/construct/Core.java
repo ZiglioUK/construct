@@ -441,11 +441,13 @@ public class Core {
     public Subconstruct(Construct subcon) {
       super(subcon.name, subcon.conflags);
       this.subcon = subcon;
+      val = subcon;
     }
 
     Subconstruct(String name, Construct subcon) {
       super(name, subcon.conflags);
       this.subcon = subcon;
+      val = subcon;
     }
 
     @Override
@@ -887,6 +889,14 @@ public class Core {
       _clear_flag(FLAG_EMBED);
     }
 
+    /**
+     * This is a special constructor for typesafe Structs.
+     * Instead of passing an array of Subcons at runtime,
+     * this constructor inspects the public fields of type Construct for this Struct
+     * and invokes each field's constructor by passing the field name.
+     * It's assumed that all declared fields have a public constructor: Construct( String name )
+     * @param name
+     */
     public Struct(String name) {
       super(name);
       try {
