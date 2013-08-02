@@ -899,16 +899,16 @@ public class Core {
      */
     public Struct(String name) {
       super(name);
+      Constructor fctor;
+      Field field = null;
+      String fname;
       try {
         Field[] fields = getClass().getDeclaredFields();
         List<Construct> subconf = new ArrayList<Construct>();
 
         Object enclosingInst = null;
-
-        for (Field field : fields) {
-          Constructor fctor;
-          String fname;
-
+        for( int i = 0; i < fields.length; i++ ) {
+          field = fields[i];
           field.setAccessible(true);
           Class clazz = field.getType();
           if (!Construct.class.isAssignableFrom(clazz))
@@ -916,6 +916,7 @@ public class Core {
 
           fname = field.getName();
           fctor = clazz.getConstructors()[0];
+          fctor.setAccessible(true);
           Construct inst;
           switch (fctor.getParameterTypes().length) {
           // TODO should check that the first instance is of the right type: enclosing type or String
@@ -942,7 +943,7 @@ public class Core {
         _inherit_flags(subcons);
         _clear_flag(FLAG_EMBED);
       } catch (Exception e) {
-        throw new RuntimeException(e);
+        throw new RuntimeException("Error constructing field " + field + "\r\n" + e.toString(), e);
       }
     }
 
