@@ -92,7 +92,7 @@ public class Macros {
   }
 
   public static BitField BitField( final String name, final int length ) {
-    return new BitField( name, length, false, false, 8 );
+    return new BitField( name, length);
  }
 
   public static class BitField extends BitIntegerAdapter {
@@ -103,6 +103,9 @@ public class Macros {
         signed,
         bytesize
     );
+   }
+    public BitField( final String name, final int length ) {
+      this( name, length, false, false, 8 );
    }
   }  
   /**
@@ -186,6 +189,12 @@ public class Macros {
   public static Adapter Bit(String name){
   	return BitField( name, 1 );
   }
+  public static class Bit extends BitField {
+    public Bit(String name){
+      super( name, 1 );
+    }
+  }
+
   /**
   * @return a 4-bit BitField; must be enclosed in a BitStruct
   */
