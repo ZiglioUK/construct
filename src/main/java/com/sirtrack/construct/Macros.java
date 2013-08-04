@@ -787,7 +787,7 @@ public static Construct BitStruct( String name, Construct... subcons ){
  * @param subcons
  * @return
  */
-public static Construct EmbeddedStruct(Construct... subcons){
+public static Embedded EmbeddedStruct(Construct... subcons){
     return Embedded( Struct( null, subcons ));
 }
 

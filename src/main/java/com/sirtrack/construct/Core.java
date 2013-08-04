@@ -430,26 +430,29 @@ public class Core {
    * Abstract subconstruct (wraps an inner construct, inheriting its name and
    * flags).
    */
-  public static abstract class Subconstruct extends Construct {
+  public static abstract class Subconstruct<T extends Construct> extends Construct {
 
-    public Construct subcon;
+    public T subcon;
 
     /**
      * @param subcon
      *          the construct to wrap
      */
-    public Subconstruct(Construct subcon) {
+    public Subconstruct(T subcon) {
       super(subcon.name, subcon.conflags);
       this.subcon = subcon;
-      val = subcon;
     }
 
-    Subconstruct(String name, Construct subcon) {
+    Subconstruct(String name, T subcon) {
       super(name, subcon.conflags);
       this.subcon = subcon;
-      val = subcon;
     }
 
+//    @Override
+//    public T get(){
+//      return subcon;
+//    }
+    
     @Override
     public Object _parse(ByteBufferWrapper stream, Container context) {
       return subcon._parse(stream, context);
@@ -874,7 +877,7 @@ public class Core {
 
   static public class Struct extends Construct {
     public boolean nested = true;
-    Construct[] subcons;
+    public Construct[] subcons;
 
     /**
      * @param name
@@ -1334,7 +1337,7 @@ public class Core {
    * Example: Buffered(BitField("foo", 16), encoder = decode_bin, decoder =
    * encode_bin, resizer = lambda size: size / 8, )
    */
-  static public class Buffered extends Subconstruct {
+  static public class Buffered<T extends Construct> extends Subconstruct<T> {
     public Encoder encoder;
     public Decoder decoder;
     public Resizer resizer;
@@ -1357,8 +1360,7 @@ public class Core {
      *          a function that takes the size of the subcon and "adjusts" or
      *          "resizes" it according to the encoding/decoding process.
      */
-    public Buffered(Construct subcon, Encoder encoder, Decoder decoder,
-        Resizer resizer) {
+    public Buffered(T subcon, Encoder encoder, Decoder decoder, Resizer resizer) {
       super(subcon);
       this.encoder = encoder;
       this.decoder = decoder;
@@ -1574,7 +1576,7 @@ public class Core {
    * set and clear flags of the inner subcon. Example: Reconfig("foo",
    * UBInt8("bar"))
    */
-  static public class Reconfig extends Subconstruct {
+  static public class Reconfig<T extends Construct> extends Subconstruct<T> {
 
     /**
      * @param name
@@ -1586,13 +1588,13 @@ public class Core {
      * @param clearflags
      *          the flags to clear (default is 0)
      */
-    public Reconfig(String name, Construct subcon, int setflags, int clearflags) {
+    public Reconfig(String name, T subcon, int setflags, int clearflags) {
       super(name, subcon);
       _set_flag(setflags);
       _clear_flag(clearflags);
     }
 
-    public Reconfig(String name, Construct subcon) {
+    public Reconfig(String name, T subcon) {
       this(name, subcon, 0, 0);
     }
 
