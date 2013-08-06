@@ -453,7 +453,7 @@ public class Core {
     }
 
     public Subconstruct clone() throws CloneNotSupportedException {
-      Subconstruct s = (Adapter) super.clone();
+      Subconstruct s = (Subconstruct) super.clone();
       s.subcon = subcon.clone();
       return s;
     }
@@ -758,8 +758,8 @@ public Construct clone() {
 
   }
 
-  public static Range Range(int mincount, int maxcount, Construct subcon) {
-    return new Range(mincount, maxcount, subcon);
+  public static <T extends Construct>Range Range(int mincount, int maxcount, T subcon) {
+    return new Range<T>(mincount, maxcount, subcon);
   }
 
   /**
@@ -811,6 +811,7 @@ public Construct clone() {
     public List<T> get(){
       return (List<T>)val;
     }
+    
     @Override
     public Object _parse(ByteBufferWrapper stream, Container context) {
       // obj = ListContainer()
@@ -820,7 +821,7 @@ public Construct clone() {
       int c = 0;
       int pos = stream.position();
       try {
-        T clone = (T)subcon.clone();
+        T clone = (T) subcon.clone();
         if ((subcon.conflags & FLAG_COPY_CONTEXT) != 0) {
           while (c < maxcout) {
             pos = stream.position();
@@ -919,12 +920,13 @@ public Construct clone() {
 
     @Override
     public Struct clone() throws CloneNotSupportedException {
-      Construct[] subclones = new Construct[subcons.length];
+      Struct clone = (Struct) super.clone();
+      clone.subcons = new Construct[subcons.length];
       int i = 0;
       for( Construct c : subcons){
-        subclones[i] = c.clone();
+        clone.subcons[i++] = c.clone();
       }
-      return new Struct( name, subclones );
+      return clone;
     }
 
     /**
