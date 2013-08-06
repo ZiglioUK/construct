@@ -6,6 +6,7 @@ import com.sirtrack.construct.lib.Containers.*;
 import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.Macros.Field;
 import static com.sirtrack.construct.lib.Binary.*;
+
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.Subconstruct;
 
@@ -108,6 +109,7 @@ public class Adapters {
       }
       return bin_to_int(ba, signed);
     }
+
   }
 
   /**
@@ -347,8 +349,7 @@ public class Adapters {
     AdapterEncoder encoder;
     AdapterDecoder decoder;
 
-    public ExprAdapter(Construct subcon, final AdapterEncoder encoder,
-        final AdapterDecoder decoder) {
+    public ExprAdapter(Construct subcon, final AdapterEncoder encoder, final AdapterDecoder decoder) {
       super(subcon);
       this.encoder = encoder;
       this.decoder = decoder;

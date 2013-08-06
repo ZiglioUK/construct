@@ -190,7 +190,7 @@ public class Core {
   For example, if FLAG_COPY_CONTEXT is set, repeaters will pass a copy of
   the context for each iteration, which is necessary for OnDemand parsing.
 */
-  static public abstract class Construct {
+  static public abstract class Construct implements Cloneable {
 
     public static final int FLAG_COPY_CONTEXT = 0x0001;
     public static final int FLAG_DYNAMIC = 0x0002;
@@ -214,6 +214,10 @@ public class Core {
       this.conflags = flags;
     }
 
+    public Construct clone() throws CloneNotSupportedException {
+      return (Construct) super.clone();
+    }
+    
     @Override
     public String toString() {
       return getClass().getName() + "(" + name + "): " + val;
@@ -448,6 +452,12 @@ public class Core {
       this.subcon = subcon;
     }
 
+    public Subconstruct clone() throws CloneNotSupportedException {
+      Subconstruct s = (Adapter) super.clone();
+      s.subcon = subcon.clone();
+      return s;
+    }
+    
 //    @Override
 //    public T get(){
 //      return subcon;
@@ -510,8 +520,14 @@ public class Core {
       return length;
     }
 
+
     /*
-     * public int _sizeof( Container context ){ return length; }
+     * public int _sizeof( Container context ){
+@Override
+public Construct clone() {
+  // TODO Auto-generated method stub
+  return null;
+} return length; }
      */
   }
 
@@ -758,7 +774,7 @@ public class Core {
    * 
    * .. note:: This object requires a seekable stream for parsing.
    */
-  public static class Range extends Subconstruct {
+  public static class Range<T extends Construct> extends Subconstruct<T> {
 
     /**
      * @param mincount
@@ -783,7 +799,7 @@ public class Core {
     int mincount;
     int maxcout;
 
-    public Range(int mincount, int maxcount, Construct subcon) {
+    public Range(int mincount, int maxcount, T subcon) {
       super(subcon);
       this.mincount = mincount;
       this.maxcout = maxcount;
@@ -792,22 +808,31 @@ public class Core {
     }
 
     @Override
+    public List<T> get(){
+      return (List<T>)val;
+    }
+    @Override
     public Object _parse(ByteBufferWrapper stream, Container context) {
       // obj = ListContainer()
       List<Object> obj = ListContainer();
+      val = ListContainer();
+      
       int c = 0;
       int pos = stream.position();
       try {
+        T clone = (T)subcon.clone();
         if ((subcon.conflags & FLAG_COPY_CONTEXT) != 0) {
           while (c < maxcout) {
             pos = stream.position();
-            obj.add(subcon._parse(stream, context.clone()));
+            get().add( clone ); 
+            obj.add(clone._parse(stream, context.clone()));
             c += 1;
           }
         } else {
           while (c < maxcout) {
             pos = stream.position();
-            obj.add(subcon._parse(stream, context));
+            get().add(clone);
+            obj.add(clone._parse(stream, context));
             c += 1;
           }
         }
@@ -892,6 +917,16 @@ public class Core {
       _clear_flag(FLAG_EMBED);
     }
 
+    @Override
+    public Struct clone() throws CloneNotSupportedException {
+      Construct[] subclones = new Construct[subcons.length];
+      int i = 0;
+      for( Construct c : subcons){
+        subclones[i] = c.clone();
+      }
+      return new Struct( name, subclones );
+    }
+
     /**
      * This is a special constructor for typesafe Structs.
      * Instead of passing an array of Subcons at runtime,
@@ -909,7 +944,6 @@ public class Core {
         Field[] fields = getClass().getDeclaredFields();
         List<Construct> subconf = new ArrayList<Construct>();
 
-        Object enclosingInst = null;
         for( int i = 0; i < fields.length; i++ ) {
           field = fields[i];
           field.setAccessible(true);
@@ -923,10 +957,15 @@ public class Core {
           Construct inst;
           switch (fctor.getParameterTypes().length) {
           // TODO should check that the first instance is of the right type: enclosing type or String
-          case 2: // inner class
-            // Class parc = fctor.getParameterTypes()[0];
-            if (enclosingInst == null)
+          case 2: // inner classes
+            Object enclosingInst;
+            try{
+              // static class case
               enclosingInst = getClass().getDeclaredField("this$0").get(this);
+            } catch( NoSuchFieldException nsfe ){
+              // private nested class case
+              enclosingInst = this;
+            }
             inst = (Construct) fctor.newInstance(enclosingInst, fname);
             break;
           case 1:
@@ -971,7 +1010,7 @@ public class Core {
       for (Construct sc : subcons) {
         if ((sc.conflags & FLAG_EMBED) != 0) {
           context.set("<obj>", obj);
-          sc._parse(stream, context);
+          sc.val = sc._parse(stream, context);
         } else {
           sc.val = sc._parse(stream, context);
           if (sc.name != null) {
@@ -1133,6 +1172,7 @@ public class Core {
     public int _sizeof(com.sirtrack.construct.lib.Containers.Container context) {
       throw new SwitchError("no default case defined");
     }
+
   };
 
   /**
@@ -1283,6 +1323,11 @@ public class Core {
     }
 
     @Override
+    public Switch clone() throws CloneNotSupportedException {
+      return new Switch(name, keyfunc, cases.clone(), defaultval.clone(), include_key);
+    }
+    
+    @Override
     public Object _parse(ByteBufferWrapper stream, Container context) {
       Object key = keyfunc.get(context);
       /* assign the case Construct as a value for Switch
@@ -1320,6 +1365,7 @@ public class Core {
       Construct casestruct = cases.get(keyfunc.get(context), defaultval);
       return casestruct._sizeof(context);
     }
+
   }
 
   /*
@@ -1465,6 +1511,7 @@ public class Core {
     public int _sizeof(Container context) {
       return resizer.resize(subcon._sizeof(context));
     }
+
   }
 
   /*

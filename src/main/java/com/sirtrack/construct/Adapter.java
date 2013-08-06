@@ -2,6 +2,7 @@ package com.sirtrack.construct;
 
 import java.io.ByteArrayOutputStream;
 
+import com.sirtrack.construct.Adapters.MappingAdapter;
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.Subconstruct;
 import com.sirtrack.construct.lib.ByteBufferWrapper;
