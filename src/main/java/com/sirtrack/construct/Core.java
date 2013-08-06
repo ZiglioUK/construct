@@ -452,9 +452,9 @@ public class Core {
       this.subcon = subcon;
     }
 
-    public Subconstruct clone() throws CloneNotSupportedException {
-      Subconstruct s = (Subconstruct) super.clone();
-      s.subcon = subcon.clone();
+    public Subconstruct<T> clone() throws CloneNotSupportedException {
+      Subconstruct<T> s = (Subconstruct<T>) super.clone();
+      s.subcon = (T)subcon.clone();
       return s;
     }
     
@@ -1326,7 +1326,11 @@ public Construct clone() {
 
     @Override
     public Switch clone() throws CloneNotSupportedException {
-      return new Switch(name, keyfunc, cases.clone(), defaultval.clone(), include_key);
+      Switch c = (Switch) super.clone();
+      c.cases = cases.clone(); // TODO check deep copy
+      c.defaultval = defaultval.clone();
+
+      return c;
     }
     
     @Override
