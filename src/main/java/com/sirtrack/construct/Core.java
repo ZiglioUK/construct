@@ -440,7 +440,7 @@ public class Core {
    */
   public static abstract class Subconstruct<T extends Construct> extends Construct {
 
-    public T subcon;
+    protected T subcon;
 
     /**
      * @param subcon
@@ -817,6 +817,10 @@ public Construct clone() {
     }
     
     @Override
+    public void set( Object val ){
+    }
+    
+    @Override
     public Object _parse(ByteBufferWrapper stream, Container context) {
       // obj = ListContainer()
       List<Object> obj = ListContainer();
@@ -825,9 +829,9 @@ public Construct clone() {
       int c = 0;
       int pos = stream.position();
       try {
-        T clone = (T) subcon.clone();
         if ((subcon.conflags & FLAG_COPY_CONTEXT) != 0) {
           while (c < maxcout) {
+            T clone = (T) subcon.clone();
             pos = stream.position();
             get().add( clone ); 
             obj.add(clone._parse(stream, context.clone()));
@@ -835,6 +839,7 @@ public Construct clone() {
           }
         } else {
           while (c < maxcout) {
+            T clone = (T) subcon.clone();
             pos = stream.position();
             get().add(clone);
             obj.add(clone._parse(stream, context));
@@ -1435,6 +1440,15 @@ public Construct clone() {
       this.encoder = encoder;
       this.decoder = decoder;
       this.resizer = resizer;
+    }
+
+    @Override
+    public T get(){
+      return subcon;
+    }
+    
+    @Override
+    public void set( Object val ){
     }
 
     @Override
