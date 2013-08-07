@@ -340,12 +340,11 @@ public class Adapters {
    *          a function that takes (obj, context) and returns an decoded
    *          version of obj
    */
-  public static <T extends Construct> ExprAdapter<T> ExprAdapter(T subcon, 
-      final AdapterEncoder encoder, final AdapterDecoder decoder) {
+  public static <T extends Construct> ExprAdapter<T> ExprAdapter(T subcon, AdapterEncoder encoder, AdapterDecoder decoder) {
     return new ExprAdapter<T>(subcon, encoder, decoder);
   };
 
-  public static class ExprAdapter<T extends Construct> extends Adapter<T> {
+  public static class ExprAdapter<T extends com.sirtrack.construct.Core.Construct> extends Adapter<T> {
     AdapterEncoder encoder;
     AdapterDecoder decoder;
 
