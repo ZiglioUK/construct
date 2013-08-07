@@ -1027,8 +1027,8 @@ public Construct clone() {
           Object val = sc._parse(stream, context);
           sc.set( val );
           if (sc.name != null) {
-            obj.set(sc.name, sc.val);
-            context.set(sc.name, sc.val);
+            obj.set(sc.name, val);
+            context.set(sc.name, val);
           }
         }
       }
@@ -1442,14 +1442,15 @@ public Construct clone() {
       this.resizer = resizer;
     }
 
-    @Override
-    public T get(){
-      return subcon;
-    }
+//    @Override
+//    public T get(){
+//      return subcon;
+//    }
     
-    @Override
-    public void set( Object val ){
-    }
+//    @Override
+//    public void set( Object val ){
+//      subcon.set(val);
+//    }
 
     @Override
     public Object _parse(ByteBufferWrapper stream, Container context) {
@@ -1683,6 +1684,16 @@ public Construct clone() {
       this(name, subcon, 0, 0);
     }
 
+    @Override
+    public T get(){
+      return subcon;
+    }
+//
+//    @Override
+//    public void set( Object val ){
+//      subcon.set(val);
+//    }
+    
   }
 
   /**

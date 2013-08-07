@@ -31,6 +31,16 @@ public abstract class Adapter<T extends Construct> extends Subconstruct<T> imple
 		subcon._build(encode(obj, context), stream, context);
 	}
 
+//  @Override
+//  public T get(){
+//    return subcon;
+//  }
+//
+//  @Override
+//  public void set( Object val ){
+//    subcon.set(val);
+//  }
+	
 	abstract public Object decode(Object obj, Container context);
 	abstract public Object encode(Object obj, Container context);
 
