@@ -144,10 +144,10 @@ public class Macros {
       pattern mismatches the desired pattern. default is False.
    * @return a padding field (value is discarded)
    */
-  public static Adapter Padding( int length, byte pattern, boolean strict ){
+  public static PaddingAdapter Padding( int length, byte pattern, boolean strict ){
   	return PaddingAdapter( Field( null, length ), pattern, strict ); 
   }
-  public static Adapter Padding( int length  ){
+  public static PaddingAdapter Padding( int length  ){
   	return Padding( length, (byte)0x00, false );
   }
 
@@ -544,19 +544,19 @@ public static Subconstruct Embed( Construct subcon ){
  * @param subcon the struct to embed
  * @return
  */
-public static Embedded Embedded( Construct subcon ){
-	return new Embedded( subcon );
+public static <T extends Construct>Embedded<T> Embedded( T subcon ){
+	return new Embedded<T>( subcon );
 }
 
 /**
  * embeds a struct into the enclosing struct.
  */
-public static class Embedded extends Reconfig {
+public static class Embedded<T extends Construct> extends Reconfig<T> {
   /*
   * @param subcon the struct to embed
   * @return
   */
-  public Embedded( Construct subcon ){
+  public Embedded( T subcon ){
     super( subcon.name, subcon, Construct.FLAG_EMBED, 0 );
   }
 }
@@ -787,7 +787,7 @@ public static Construct BitStruct( String name, Construct... subcons ){
  * @param subcons
  * @return
  */
-public static Embedded EmbeddedStruct(Construct... subcons){
+public static Embedded<Struct> EmbeddedStruct(Construct... subcons){
     return Embedded( Struct( null, subcons ));
 }
 

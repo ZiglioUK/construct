@@ -340,16 +340,16 @@ public class Adapters {
    *          a function that takes (obj, context) and returns an decoded
    *          version of obj
    */
-  public static ExprAdapter ExprAdapter(Construct subcon,
+  public static <T extends Construct> ExprAdapter<T> ExprAdapter(T subcon, 
       final AdapterEncoder encoder, final AdapterDecoder decoder) {
-    return new ExprAdapter(subcon, encoder, decoder);
+    return new ExprAdapter<T>(subcon, encoder, decoder);
   };
 
-  public static class ExprAdapter extends Adapter {
+  public static class ExprAdapter<T extends Construct> extends Adapter<T> {
     AdapterEncoder encoder;
     AdapterDecoder decoder;
 
-    public ExprAdapter(Construct subcon, final AdapterEncoder encoder, final AdapterDecoder decoder) {
+    public ExprAdapter(T subcon, final AdapterEncoder encoder, final AdapterDecoder decoder) {
       super(subcon);
       this.encoder = encoder;
       this.decoder = decoder;

@@ -199,7 +199,7 @@ public class Core {
 
     public int conflags;
     public String name;
-    public Object val;
+    protected Object val;
 
     public Construct(String name) {
       this(name, 0);
@@ -225,6 +225,10 @@ public class Core {
 
     public Object get() {
       return val;
+    }
+
+    public void set(Object val) {
+      this.val = val;
     }
 
     /**
@@ -1012,9 +1016,11 @@ public Construct clone() {
       for (Construct sc : subcons) {
         if ((sc.conflags & FLAG_EMBED) != 0) {
           context.set("<obj>", obj);
-          sc.val = sc._parse(stream, context);
+          Object val = sc._parse(stream, context);
+          sc.set( val );
         } else {
-          sc.val = sc._parse(stream, context);
+          Object val = sc._parse(stream, context);
+          sc.set( val );
           if (sc.name != null) {
             obj.set(sc.name, sc.val);
             context.set(sc.name, sc.val);
@@ -1322,6 +1328,18 @@ public Construct clone() {
 
     public Switch(String name, KeyFunc keyfunc, Container cases) {
       this(name, keyfunc, cases, NoDefault, false);
+    }
+
+    @Override
+    public Object get() {
+      return val;
+    }
+
+    @Override
+    public void set(Object val) {
+      // do nothing: prevent Structs from setting val to the parsed value
+      // keep the Switch case construct as a value
+      //this.val = val;
     }
 
     @Override
