@@ -930,10 +930,22 @@ public Construct clone() {
     @Override
     public Struct clone() throws CloneNotSupportedException {
       Struct clone = (Struct) super.clone();
+
       clone.subcons = new Construct[subcons.length];
+      Field[] fields = getClass().getDeclaredFields();
+
       int i = 0;
-      for( Construct c : subcons){
-        clone.subcons[i++] = c.clone();
+      for( Field f : fields){
+        if (!Construct.class.isAssignableFrom(f.getType()))
+          continue;        
+        try{
+          f.setAccessible(true);
+          Construct fclone = ((Construct)f.get(this)).clone();
+          f.set(clone, fclone);
+          clone.subcons[i++] = fclone;
+        } catch( Exception e ){
+          throw new RuntimeException(e);
+        }
       }
       return clone;
     }
