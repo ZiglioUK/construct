@@ -935,17 +935,37 @@ public Construct clone() {
       Field[] fields = getClass().getDeclaredFields();
 
       int i = 0;
-      for( Field f : fields){
-        if (!Construct.class.isAssignableFrom(f.getType()))
-          continue;        
-        try{
-          f.setAccessible(true);
-          Construct fclone = ((Construct)f.get(this)).clone();
-          f.set(clone, fclone);
-          clone.subcons[i++] = fclone;
-        } catch( Exception e ){
-          throw new RuntimeException(e);
-        }
+      for( Field f : fields ){
+        if (Construct.class.isAssignableFrom(f.getType()))
+	        try{
+	          f.setAccessible(true);
+	          // clone field 
+	          Construct fclone = ((Construct)f.get(this)).clone();
+	          // set the field clone into the Struct clone 
+	          f.set(clone, fclone);
+	          // also add the field clone to the subcons array 
+	          clone.subcons[i++] = fclone;
+	        } catch( Exception e ){
+	          throw new RuntimeException(e);
+	        }
+          
+        // Clone elements in the subcons array
+        // Because we cater for both static and runtime Struct definitions,
+        // we need to make sure subcons don't end up twice in the subcons array
+        // This case has to handle only the runtime (old) definition
+        // So if we already have stuff in the subcons array, carry on
+        else if ( /*f.getType() == Construct[].class &&*/ f.getName().equals("subcons") && clone.subcons[0] == null )
+	        try{
+	          i = 0;
+	          for( Construct c : subcons ){
+	            clone.subcons[i++] = c.clone();
+	          }
+
+	        } catch( Exception e ){
+	          throw new RuntimeException(e);
+	      }
+        else
+        	continue;
       }
       return clone;
     }
