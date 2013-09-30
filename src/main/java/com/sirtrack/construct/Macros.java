@@ -210,27 +210,27 @@ public class Macros {
   /**
   * @return unsigned, big endian 8-bit integer
   */
-  public static FormatField UBInt8(String name){
-   	return new FormatField( name, '>', 'B' );
+  public static FormatField<Integer> UBInt8(String name){
+   	return new FormatField<Integer>( name, '>', 'B' );
   }
   /**
 	  * @return unsigned, big endian 16-bit integer
 	  */
-	  public static FormatField UBInt16(String name){
-	   	return new FormatField( name, '>', 'H' );
+	  public static FormatField<Integer> UBInt16(String name){
+	   	return new FormatField<Integer>( name, '>', 'H' );
 	  }
   /**
 	  * @return unsigned, big endian 32-bit integer
 	  */
-	  public static FormatField UBInt32(String name){
-	   	return new FormatField( name, '>', 'L' );
+	  public static FormatField<Integer> UBInt32(String name){
+	   	return new FormatField<Integer>( name, '>', 'L' );
 	  }
 
   /**
 	  * @return unsigned, big endian 64-bit integer
 	  */
-	  public static FormatField UBInt64(String name){
-	   	return new FormatField( name, '>', 'Q' );
+	  public static FormatField<Integer> UBInt64(String name){
+	   	return new FormatField<Integer>( name, '>', 'Q' );
 	  }
 
   /**
@@ -239,7 +239,7 @@ public class Macros {
 	  public static UBInt8 SBInt8(String name){
 	   	return new UBInt8( name );
 	  }
-	  static class UBInt8 extends FormatField {
+	  static class UBInt8 extends FormatField<Integer> {
 	    public UBInt8(String name) {
 	      super(name, '>', 'b');
 	    }
@@ -251,7 +251,7 @@ public class Macros {
 	  public static UBInt16 SBInt16(String name){
 	   	return new UBInt16( name );
 	  }
-    static class UBInt16 extends FormatField {
+    static class UBInt16 extends FormatField<Integer> {
       public UBInt16(String name) {
         super(name, '>', 'h');
       }
@@ -259,14 +259,14 @@ public class Macros {
   /**
 	  * @return signed, big endian 32-bit integer
 	  */
-	  public static FormatField SBInt32(String name){
-	   	return new FormatField( name, '>', 'l' );
+	  public static FormatField<Integer> SBInt32(String name){
+	   	return new FormatField<Integer>( name, '>', 'l' );
 	  }
   /**
 	  * @return signed, big endian 64-bit integer
 	  */
-	  public static FormatField SBInt64(String name){
-	   	return new FormatField( name, '>', 'q' );
+	  public static FormatField<Integer> SBInt64(String name){
+	   	return new FormatField<Integer>( name, '>', 'q' );
 	  }
   /**
 	  * @return unsigned, little endian 8-bit integer
@@ -274,7 +274,7 @@ public class Macros {
     public static ULInt8 ULInt8(String name){
       return new ULInt8( name );
     }
-	  public static class ULInt8 extends FormatField {
+	  public static class ULInt8 extends FormatField<Integer> {
       public ULInt8(String name){
         super( name, '<', 'B' );
       }
@@ -285,7 +285,7 @@ public class Macros {
 	  public static ULInt16 ULInt16(String name){
 	   	return new ULInt16( name );
 	  }
-	  public static class ULInt16 extends FormatField{
+	  public static class ULInt16 extends FormatField<Integer>{
 	    public ULInt16(String name){
 	      super( name, '<', 'H' );
 	    }
@@ -293,86 +293,86 @@ public class Macros {
   /**
 	  * @return unsigned, little endian 32-bit integer
 	  */
-	  public static FormatField ULInt32(String name){
-	   	return new FormatField( name, '<', 'L' );
+	  public static FormatField<Integer> ULInt32(String name){
+	   	return new FormatField<Integer>( name, '<', 'L' );
 	  }
   /**
 	  * @return unsigned, little endian 64-bit integer
 	  */
-	  public static FormatField ULInt64(String name){
-	   	return new FormatField( name, '<', 'Q' );
+	  public static FormatField<Integer> ULInt64(String name){
+	   	return new FormatField<Integer>( name, '<', 'Q' );
 	  }
   /**
 	  * @return signed, little endian 8-bit integer
 	  */
-	  public static FormatField SLInt8(String name){
-	   	return new FormatField( name, '<', 'b' );
+	  public static FormatField<Integer> SLInt8(String name){
+	   	return new FormatField<Integer>( name, '<', 'b' );
 	  }
   /**
 	  * @return signed, little endian 16-bit integer
 	  */
-	  public static FormatField SLInt16(String name){
-	   	return new FormatField( name, '<', 'h' );
+	  public static FormatField<Integer> SLInt16(String name){
+	   	return new FormatField<Integer>( name, '<', 'h' );
 	  }
   /**
 	  * @return signed, little endian 32-bit integer
 	  */
-	  public static FormatField SLInt32(String name){
-	   	return new FormatField( name, '<', 'l' );
+	  public static FormatField<Integer> SLInt32(String name){
+	   	return new FormatField<Integer>( name, '<', 'l' );
 	  }
   /**
 	  * @return signed, little endian 64-bit integer
 	  */
-	  public static FormatField SLInt64(String name){
-	   	return new FormatField( name, '<', 'q' );
+	  public static FormatField<Integer> SLInt64(String name){
+	   	return new FormatField<Integer>( name, '<', 'q' );
 	  }
   /**
 	  * @return unsigned, native endianity 8-bit integer
 	  */
-	  public static FormatField UNInt8(String name){
-	   	return new FormatField( name, '=', 'B' );
+	  public static FormatField<Integer> UNInt8(String name){
+	   	return new FormatField<Integer>( name, '=', 'B' );
 	  }
   /**
 	  * @return unsigned, native endianity 16-bit integer
 	  */
-	  public static FormatField UNInt16(String name){
-	   	return new FormatField( name, '=', 'H' );
+	  public static FormatField<Integer> UNInt16(String name){
+	   	return new FormatField<Integer>( name, '=', 'H' );
 	  }
   /**
 	  * @return unsigned, native endianity 32-bit integer
 	  */
-	  public static FormatField UNInt32(String name){
-	   	return new FormatField( name, '=', 'L' );
+	  public static FormatField<Long> UNInt32(String name){
+	   	return new FormatField<Long>( name, '=', 'L' );
 	  }
   /**
 	  * @return unsigned, native endianity 64-bit integer
 	  */
-	  public static FormatField UNInt64(String name){
-	   	return new FormatField( name, '=', 'Q' );
+	  public static FormatField<Long> UNInt64(String name){
+	   	return new FormatField<Long>( name, '=', 'Q' );
 	  }
   /**
 	  * @return signed, native endianity 8-bit integer
 	  */
-	  public static FormatField SNInt8(String name){
-	   	return new FormatField( name, '=', 'b' );
+	  public static FormatField<Integer> SNInt8(String name){
+	   	return new FormatField<Integer>( name, '=', 'b' );
 	  }
   /**
 	  * @return signed, native endianity 16-bit integer
 	  */
-	  public static FormatField SNInt16(String name){
-	   	return new FormatField( name, '=', 'h' );
+	  public static FormatField<Integer> SNInt16(String name){
+	   	return new FormatField<Integer>( name, '=', 'h' );
 	  }
   /**
 	  * @return signed, native endianity 32-bit integer
 	  */
-	  public static FormatField SNInt32(String name){
-	   	return new FormatField( name, '=', 'l' );
+	  public static FormatField<Long> SNInt32(String name){
+	   	return new FormatField<Long>( name, '=', 'l' );
 	  }
   /**
 	  * @return signed, native endianity 64-bit integer
 	  */
-	  public static FormatField SNInt64(String name){
-	   	return new FormatField( name, '=', 'q' );
+	  public static FormatField<Long> SNInt64(String name){
+	   	return new FormatField<Long>( name, '=', 'q' );
 	  }
 	  
 /*

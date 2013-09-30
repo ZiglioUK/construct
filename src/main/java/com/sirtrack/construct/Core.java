@@ -540,9 +540,9 @@ public Construct clone() {
    * 
    * See ``struct`` documentation for instructions on crafting format strings.
    */
-  public static class FormatField extends StaticField {
+  public static class FormatField<T extends Number> extends StaticField {
     int length;
-    Packer packer;
+    Packer<T> packer;
 
     /**
      * @param name
@@ -559,13 +559,13 @@ public Construct clone() {
         throw new ValueError("endianity must be be '=', '<', or '>' "
             + endianity);
 
-      packer = new Packer(endianity, format);
+      packer = new Packer<T>(endianity, format);
       super.length = packer.length();
 
     }
 
     @Override
-    public Object _parse(ByteBufferWrapper stream, Container context) {
+    public T _parse(ByteBufferWrapper stream, Container context) {
       try {
         return packer.unpack(stream.bb);
       } catch (Exception e) {
@@ -577,6 +577,11 @@ public Construct clone() {
     public void _build(Object obj, ByteArrayOutputStream stream,
         Container context) {
       _write_stream(stream, super.length, packer.pack(obj));
+    }
+
+    @Override
+    public T get() {
+      return (T)val;
     }
 
   }

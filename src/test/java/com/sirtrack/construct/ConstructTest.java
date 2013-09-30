@@ -108,8 +108,10 @@ public class ConstructTest {
     cb = Container("a", 1, "b", 2);
     assertTrue(ca.equals(cb));
 
-    assertEquals(1, s.a.get());
-    assertEquals(2, s.b.get());
+    Integer a = s.a.get();
+    
+    assertTrue(1 == a);
+    assertTrue(2 == s.b.get());
   }
 
 
@@ -139,10 +141,10 @@ public class ConstructTest {
     cb = Container("a", 1, "b", 2, "foo", Container("c", 3, "d", 4));
     assertTrue(ca.equals(cb));
 
-    assertEquals(1, s.a.get());
-    assertEquals(2, s.b.get());
-    assertEquals(3, s.foo.c.get());
-    assertEquals(4, s.foo.d.get());
+    assertTrue(1 == s.a.get());
+    assertTrue(2 == s.b.get());
+    assertTrue(3 == s.foo.c.get());
+    assertTrue(4 == s.foo.d.get());
   }
 
   @Test
