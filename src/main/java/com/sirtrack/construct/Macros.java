@@ -120,6 +120,11 @@ public class Macros {
     public Bits( final String name, final int length ) {
       this( name, length, false, false, 8 );
     }
+
+    @Override
+    public Integer get() {
+      return (Integer)val;
+    }
   }
 
   public static Bits Bits( final String name, final int length, boolean swapped, boolean signed, int bytesize ) {
@@ -268,23 +273,31 @@ public class Macros {
 	  public static FormatField<Integer> SBInt64(String name){
 	   	return new FormatField<Integer>( name, '>', 'q' );
 	  }
+	  
   /**
 	  * @return unsigned, little endian 8-bit integer
 	  */
     public static ULInt8 ULInt8(String name){
       return new ULInt8( name );
     }
+    /**
+     * @return unsigned, little endian 8-bit integer
+     */
 	  public static class ULInt8 extends FormatField<Integer> {
       public ULInt8(String name){
         super( name, '<', 'B' );
       }
 	  }
-  /**
+
+	  /**
 	  * @return unsigned, little endian 16-bit integer
 	  */
 	  public static ULInt16 ULInt16(String name){
 	   	return new ULInt16( name );
 	  }
+    /**
+    * @return unsigned, little endian 16-bit integer
+    */
 	  public static class ULInt16 extends FormatField<Integer>{
 	    public ULInt16(String name){
 	      super( name, '<', 'H' );

@@ -1736,8 +1736,8 @@ public Construct clone() {
   /**
    * a function that takes the context and return the computed value
    */
-  public static interface ValueFunc {
-    Object get(Container ctx);
+  public static interface ValueFunc<T> {
+    T get(Container ctx);
   }
 
   /**
@@ -1749,14 +1749,14 @@ public Construct clone() {
    * @param func
    *          a function that takes the context and return the computed value
    */
-  public static Value Value(String name, ValueFunc func) {
-    return new Value(name, func);
+  public static <T>Value Value(String name, ValueFunc<T> func) {
+    return new Value<T>(name, func);
   };
 
-  public static class Value extends Construct {
-    ValueFunc func;
+  public static class Value<T> extends Construct {
+    ValueFunc<T> func;
 
-    public Value(String name, ValueFunc func) {
+    public Value(String name, ValueFunc<T> func) {
       super(name);
       this.func = func;
       _set_flag(FLAG_DYNAMIC);
