@@ -1763,6 +1763,11 @@ public Construct clone() {
     }
 
     @Override
+    public T get() {
+      return (T)val;
+    }
+    
+    @Override
     public Object _parse(ByteBufferWrapper stream,
         com.sirtrack.construct.lib.Containers.Container context) {
       return func.get(context);
