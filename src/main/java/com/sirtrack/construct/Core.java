@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -1753,13 +1754,33 @@ public Construct clone() {
     return new Value<T>(name, func);
   };
 
-  public static class Value<T> extends Construct {
-    ValueFunc<T> func;
+  public static class Value<T> extends Construct implements ValueFunc<T> {
+    public ValueFunc<T> func;
 
+    /**
+     * Us this consstructor if a class extends Value and implements ValueFunc, 
+     * in its own constructor it needs to set super.func = this
+     * 
+     * @param name
+     */
+    public Value(String name) {
+      super(name);
+      this.func = this;
+      _set_flag(FLAG_DYNAMIC);
+    }
+
+    /**
+     * @param name
+     * @param func overrides unimplemented ValueFunc<T> at runtime
+     */
     public Value(String name, ValueFunc<T> func) {
       super(name);
       this.func = func;
       _set_flag(FLAG_DYNAMIC);
+    }
+
+    public T get(Container ctx){
+      throw new RuntimeException("unimplemented");
     }
 
     @Override
