@@ -202,19 +202,28 @@ public class Core {
     public String name;
     protected Object val;
 
+    public Construct() {
+      this(null, 0);
+      // must set name later
+    }
+
     public Construct(String name) {
       this(name, 0);
     }
 
     public Construct(String name, int flags) {
+      setName(name);
+      this.conflags = flags;
+    }
+
+    public void setName(String name){
       if (name != null) {
         if (name.equals("_") || name.startsWith("<"))
           throw new ValueError("reserved name " + name); // raise
       }
       this.name = name;
-      this.conflags = flags;
     }
-
+    
     public Construct clone() throws CloneNotSupportedException {
       return (Construct) super.clone();
     }
@@ -1004,10 +1013,10 @@ public Construct clone() {
           fctor = clazz.getConstructors()[0];
           fctor.setAccessible(true);
           Construct inst;
+          Object enclosingInst;
           switch (fctor.getParameterTypes().length) {
           // TODO should check that the first instance is of the right type: enclosing type or String
           case 2: // inner classes
-            Object enclosingInst;
             try{
               // static class case
               enclosingInst = getClass().getDeclaredField("this$0").get(this);
@@ -1018,7 +1027,22 @@ public Construct clone() {
             inst = (Construct) fctor.newInstance(enclosingInst, fname);
             break;
           case 1:
-            inst = (Construct) fctor.newInstance(fname);
+            if( String.class.isAssignableFrom( fctor.getParameterTypes()[0] )){
+              inst = (Construct) fctor.newInstance(fname);
+            } else {
+              // no arguments constructor
+              try{
+                // static class case
+                enclosingInst = getClass().getDeclaredField("this$0").get(this);
+              } catch( NoSuchFieldException nsfe ){
+                // private nested class case
+                enclosingInst = this;
+              }
+              inst = (Construct) fctor.newInstance(enclosingInst);
+              
+              // now call name setter with fname
+              inst.setName(fname); 
+            }
             break;
           case 0:
             inst = (Construct) fctor.newInstance();
@@ -1763,8 +1787,8 @@ public Construct clone() {
      * 
      * @param name
      */
-    public Value(String name) {
-      super(name);
+    public Value() {
+      super();
       this.func = this;
       _set_flag(FLAG_DYNAMIC);
     }
