@@ -924,6 +924,9 @@ public Construct clone() {
   static public Struct Struct(String name, Construct... subcons) {
     return new Struct(name, subcons);
   }
+  static public Struct Struct(Construct... subcons) {
+    return new Struct(null, subcons);
+  }
 
   static public class Struct extends Construct {
     public boolean nested = true;
