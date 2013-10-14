@@ -48,7 +48,7 @@ Whitespace between formats is ignored.
 
 The variable struct.error is an exception raised on errors. *
  */
-public class Packer {
+public class Packer<T extends Number> {
   
 	static public class StructError extends RuntimeException{
   	public StructError( String err ){
@@ -65,7 +65,7 @@ public class Packer {
     this.fmt = fmt;
   }
 
-  public Object unpack( ByteBuffer buf )
+  public T unpack( ByteBuffer buf )
   {
       ArrayList<Object> result = new ArrayList<Object>();
       Object obj;
@@ -119,7 +119,7 @@ public class Packer {
      		default:
       			throw new StructError( "unrecognized fmt " + fmt);
       }
-     return obj;
+     return (T)obj;
   }
 
   static public byte getByte( Object obj ){
