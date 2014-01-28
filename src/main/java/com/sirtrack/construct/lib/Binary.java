@@ -2,9 +2,17 @@ package com.sirtrack.construct.lib;
 import com.sirtrack.construct.Core.ValueError;
 import com.sirtrack.construct.lib.*;
 
+/**
+ * @author zigliolie
+ *
+ */
+/**
+ * @author zigliolie
+ *
+ */
 public class Binary {
 
-	static byte[][] _char_to_bin = new byte[256][8];
+	public static final byte[][] _char_to_bin = new byte[256][8];
 	static{
 		for( int i = 0; i<256; i++)
 		{
@@ -61,15 +69,22 @@ public class Binary {
 		return swap_bytes( bits, 8 );
 	}
 	
+	
+	/**
+	 * @param bits
+	 * @param bytesize
+	 * @return it swaps two bytes in a bit array, max 2 byte long
+	 */
 	public static byte[] swap_bytes( byte[] bits, int bytesize ) {
-	    int i = 0;
-	    int l = bits.length;
-	    byte[] output = new byte[l];
-	    int j = output.length - 1;
-	    while( i < l ){
-	    	output[j] = bits[i];
-	    	i++;
-	        j--;
+	    final int L = bits.length;
+	    byte[] output = new byte[L];
+	    
+      int j = L - bytesize;
+	    for( int i = 0; i < L; i++, j++){
+	      if( j == L ){
+	        j = 0;
+	      }
+	      output[j] = bits[i];
 	    }
 	    return output;
 	}

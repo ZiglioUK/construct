@@ -40,7 +40,12 @@ public class LibTest
 
   @Test
   public void test_swap_bytes(){
-	  assertArrayEquals( ByteArray( 0xa, 0xb, 0xc, 0xd ), swap_bytes( ByteArray( 0xd, 0xc, 0xb, 0xa ), 4 ));
+	  assertArrayEquals( ByteArray( 0, 1, 1, 0 ), swap_bytes( ByteArray( 1, 0, 0, 1 ), 2 ));
+  }
+
+  @Test
+  public void test_swap_bytes2(){
+    assertArrayEquals( ByteArray( 0, 1, 1, 0, 1, 1, 1, 1, 0, 0 ), swap_bytes( ByteArray( 1, 0, 1, 1, 1, 1, 0, 0, 0, 1 ), 8 ));
   }
 
   @Test

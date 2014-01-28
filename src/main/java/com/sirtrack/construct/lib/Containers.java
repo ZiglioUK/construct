@@ -19,20 +19,21 @@ public class Containers{
   {
   	HashMap<Object, Object> dict = new HashMap<Object, Object>();
   	
-  	public Container( Object... pairs ){
-  		if(( pairs.length & 1 ) != 0 )
-  			throw new ContainerError( "length of parameters is not and even number: " + pairs.length );
-  		
+  	public <T>Container( T... pairs ){
+  		if(( pairs.length & 1 ) != 0 ){
+  		  if( pairs[0] instanceof Map ){
+  	      this.dict.putAll( (Map)(pairs[0]) );
+  	      return;
+  		  }
+  		  else 
+  		    throw new ContainerError( "length of parameters is not an even number: " + pairs.length );
+  		}
   		for( int i=0; i<pairs.length;  ){
   			Object name = pairs[i++];
   			Object value = pairs[i++];
   			
   			this.dict.put( name, value);
   		}
-  	}
-  
-  	public Container( Map<Object, Object> dict ){
-  		this.dict.putAll( dict );
   	}
   
   	public <K,V>V get( K name ){
@@ -49,7 +50,11 @@ public class Containers{
   	public void del( Object name ){
   		dict.remove( name );
   	}
-  	
+
+    public void clear(){
+      dict.clear();
+    }
+
   	public void set( Object name, Object value ){
   		dict.put( name, value);
   	}
