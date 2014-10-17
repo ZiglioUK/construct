@@ -6,6 +6,7 @@ import static com.sirtrack.construct.lib.Containers.*;
 
 import java.io.ByteArrayOutputStream;
 
+import com.sirtrack.construct.Core.Buffered;
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.CountFunc;
 import com.sirtrack.construct.Core.FormatField;
@@ -515,6 +516,28 @@ public static Range OptionalGreedyRange(Construct subcon){
 #===============================================================================
 */
 	  
+public static class BitwiseBuffered<T extends Construct> extends Buffered<T> {
+  public BitwiseBuffered(T subcon) {
+    super( subcon,
+        BinaryEncoder(),
+        BinaryDecoder(),
+        new Resizer(){
+        @Override
+        public int resize(int length) {
+            if( (length & 7) != 0 )
+              throw new SizeofError("size must be a multiple of 8, size = " + length );
+          return length >> 3;
+        }
+      });
+  }
+  
+  @Override
+  public T get(){
+    return subcon;
+  }
+
+}
+
 /**
  * converts the stream to bits, and passes the bitstream to subcon
  * @param subcon a bitwise construct (usually BitField)

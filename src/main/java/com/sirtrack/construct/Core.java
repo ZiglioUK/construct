@@ -1538,7 +1538,8 @@ public Construct clone() {
 
     @Override
     public int _sizeof(Container context) {
-      return resizer.resize(subcon._sizeof(context));
+      return resizer.resize(
+          subcon._sizeof(context));
     }
   }
 
