@@ -340,27 +340,27 @@ public class Adapters {
    *          a function that takes (obj, context) and returns an decoded
    *          version of obj
    */
-  public static <T extends Construct> ExprAdapter<T> ExprAdapter(T subcon, AdapterEncoder encoder, AdapterDecoder decoder) {
-    return new ExprAdapter<T>(subcon, encoder, decoder);
+  public static <T extends Construct,V> ExprAdapter<T,V> ExprAdapter(T subcon, AdapterEncoder<V> encoder, AdapterDecoder<V> decoder) {
+    return new ExprAdapter<T,V>(subcon, encoder, decoder);
   };
 
-  public static class ExprAdapter<T extends com.sirtrack.construct.Core.Construct> extends Adapter<T> {
-    AdapterEncoder encoder;
-    AdapterDecoder decoder;
+  public static class ExprAdapter<T extends com.sirtrack.construct.Core.Construct, V> extends Adapter<T, V> {
+    AdapterEncoder<V> encoder;
+    AdapterDecoder<V> decoder;
 
-    public ExprAdapter(T subcon, final AdapterEncoder encoder, final AdapterDecoder decoder) {
+    public ExprAdapter(T subcon, final AdapterEncoder<V> encoder, final AdapterDecoder<V> decoder) {
       super(subcon);
       this.encoder = encoder;
       this.decoder = decoder;
     }
 
     @Override
-    public Object decode(Object obj, Container context) {
+    public V decode(Object obj, Container context) {
       return decoder.decode(obj, context);
     }
 
     @Override
-    public Object encode(Object obj, Container context) {
+    public Object encode(V obj, Container context) {
       return encoder.encode(obj, context);
     }
   };
