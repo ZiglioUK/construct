@@ -413,8 +413,7 @@ public class Core {
 
     // abstract public void _build( String obj, OutputStream stream, Container
     // context);
-    public abstract void _build(Object obj, ByteArrayOutputStream stream,
-        Container context);
+    public abstract void _build( Object obj, ByteArrayOutputStream stream, Container context );
 
     /**
      * Calculate the size of this object, optionally using a context. Some
@@ -483,8 +482,7 @@ public class Core {
     }
 
     @Override
-    public void _build(Object obj, ByteArrayOutputStream stream,
-        Container context) {
+    public void _build(Object obj, ByteArrayOutputStream stream, Container context) {
       subcon._build(obj, stream, context);
     }
 
