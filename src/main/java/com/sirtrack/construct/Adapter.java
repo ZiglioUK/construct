@@ -32,14 +32,14 @@ public abstract class Adapter<T extends Construct, V> extends Subconstruct<T> im
     subcon._build(encode((V) obj, context), stream, context);
   }
 
+  @Override
+  public V get(){
+    return (V) val;
+  }
+
 //  @Override
-//  public T get(){
-//    return subcon;
-//  }
-//
-//  @Override
-//  public void set( Object val ){
-//    subcon.set(val);
+//  public void set( V val ){
+//    set(val);
 //  }
   
   abstract public V decode(Object obj, Container context);
