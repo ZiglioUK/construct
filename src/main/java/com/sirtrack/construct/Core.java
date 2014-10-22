@@ -230,7 +230,10 @@ public class Core {
     
     @Override
     public String toString() {
-      return getClass().getName() + "(" + name + "): " + val;
+      if( get() != null)
+        return get().toString();
+      else
+        return getClass().getName() + "(" + name + ")";
     }
 
     public Object get() {
@@ -442,6 +445,7 @@ public class Core {
     }
 
     public abstract int _sizeof(Container context);
+    
   }
 
   /**
