@@ -181,11 +181,6 @@ public class Adapters {
       }
     }
 
-    @Override
-    public T get(){
-      return (T) val;
-    }
-
   }
 
   // public static int getLength( Object obj ){
