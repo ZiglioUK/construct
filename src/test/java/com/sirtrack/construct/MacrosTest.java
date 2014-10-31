@@ -114,17 +114,17 @@ public class MacrosTest
   	a = Enum( UBInt8("enum"), 'q',3,'r',4,'t',5, "_default_", "spam");
   	assertEquals( "spam", a.parse(ByteArray(7)));
 
-  	a = Enum( UBInt8("enum"), 'q',3,'r',4,'t',5, "_default_", Pass );
-  	assertEquals( 7, a.parse(ByteArray(7)));
+//  	a = Enum( UBInt8("enum"), 'q',3,'r',4,'t',5, "_default_", Pass );
+//  	assertEquals( 7, a.parse(ByteArray(7)));
 
   	a = Enum( UBInt8("enum"), 'q',3,'r',4,'t',5);
   	assertArrayEquals( ByteArray(4), a.build('r'));
 
-  	a = Enum( UBInt8("enum"), 'q',3,'r',4,'t',5, "_default_", 9);
-  	assertArrayEquals( ByteArray(9), a.build("spam"));
+//  	a = Enum( UBInt8("enum"), 'q',3,'r',4,'t',5, "_default_", 9);
+//  	assertArrayEquals( ByteArray(9), a.build("spam"));
 
-  	a = Enum( UBInt8("enum"), 'q',3,'r',4,'t',5, "_default_", Pass);
-  	assertArrayEquals( ByteArray(9), a.build(9));
+//  	a = Enum( UBInt8("enum"), 'q',3,'r',4,'t',5, "_default_", Pass);
+//  	assertArrayEquals( ByteArray(9), a.build(9));
   	
   	a = Enum( UBInt8("enum"), 'q',3,'r',4,'t',5);
     exception.expect( MappingError.class );

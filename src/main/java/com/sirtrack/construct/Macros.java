@@ -775,16 +775,22 @@ public static class SymmetricMapping<T> extends MappingAdapter<T>{
       pass the unmapped value as-is
  * @return a set of named values mapping.
  */
-public static <T> Enum<T> Enum( Construct subcon, Object... pairs ){
-	return new Enum<T>( subcon, pairs );
+public static Enum Enum( Construct subcon, Object... pairs ){
+	return new Enum( subcon, pairs );
 }
 
-public static class Enum<T> extends SymmetricMapping<T> {
+public static class Enum extends SymmetricMapping<String> {
+  
+  // we could do some static type checks, making sure that names are String
+  // and that the size of values matches the size of subcon
+  // Let's keep things simple for now
+  // Also don't handle Pass, decided we should always return the same type
+  public Enum( Construct subcon, Container map ){
+    super( subcon, map, (String)map.get("_default_"));
+  }
+  
   public Enum( Construct subcon, Object... pairs ){
-    // we could do some static type checks, making sure that names are String
-    // and that the size of values matches the size of subcon
-    // Let's keep things simple for now
-    super( subcon, Container(pairs), (T) Container(pairs).get("_default_") );
+    this( subcon, Container(pairs) );
   }
 }
 
