@@ -756,12 +756,12 @@ public static class CRC extends Subconstruct {
       return the value "as is" (unmapped)
  * @return a symmetrical mapping: a->b, b->a.
  */
-public static SymmetricMapping SymmetricMapping( Construct subcon, final Container mapping, Object mappingdefault ){
-	return new SymmetricMapping( subcon, mapping, mappingdefault );
+public static <T> SymmetricMapping<T> SymmetricMapping( Construct subcon, final Container mapping, T mappingdefault ){
+	return new SymmetricMapping<T>( subcon, mapping, mappingdefault );
 }
 
-public static class SymmetricMapping extends MappingAdapter{
-  public SymmetricMapping( Construct subcon, final Container mapping, Object mappingdefault ){
+public static class SymmetricMapping<T> extends MappingAdapter<T>{
+  public SymmetricMapping( Construct subcon, final Container mapping, T mappingdefault ){
     super( subcon, mapping.reverse(), mapping, mappingdefault, mappingdefault );
   }
 }
@@ -775,16 +775,16 @@ public static class SymmetricMapping extends MappingAdapter{
       pass the unmapped value as-is
  * @return a set of named values mapping.
  */
-public static Enum Enum( Construct subcon, Object... pairs ){
-	return new Enum( subcon, pairs );
+public static <T> Enum<T> Enum( Construct subcon, Object... pairs ){
+	return new Enum<T>( subcon, pairs );
 }
 
-public static class Enum extends SymmetricMapping {
+public static class Enum<T> extends SymmetricMapping<T> {
   public Enum( Construct subcon, Object... pairs ){
     // we could do some static type checks, making sure that names are String
     // and that the size of values matches the size of subcon
     // Let's keep things simple for now
-    super( subcon, Container(pairs), Container(pairs).get("_default_") );
+    super( subcon, Container(pairs), (T) Container(pairs).get("_default_") );
   }
 }
 

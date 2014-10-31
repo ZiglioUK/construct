@@ -130,22 +130,22 @@ public class Adapters {
    * @return Adapter that maps objects to other objects. See SymmetricMapping
    *         and Enum.
    */
-  static public MappingAdapter MappingAdapter(Construct subcon,
-      Container decoding, Container encoding, Object decdefault,
-      Object encdefault) {
-    return new MappingAdapter(subcon, decoding, encoding, decdefault,
+  static public <T> MappingAdapter<T> MappingAdapter(Construct subcon,
+      Container decoding, Container encoding, T decdefault,
+      T encdefault) {
+    return new MappingAdapter<T>(subcon, decoding, encoding, decdefault,
         encdefault);
   }
 
-  static public class MappingAdapter extends Adapter {
+  static public class MappingAdapter<T> extends Adapter<Construct, T> {
 
     Container decoding;
     Container encoding;
-    Object decdefault;
+    T decdefault;
     Object encdefault;
 
     public MappingAdapter(Construct subcon, Container decoding,
-        Container encoding, Object decdefault, Object encdefault) {
+        Container encoding, T decdefault, Object encdefault) {
       super(subcon);
       this.decoding = decoding;
       this.encoding = encoding;
@@ -166,7 +166,7 @@ public class Adapters {
       }
     }
 
-    public Object decode(Object obj, Container context) {
+    public T decode(Object obj, Container context) {
       if (obj instanceof byte[])
         obj = ((byte[]) obj)[0];
 
@@ -176,10 +176,16 @@ public class Adapters {
         if (decdefault == null)
           throw new MappingError("no encoding mapping for " + obj);
         if (decdefault == Pass)
-          return obj;
+          return (T) obj;
         return decdefault;
       }
     }
+
+    @Override
+    public T get(){
+      return (T) val;
+    }
+
   }
 
   // public static int getLength( Object obj ){
