@@ -1006,13 +1006,14 @@ public Construct clone() {
       Field field = null;
       String fname;
       try {
-        Field[] fields = getClass().getDeclaredFields();
+        Field[] fields = getClass().getFields();
         List<Construct> subconf = new ArrayList<Construct>();
 
         for( int i = 0; i < fields.length; i++ ) {
           field = fields[i];
           field.setAccessible(true);
           Class clazz = field.getType();
+          
           if (!Construct.class.isAssignableFrom(clazz))
             continue;
 
