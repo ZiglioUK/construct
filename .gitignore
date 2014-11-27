@@ -1,1 +1,2 @@
-target
+target/classes
+target/test-classes
