@@ -707,7 +707,7 @@ public Construct clone() {
    * 
    * Example: MetaArray(lambda ctx: 5, UBInt8("foo"))
    */
-  public static class MetaArray extends Subconstruct {
+  public static class MetaArray<T extends Construct> extends Subconstruct<T> {
 
     CountFunc countfunc;
 
@@ -720,7 +720,7 @@ public Construct clone() {
      * @param name
      * @param subcon
      */
-    MetaArray(CountFunc countfunc, Construct subcon) {
+    public MetaArray(CountFunc countfunc, T subcon) {
       super(subcon);
       this.countfunc = countfunc;
       _clear_flag(FLAG_COPY_CONTEXT);
@@ -747,6 +747,7 @@ public Construct clone() {
       } catch (Exception e) {
         throw new ArrayError("expected " + count + ", found " + c, e);
       }
+      val = obj;
       return obj;
     }
 
