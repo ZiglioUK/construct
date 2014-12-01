@@ -23,7 +23,8 @@ public abstract class Adapter<T extends Construct, V> extends Subconstruct<T> im
 
   @Override
   public Object _parse( ByteBufferWrapper stream, Container context) {
-    return decode(subcon._parse( stream, context ), context);
+    val = decode(subcon._parse( stream, context ), context);
+    return val;
   }
 
   @Override
