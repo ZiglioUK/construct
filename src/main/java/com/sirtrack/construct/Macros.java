@@ -223,11 +223,11 @@ public class Macros {
 	  * @return unsigned, big endian 16-bit integer
 	  */
 	  public static FormatField<Integer> UBInt16(String name){
-	   	return new FormatField<Integer>( name, '>', 'H' );
+	   	return new UBInt16( name );
 	  }
     public static class UBInt16 extends FormatField<Integer> {
       public UBInt16(String name) {
-        super(name, '>', 'h');
+        super(name, '>', 'H');
       }
     }
 	  
@@ -260,9 +260,15 @@ public class Macros {
   /**
 	  * @return signed, big endian 16-bit integer
 	  */
-	  public static UBInt16 SBInt16(String name){
-	   	return new UBInt16( name );
+	  public static SBInt16 SBInt16(String name){
+	   	return new SBInt16( name );
 	  }
+    public static class SBInt16 extends FormatField<Integer> {
+      public SBInt16(String name) {
+        super(name, '>', 'h');
+      }
+    }
+	  
   /**
 	  * @return signed, big endian 32-bit integer
 	  */
