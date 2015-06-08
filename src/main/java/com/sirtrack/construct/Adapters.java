@@ -130,56 +130,11 @@ public class Adapters {
    * @return Adapter that maps objects to other objects. See SymmetricMapping
    *         and Enum.
    */
-  static public MappingAdapter MappingAdapter(Construct subcon,
-      Container decoding, Container encoding, Object decdefault,
-      Object encdefault) {
-    return new MappingAdapter(subcon, decoding, encoding, decdefault,
+  static public <T> MappingAdapter<T> MappingAdapter(Construct subcon,
+      Container decoding, Container encoding, T decdefault,
+      T encdefault) {
+    return new MappingAdapter<T>(subcon, decoding, encoding, decdefault,
         encdefault);
-  }
-
-  static public class MappingAdapter extends Adapter {
-
-    Container decoding;
-    Container encoding;
-    Object decdefault;
-    Object encdefault;
-
-    public MappingAdapter(Construct subcon, Container decoding,
-        Container encoding, Object decdefault, Object encdefault) {
-      super(subcon);
-      this.decoding = decoding;
-      this.encoding = encoding;
-      this.decdefault = decdefault;
-      this.encdefault = encdefault;
-
-    }
-
-    public Object encode(Object obj, Container context) {
-      if (encoding.contains(obj))
-        return encoding.get(obj);
-      else {
-        if (encdefault == null)
-          throw new MappingError("no encoding mapping for " + obj);
-        if (encdefault == Pass)
-          return obj;
-        return encdefault;
-      }
-    }
-
-    public Object decode(Object obj, Container context) {
-      if (obj instanceof byte[])
-        obj = ((byte[]) obj)[0];
-
-      if (decoding.contains(obj))
-        return decoding.get(obj);
-      else {
-        if (decdefault == null)
-          throw new MappingError("no encoding mapping for " + obj);
-        if (decdefault == Pass)
-          return obj;
-        return decdefault;
-      }
-    }
   }
 
   // public static int getLength( Object obj ){
@@ -340,27 +295,27 @@ public class Adapters {
    *          a function that takes (obj, context) and returns an decoded
    *          version of obj
    */
-  public static <T extends Construct> ExprAdapter<T> ExprAdapter(T subcon, AdapterEncoder encoder, AdapterDecoder decoder) {
-    return new ExprAdapter<T>(subcon, encoder, decoder);
+  public static <T extends Construct,V> ExprAdapter<T,V> ExprAdapter(T subcon, AdapterEncoder<V> encoder, AdapterDecoder<V> decoder) {
+    return new ExprAdapter<T,V>(subcon, encoder, decoder);
   };
 
-  public static class ExprAdapter<T extends com.sirtrack.construct.Core.Construct> extends Adapter<T> {
-    AdapterEncoder encoder;
-    AdapterDecoder decoder;
+  public static class ExprAdapter<T extends com.sirtrack.construct.Core.Construct, V> extends Adapter<T, V> {
+    AdapterEncoder<V> encoder;
+    AdapterDecoder<V> decoder;
 
-    public ExprAdapter(T subcon, final AdapterEncoder encoder, final AdapterDecoder decoder) {
+    public ExprAdapter(T subcon, final AdapterEncoder<V> encoder, final AdapterDecoder<V> decoder) {
       super(subcon);
       this.encoder = encoder;
       this.decoder = decoder;
     }
 
     @Override
-    public Object decode(Object obj, Container context) {
+    public V decode(Object obj, Container context) {
       return decoder.decode(obj, context);
     }
 
     @Override
-    public Object encode(Object obj, Container context) {
+    public Object encode(V obj, Container context) {
       return encoder.encode(obj, context);
     }
   };

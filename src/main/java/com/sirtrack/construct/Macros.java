@@ -6,6 +6,7 @@ import static com.sirtrack.construct.lib.Containers.*;
 
 import java.io.ByteArrayOutputStream;
 
+import com.sirtrack.construct.Core.Buffered;
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.CountFunc;
 import com.sirtrack.construct.Core.FormatField;
@@ -222,8 +223,14 @@ public class Macros {
 	  * @return unsigned, big endian 16-bit integer
 	  */
 	  public static FormatField<Integer> UBInt16(String name){
-	   	return new FormatField<Integer>( name, '>', 'H' );
+	   	return new UBInt16( name );
 	  }
+    public static class UBInt16 extends FormatField<Integer> {
+      public UBInt16(String name) {
+        super(name, '>', 'H');
+      }
+    }
+	  
   /**
 	  * @return unsigned, big endian 32-bit integer
 	  */
@@ -253,14 +260,15 @@ public class Macros {
   /**
 	  * @return signed, big endian 16-bit integer
 	  */
-	  public static UBInt16 SBInt16(String name){
-	   	return new UBInt16( name );
+	  public static SBInt16 SBInt16(String name){
+	   	return new SBInt16( name );
 	  }
-    static class UBInt16 extends FormatField<Integer> {
-      public UBInt16(String name) {
+    public static class SBInt16 extends FormatField<Integer> {
+      public SBInt16(String name) {
         super(name, '>', 'h');
       }
     }
+	  
   /**
 	  * @return signed, big endian 32-bit integer
 	  */
@@ -515,6 +523,28 @@ public static Range OptionalGreedyRange(Construct subcon){
 #===============================================================================
 */
 	  
+public static class BitwiseBuffered<T extends Construct> extends Buffered<T> {
+  public BitwiseBuffered(T subcon) {
+    super( subcon,
+        BinaryEncoder(),
+        BinaryDecoder(),
+        new Resizer(){
+        @Override
+        public int resize(int length) {
+            if( (length & 7) != 0 )
+              throw new SizeofError("size must be a multiple of 8, size = " + length );
+          return length >> 3;
+        }
+      });
+  }
+  
+  @Override
+  public T get(){
+    return subcon;
+  }
+
+}
+
 /**
  * converts the stream to bits, and passes the bitstream to subcon
  * @param subcon a bitwise construct (usually BitField)
@@ -733,12 +763,12 @@ public static class CRC extends Subconstruct {
       return the value "as is" (unmapped)
  * @return a symmetrical mapping: a->b, b->a.
  */
-public static SymmetricMapping SymmetricMapping( Construct subcon, final Container mapping, Object mappingdefault ){
-	return new SymmetricMapping( subcon, mapping, mappingdefault );
+public static <T> SymmetricMapping<T> SymmetricMapping( Construct subcon, final Container mapping, T mappingdefault ){
+	return new SymmetricMapping<T>( subcon, mapping, mappingdefault );
 }
 
-public static class SymmetricMapping extends MappingAdapter{
-  public SymmetricMapping( Construct subcon, final Container mapping, Object mappingdefault ){
+public static class SymmetricMapping<T> extends MappingAdapter<T>{
+  public SymmetricMapping( Construct subcon, final Container mapping, T mappingdefault ){
     super( subcon, mapping.reverse(), mapping, mappingdefault, mappingdefault );
   }
 }
@@ -756,12 +786,18 @@ public static Enum Enum( Construct subcon, Object... pairs ){
 	return new Enum( subcon, pairs );
 }
 
-public static class Enum extends SymmetricMapping {
+public static class Enum extends SymmetricMapping<String> {
+  
+  // we could do some static type checks, making sure that names are String
+  // and that the size of values matches the size of subcon
+  // Let's keep things simple for now
+  // Also don't handle Pass, decided we should always return the same type
+  public Enum( Construct subcon, Container map ){
+    super( subcon, map, (String)map.get("_default_"));
+  }
+  
   public Enum( Construct subcon, Object... pairs ){
-    // we could do some static type checks, making sure that names are String
-    // and that the size of values matches the size of subcon
-    // Let's keep things simple for now
-    super( subcon, Container(pairs), Container(pairs).get("_default_") );
+    this( subcon, Container(pairs) );
   }
 }
 

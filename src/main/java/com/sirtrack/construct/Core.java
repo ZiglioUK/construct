@@ -230,7 +230,10 @@ public class Core {
     
     @Override
     public String toString() {
-      return getClass().getName() + "(" + name + "): " + val;
+      if( get() != null)
+        return get().toString();
+      else
+        return getClass().getName() + "(" + name + ")";
     }
 
     public Object get() {
@@ -442,6 +445,7 @@ public class Core {
     }
 
     public abstract int _sizeof(Container context);
+    
   }
 
   /**
@@ -703,7 +707,7 @@ public Construct clone() {
    * 
    * Example: MetaArray(lambda ctx: 5, UBInt8("foo"))
    */
-  public static class MetaArray extends Subconstruct {
+  public static class MetaArray<T extends Construct> extends Subconstruct<T> {
 
     CountFunc countfunc;
 
@@ -716,7 +720,7 @@ public Construct clone() {
      * @param name
      * @param subcon
      */
-    MetaArray(CountFunc countfunc, Construct subcon) {
+    public MetaArray(CountFunc countfunc, T subcon) {
       super(subcon);
       this.countfunc = countfunc;
       _clear_flag(FLAG_COPY_CONTEXT);
@@ -743,6 +747,7 @@ public Construct clone() {
       } catch (Exception e) {
         throw new ArrayError("expected " + count + ", found " + c, e);
       }
+      val = obj;
       return obj;
     }
 
@@ -1002,13 +1007,14 @@ public Construct clone() {
       Field field = null;
       String fname;
       try {
-        Field[] fields = getClass().getDeclaredFields();
+        Field[] fields = getClass().getFields();
         List<Construct> subconf = new ArrayList<Construct>();
 
         for( int i = 0; i < fields.length; i++ ) {
           field = fields[i];
           field.setAccessible(true);
           Class clazz = field.getType();
+          
           if (!Construct.class.isAssignableFrom(clazz))
             continue;
 
@@ -1538,7 +1544,8 @@ public Construct clone() {
 
     @Override
     public int _sizeof(Container context) {
-      return resizer.resize(subcon._sizeof(context));
+      return resizer.resize(
+          subcon._sizeof(context));
     }
   }
 
