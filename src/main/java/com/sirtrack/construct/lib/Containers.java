@@ -3,6 +3,7 @@ package com.sirtrack.construct.lib;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +18,7 @@ public class Containers{
 	
   static public class Container
   {
-  	HashMap<Object, Object> dict = new HashMap<Object, Object>();
+  	Map<Object, Object> dict = new LinkedHashMap<Object, Object>();
   	
   	public <T>Container( T... pairs ){
   		if(( pairs.length & 1 ) != 0 ){
