@@ -1574,7 +1574,7 @@ public Construct clone() {
 
       Object val = subcon._parse(new ByteBufferWrapper().wrap(stream2), context);
 
-      if( debug ){
+      if( debug != null && debug ){
         System.out.println(val);
       }
       return val;
