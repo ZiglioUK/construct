@@ -1558,9 +1558,9 @@ public Construct clone() {
 
     @Override
     public Object _parse(ByteBufferWrapper stream, Container context) {
-      boolean debug = context.get("debug");
+      Boolean debug = context.get("debug");
       byte[] data = _read_stream(stream, _sizeof(context));
-      if( debug ) {
+      if( debug != null && debug==true) {
         for( byte b : data ){
           System.out.print( String.format("%02x ", b ));
         }
