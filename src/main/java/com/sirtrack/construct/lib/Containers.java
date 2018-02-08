@@ -104,10 +104,17 @@ public class Containers{
   }
   
   static public List<Object> ListContainer( Object... args ){
+	  
   	ArrayList<Object> l = new ArrayList<Object>();
   	for( Object o: args )
-  		l.add(o);
+  	  l.add(o);
   	return l;
   }
 
+  static public List<Object> ListContainer( String s ){
+    ArrayList<Object> l = new ArrayList<Object>();
+    for( byte b: s.getBytes() )
+    		l.add(b);
+    return l;
+  }
 }
