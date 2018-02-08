@@ -294,15 +294,15 @@ public class Adapters {
    *          a function that takes (obj, context) and returns an decoded
    *          version of obj
    */
-  public static <T extends Construct,V> ExprAdapter<T,V> ExprAdapter(T subcon, AdapterEncoder<V> encoder, AdapterDecoder<V> decoder) {
+  public static <T,V> ExprAdapter<T,V> ExprAdapter(Construct subcon, AdapterEncoder<V> encoder, AdapterDecoder<V> decoder) {
     return new ExprAdapter<T,V>(subcon, encoder, decoder);
   };
 
-  public static class ExprAdapter<T extends Construct, V> extends Adapter<T, V> {
+  public static class ExprAdapter<T, V> extends Adapter<T, V> {
     AdapterEncoder<V> encoder;
     AdapterDecoder<V> decoder;
 
-    public ExprAdapter(T subcon, final AdapterEncoder<V> encoder, final AdapterDecoder<V> decoder) {
+    public ExprAdapter(Construct subcon, final AdapterEncoder<V> encoder, final AdapterDecoder<V> decoder) {
       super(subcon);
       this.encoder = encoder;
       this.decoder = decoder;
@@ -413,10 +413,6 @@ public class Adapters {
     return new BeanAdapter<T>(clazz, subcon);
   }
 
-//  public class Adapter<T extends Construct, V> extends Subconstruct<T> {
-//		Encoder<T> e;
-//		Decoder<V> d;
-  
   public static class BeanAdapter<V> extends Adapter<Construct,V> {
 	Class<V> clazz;
 	  

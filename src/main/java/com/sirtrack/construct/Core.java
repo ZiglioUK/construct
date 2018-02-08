@@ -810,7 +810,7 @@ public Construct clone() {
 
   }
 
-  public static <T extends Construct>Range Range(int mincount, int maxcount, T subcon) {
+  public static <T extends Construct>Range<T> Range(int mincount, int maxcount, T subcon) {
     return new Range<T>(mincount, maxcount, subcon);
   }
 
