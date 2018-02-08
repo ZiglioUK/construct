@@ -483,27 +483,27 @@ public class Core {
    * Abstract subconstruct (wraps an inner construct, inheriting its name and
    * flags).
    */
-  public static abstract class Subconstruct<T extends Construct> extends Construct {
+  public static abstract class Subconstruct extends Construct {
 
-    protected T subcon;
+    protected Construct subcon;
 
     /**
      * @param subcon
      *          the construct to wrap
      */
-    public Subconstruct(T subcon) {
+    public Subconstruct(Construct subcon) {
       super(subcon.name, subcon.conflags);
       this.subcon = subcon;
     }
 
-    Subconstruct(String name, T subcon) {
+    Subconstruct(String name, Construct subcon) {
       super(name, subcon.conflags);
       this.subcon = subcon;
     }
 
-    public Subconstruct<T> clone() throws CloneNotSupportedException {
-      Subconstruct<T> s = (Subconstruct<T>) super.clone();
-      s.subcon = (T)subcon.clone();
+    public Subconstruct clone() throws CloneNotSupportedException {
+      Subconstruct s = (Subconstruct) super.clone();
+      s.subcon = subcon.clone();
       return s;
     }
     
@@ -735,7 +735,7 @@ public Construct clone() {
    * 
    * Example: MetaArray(lambda ctx: 5, UBInt8("foo"))
    */
-  public static class MetaArray<T extends Construct> extends Subconstruct<T> {
+  public static class MetaArray<T extends Construct> extends Subconstruct {
 
     CountFunc countfunc;
 
@@ -826,7 +826,7 @@ public Construct clone() {
    * 
    * .. note:: This object requires a seekable stream for parsing.
    */
-  public static class Range<T extends Construct> extends Subconstruct<T> {
+  public static class Range<T extends Construct> extends Subconstruct {
 
     /**
      * @param mincount
@@ -1512,7 +1512,7 @@ public Construct clone() {
    * Example: Buffered(BitField("foo", 16), encoder = decode_bin, decoder =
    * encode_bin, resizer = lambda size: size / 8, )
    */
-  static public class Buffered<T extends Construct> extends Subconstruct<T> {
+  static public class Buffered extends Subconstruct {
     public Encoder encoder;
     public Decoder decoder;
     public Resizer resizer;
@@ -1535,7 +1535,7 @@ public Construct clone() {
      *          a function that takes the size of the subcon and "adjusts" or
      *          "resizes" it according to the encoding/decoding process.
      */
-    public Buffered(T subcon, Encoder encoder, Decoder decoder, Resizer resizer) {
+    public Buffered(Construct subcon, Encoder encoder, Decoder decoder, Resizer resizer) {
       super(subcon);
       this.encoder = encoder;
       this.decoder = decoder;
@@ -1780,7 +1780,7 @@ public Construct clone() {
    * set and clear flags of the inner subcon. Example: Reconfig("foo",
    * UBInt8("bar"))
    */
-  static public class Reconfig<T extends Construct> extends Subconstruct<T> {
+  static public class Reconfig<T extends Construct> extends Subconstruct {
 
     /**
      * @param name
@@ -1803,7 +1803,7 @@ public Construct clone() {
     }
 
     @Override
-    public T get(){
+    public Construct get(){
       return subcon;
     }
 //

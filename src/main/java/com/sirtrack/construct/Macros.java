@@ -514,8 +514,8 @@ public static Range OptionalGreedyRange(Construct subcon){
 #===============================================================================
 */
 	  
-public static class BitwiseBuffered<T extends Construct> extends Buffered<T> {
-  public BitwiseBuffered(T subcon) {
+public static class BitwiseBuffered extends Buffered {
+  public BitwiseBuffered(Construct subcon) {
     super( subcon,
         BinaryEncoder(),
         BinaryDecoder(),
@@ -528,7 +528,7 @@ public static class BitwiseBuffered<T extends Construct> extends Buffered<T> {
   }
   
   @Override
-  public T get(){
+  public Construct get(){
     return subcon;
   }
 

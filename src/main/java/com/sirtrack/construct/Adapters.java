@@ -298,7 +298,7 @@ public class Adapters {
     return new ExprAdapter<T,V>(subcon, encoder, decoder);
   };
 
-  public static class ExprAdapter<T extends com.sirtrack.construct.Core.Construct, V> extends Adapter<T, V> {
+  public static class ExprAdapter<T extends Construct, V> extends Adapter<T, V> {
     AdapterEncoder<V> encoder;
     AdapterDecoder<V> decoder;
 

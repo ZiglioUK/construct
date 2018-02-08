@@ -11,14 +11,14 @@ import com.sirtrack.construct.lib.Containers.Container;
  * """ Abstract adapter: calls _decode for parsing and _encode for building. """
  * 
  */
-public abstract class Adapter<T extends Construct, V> extends Subconstruct<T> implements AdapterEncoder<V>, AdapterDecoder<V> {
+public abstract class Adapter<T, V> extends Subconstruct implements AdapterEncoder<V>, AdapterDecoder<V> {
 
 	/**
    * @param name
    * @param subcon
    *          the construct to wrap
    */
-  public Adapter(T subcon ) {
+  public Adapter(Construct subcon ) {
     super(subcon);
   }
 
