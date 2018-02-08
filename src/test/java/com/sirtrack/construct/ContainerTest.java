@@ -18,13 +18,13 @@ public class ContainerTest
   @Test
   public void test_getattr() {
       Container c = new Container( "a",1 );
-      assertEquals( 1, c.get("a") );
+      assertEquals( 1, (int)c.get("a") );
   }
   @Test
   public void test_setattr() {
       Container c = new Container();
       c.set("a", 1);
-      assertEquals( 1, c.get("a") );
+      assertEquals( 1, (int)c.get("a") );
   }
   @Test
   public void test_delattr() {
@@ -37,7 +37,7 @@ public class ContainerTest
       Container c = new Container( "a",1 );
       Container d = new Container();
       d.update(c);
-      assertEquals( 1, d.get("a") );
+      assertEquals( 1, (int)d.get("a") );
   }
   @Test
   public void test_eq_eq() {
@@ -120,8 +120,8 @@ public class ContainerTest
   	Container c, d;
   	
     c = new Container("name1",1,"name2",2);
-    assertEquals( 1, c.get("name1"));
-    assertEquals( 2, c.get("name2"));
+    assertEquals( 1, (int)c.get("name1"));
+    assertEquals( 2, (int)c.get("name2"));
     
     d = c.reverse();
     assertEquals( "name1", d.get(1));

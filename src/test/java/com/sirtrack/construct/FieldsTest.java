@@ -30,52 +30,52 @@ public class FieldsTest {
   	FormatField f;
   	
   	f = UBInt8("f");
-  	assertEquals( 255, f.parse(ByteArray( 0xFF )));
+  	assertEquals( 255, (int)f.parse(ByteArray( 0xFF )));
 
   	f = UBInt16("f");
-  	assertEquals( 65518, f.parse(ByteArray( 0xFF, 0xEE )));
+  	assertEquals( 65518, (int)f.parse(ByteArray( 0xFF, 0xEE )));
 
   	f = UBInt32("f");
-  	assertEquals( 4293844428L, f.parse(ByteArray( 0xFF, 0xEE, 0xDD, 0xCC )));
+  	assertEquals( 4293844428L, (long)f.parse(ByteArray( 0xFF, 0xEE, 0xDD, 0xCC )));
 
 //  	unsupported for now
 //  	f = UBInt64("f");
 //  	assertEquals( 2^64-1, f.parse( ByteArray( 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE ) ));
 
   	f = SBInt8("f");
-  	assertEquals( -1, f.parse(ByteArray( 0xFF )));
+  	assertEquals( -1, (int)f.parse(ByteArray( 0xFF )));
 
   	f = SBInt16("f");
-  	assertEquals( -18, f.parse(ByteArray( 0xFF, 0xEE )));
+  	assertEquals( -18, (int)f.parse(ByteArray( 0xFF, 0xEE )));
 
   	f = SBInt32("f");
-  	assertEquals( -1122868, f.parse(ByteArray( 0xFF, 0xEE, 0xDD, 0xCC )));
+  	assertEquals( -1122868, (int)f.parse(ByteArray( 0xFF, 0xEE, 0xDD, 0xCC )));
   	
 //  	unsupported for now
 //  	f = SBInt64("f");
 //  	assertEquals( ByteArray( 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF ), f.parse(-1));
 
   	f = ULInt8("f");
-  	assertEquals( 255, f.parse(ByteArray( 0xFF )));
+  	assertEquals( 255, (int)f.parse(ByteArray( 0xFF )));
 
   	f = ULInt16("f");
-  	assertEquals( 65518, f.parse(ByteArray( 0xEE, 0xFF )));
+  	assertEquals( 65518, (int)f.parse(ByteArray( 0xEE, 0xFF )));
 
   	f = ULInt32("f");
-  	assertEquals( 4293844428L, f.parse(ByteArray( 0xCC, 0xDD, 0xEE, 0xFF )));
+  	assertEquals( 4293844428L, (long)f.parse(ByteArray( 0xCC, 0xDD, 0xEE, 0xFF )));
 
 //	unsupported for now
 //	f = ULInt64("f");
 //	assertEquals( ByteArray( 0x99, 0x00, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF ), f.parse( 0xFFEEDDCCBBAA0099 ));
 
   	f = SLInt8("f");
-  	assertEquals( -1, f.parse(ByteArray( 0xFF )));
+  	assertEquals( -1, (int)f.parse(ByteArray( 0xFF )));
 
   	f = SLInt16("f");
-  	assertEquals( -18, f.parse(ByteArray( 0xEE, 0xFF )));
+  	assertEquals( -18, (int)f.parse(ByteArray( 0xEE, 0xFF )));
 
   	f = SLInt32("f");
-  	assertEquals( -1122868, f.parse(ByteArray( 0xCC, 0xDD, 0xEE, 0xFF )));
+  	assertEquals( -1122868, (int)f.parse(ByteArray( 0xCC, 0xDD, 0xEE, 0xFF )));
   	
 //  	unsupported for now
 //  	f = SLInt64("f");

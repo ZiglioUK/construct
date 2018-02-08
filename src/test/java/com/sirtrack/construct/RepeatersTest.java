@@ -1,9 +1,5 @@
 package com.sirtrack.construct;
 
-//from construct import Struct, MetaField, StaticField, FormatField
-//from construct import Container, Byte
-//from construct import FieldError, SizeofError
-
 import static com.sirtrack.construct.Adapters.*;
 import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.Macros.*;

@@ -247,9 +247,9 @@ public class ConstructTest {
     // toString() methods
     // assertEquals( (Container)obj, Container( "length", 3, "inner", Container(
     // "inner_length", 2, "data", ByteArray(0xA,0xB,0xC,0xD,0xE))) );
-    assertEquals(3, obj.get("length"));
+    assertEquals(3, (int)obj.get("length"));
     Container inner = obj.get("inner");
-    assertEquals(2, inner.get("inner_length"));
+    assertEquals(2, (int)inner.get("inner_length"));
     byte[] data = inner.get("data");
     assertArrayEquals(ByteArray(0xA, 0xB, 0xC, 0xD, 0xE), data);
 
@@ -296,14 +296,14 @@ public class ConstructTest {
         return 5;
       }
     }, 1, UBInt8("x"), 5, UBInt16("y"));
-    assertEquals(2, switchstruct.parse(ByteArray(0, 2)));
+    assertEquals(2, (int)switchstruct.parse(ByteArray(0, 2)));
 
     switchstruct = Switch("switch", new KeyFunc() {
       public Object get(Container context) {
         return 6;
       }
     }, Container(1, UBInt8("x"), 5, UBInt16("y")), UBInt8("x"), false);
-    assertEquals(0, switchstruct.parse(ByteArray(0, 2)));
+    assertEquals(0, (int)switchstruct.parse(ByteArray(0, 2)));
 
     switchstruct = Switch("switch", new KeyFunc() {
       public Object get(Container context) {

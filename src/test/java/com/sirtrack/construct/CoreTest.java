@@ -91,11 +91,11 @@ public class CoreTest
   	Container c;
   	
   	c = s.parse(ByteArray( 3, 'A', 'B', 'C'));
-  	assertEquals(3, c.get("length"));
+  	assertEquals(3, (int)c.get("length"));
   	assertArrayEquals( "ABC".getBytes(), (byte[])c.get("data"));
 
   	c = s.parse(ByteArray( 4, 'A', 'B', 'C', 'D'));
-  	assertEquals(4, c.get("length"));
+  	assertEquals(4, (int)c.get("length"));
   	assertArrayEquals( "ABCD".getBytes(), (byte[])c.get("data"));
  
   	Container context = Container("length", 4);

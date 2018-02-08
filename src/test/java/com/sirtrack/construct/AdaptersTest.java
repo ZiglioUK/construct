@@ -1,9 +1,5 @@
 package com.sirtrack.construct;
 
-//from construct import Struct, MetaField, StaticField, FormatField
-//from construct import Container, Byte
-//from construct import FieldError, SizeofError
-
 import static com.sirtrack.construct.Adapters.*;
 import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.Macros.*;
@@ -31,13 +27,13 @@ public class AdaptersTest
     Adapter ba;
 
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8 );
-    assertEquals( 255, ba.parse( ByteArray(1,1,1,1,1,1,1,1) ));
+    assertEquals( 255, (int)ba.parse( ByteArray(1,1,1,1,1,1,1,1) ));
 
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8, false, true );
-    assertEquals( -1, ba.parse( ByteArray(1,1,1,1,1,1,1,1) ));
+    assertEquals( -1, (int)ba.parse( ByteArray(1,1,1,1,1,1,1,1) ));
 
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8, true, false, 4 );
-    assertEquals( 0x0d, ba.parse( ByteArray(1,1,0,1,0,0,0,0) ));
+    assertEquals( 0x0d, (int)ba.parse( ByteArray(1,1,0,1,0,0,0,0) ));
 
     ba = BitIntegerAdapter( Field("bitintegeradapter", 8), 8 );
     assertArrayEquals( ByteArray(1,1,1,1,1,1,1,1), ba.build(255) );
@@ -56,7 +52,7 @@ public class AdaptersTest
   @Test
   public void oneOfTest(){
   	Adapter oneOf = OneOf(UBInt8("foo"), ListContainer(4, 5, 6, 7));
-  	assertEquals( 5, oneOf.parse( ByteArray(5)));
+  	assertEquals( 5, (int)oneOf.parse( ByteArray(5)));
 
   	assertArrayEquals( ByteArray(5), oneOf.build(5) );
 
@@ -78,7 +74,7 @@ public class AdaptersTest
   	assertEquals( "foo", ma.parse(ByteArray(4)));
 
   	ma = MappingAdapter( UBInt8("mappingadapter"), Container( 2,"x", 3,"y"), Container( "x",2, "y",3), Pass, null );
-  	assertEquals( 4, ma.parse(ByteArray(4)));
+  	assertEquals( 4, (int)ma.parse(ByteArray(4)));
 
   	ma = MappingAdapter( UBInt8("mappingadapter"), Container( 2,"x", 3,"y"), Container( "x",2, "y",3), null, null);
   	assertArrayEquals( ByteArray(3), ma.build("y"));
@@ -133,7 +129,7 @@ public class AdaptersTest
 																					return (Integer)obj * 7;
 																				}
 																			});
-  	assertEquals( 42, exprAdapter.parse( ByteArray( 6 )));
+  	assertEquals( 42, (int)exprAdapter.parse( ByteArray( 6 )));
   	assertArrayEquals( ByteArray(6), exprAdapter.build( 42 ));
   }
 

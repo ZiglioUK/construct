@@ -109,7 +109,7 @@ public class MacrosTest
   	Adapter a;
   	
   	a = Enum( UBInt8("enum"), 'q',3,'r',4,'t',5);
-  	assertEquals( 'r', a.parse(ByteArray(4)));
+  	assertEquals( 'r', (char)a.parse(ByteArray(4)));
 
   	a = Enum( UBInt8("enum"), 'q',3,'r',4,'t',5, "_default_", "spam");
   	assertEquals( "spam", a.parse(ByteArray(7)));
@@ -150,10 +150,10 @@ public class MacrosTest
   	Switch ifThenElse;
   	
   	ifThenElse = IfThenElse("ifthenelse", new KeyFunc(){ public Object get(Container context){return true;}}, UBInt8("then"), UBInt16("else") );
-  	assertEquals(1, ifThenElse.parse(ByteArray(1)));
+  	assertEquals(1, (int)ifThenElse.parse(ByteArray(1)));
 
   	ifThenElse = IfThenElse("ifthenelse", new KeyFunc(){ public Object get(Container context){return false;}}, UBInt8("then"), UBInt16("else") );
-  	assertEquals(1, ifThenElse.parse(ByteArray(0,1)));
+  	assertEquals(1, (int)ifThenElse.parse(ByteArray(0,1)));
 
   	ifThenElse = IfThenElse("ifthenelse", new KeyFunc(){ public Object get(Container context){return true;}}, UBInt8("then"), UBInt16("else") );
   	assertArrayEquals(ByteArray(1), (byte[])ifThenElse.build(1));
