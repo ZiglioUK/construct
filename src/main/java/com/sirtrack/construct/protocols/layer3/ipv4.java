@@ -51,15 +51,8 @@ public class ipv4 {
         
           ExprAdapter( 
             Nibble("header_length"), 
-            new AdapterEncoder() {
-              public Object encode(Object obj, Container context) {
-                return (Integer) obj / 4;
-              }}, 
-            new AdapterDecoder() {
-              public Object decode(Object obj, Container context) {
-                return (Integer) obj * 4;
-              }
-            })
+            ( obj, context ) -> (Integer) obj / 4,
+            ( obj, context ) -> (Integer) obj * 4 )
         ),
   
         BitStruct( "tos", 
@@ -73,12 +66,7 @@ public class ipv4 {
         
         UBInt16("total_length"),
   
-        Value("payload_length", new ValueFunc() {
-          public Object get(Container ctx) {
-            return (Integer) ctx.get("total_length")
-                 - (Integer) ctx.get("header_length");
-          }
-        }),
+        Value("payload_length", ctx -> (Integer) ctx.get("total_length") - (Integer) ctx.get("header_length") ),
   
         UBInt16("identification"),
           
@@ -103,11 +91,7 @@ public class ipv4 {
       CRC16
     ),
 
-    Field("options", new LengthFunc() {
-      public int length(Container context) {
-        return (Integer) context.get("header_length") - 20;
-      }
-    })
+    Field("options", context -> (Integer) context.get("header_length") - 20)
   );
 
   static byte[] cap = hexStringToByteArray("4500003ca0e3000080116185c0a80205d474a126");

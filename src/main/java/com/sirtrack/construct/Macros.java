@@ -430,12 +430,8 @@ public static MetaArray Array( CountFunc countfunc, Construct subcon){
  * @param subcon construct to repeat
  */
 public static MetaArray Array( final int count, Construct subcon ){
-	MetaArray con = MetaArray( new CountFunc(){
-		public int count(Container context) {
-			return count;
-		}
-  }, subcon);
-  con._clear_flag(con.FLAG_DYNAMIC);
+	MetaArray con = MetaArray( ctx -> count, subcon);
+    con._clear_flag(con.FLAG_DYNAMIC);
 	return con;
 }
 
@@ -448,12 +444,7 @@ public static Adapter PrefixedArray( Construct subcon, final StaticField length_
   return LengthValueAdapter(
       Sequence( subcon.name,
                 length_field,
-                Array( new CountFunc(){
-									public int count(Container ctx) {
-										return (Integer)ctx.get(length_field.name);
-									}},
-                  subcon
-                ))
+                Array( ctx -> (Integer)ctx.get(length_field.name), subcon ))
 //                nested = False
       );
 }
@@ -557,19 +548,17 @@ public static Subconstruct Bitwise(Construct subcon) {
     final int MAX_BUFFER = 1024 * 8;
 
     Subconstruct con;
-    Resizer resizer = new Resizer(){
-			@Override
-      public int resize(int length) {
+    Resizer resizer = length -> {
           if( (length & 7) != 0 )
             throw new SizeofError("size must be a multiple of 8, size = " + length );
         return length >> 3;
-      }
     };
+    
     if( !subcon._is_flag(subcon.FLAG_DYNAMIC) && subcon.sizeof() < MAX_BUFFER ){
       con = new Buffered( subcon,
-              						BinaryEncoder(),
-              						BinaryDecoder(),
-              						resizer );
+  						BinaryEncoder(),
+  						BinaryDecoder(),
+  						resizer );
     } else {
       con = new Restream( subcon,
                           new BitStreamReader(),

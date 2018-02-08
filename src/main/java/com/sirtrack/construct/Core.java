@@ -645,11 +645,7 @@ public Construct clone() {
    * @return get length from context field
    */
   static public LengthFunc LengthField(final String name) {
-    return new LengthFunc() {
-      public int length(Container ctx) {
-        return (Integer) ctx.get(name);
-      }
-    };
+    return ctx -> (Integer) ctx.get(name);
   }
 
   /**

@@ -90,19 +90,13 @@ public class Binary {
 	}
 
 	public static Encoder BinaryEncoder(){
-		return new Encoder(){
-  		public byte[] encode(String data) {
-  	    return decode_bin(data.getBytes());
-      }
-		};
+		return data -> decode_bin(data.getBytes());
 	}
+	
 	public static Decoder BinaryDecoder(){
-		return new Decoder(){
-      public byte[] decode(byte[] data) {
-	        return encode_bin( data );
-      }
-		};
-	}
+	    return data -> encode_bin( data );
+    }
+
 	public static byte[] encode_bin( byte[] data ) {
 		byte[] out = new byte[8 * data.length ];
 		for( int i = 0; i < data.length; i++ ){

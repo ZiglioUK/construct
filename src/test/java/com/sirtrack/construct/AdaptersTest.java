@@ -119,16 +119,8 @@ public class AdaptersTest
   @Test
   public void ExprAdapterTest(){
   	Adapter exprAdapter = ExprAdapter( UBInt8("expradapter"),
-  																		 new AdapterEncoder() {
-																				public Object encode(Object obj, Container context) {
-																					return (Integer)obj / 7;
-																				}
-																			},
-																			new AdapterDecoder() {
-																				public Object decode(Object obj, Container context) {
-																					return (Integer)obj * 7;
-																				}
-																			});
+  									  (obj, context)-> (Integer)obj / 7,
+  									  (obj, context)-> (Integer)obj * 7 );
   	assertEquals( 42, (int)exprAdapter.parse( ByteArray( 6 )));
   	assertArrayEquals( ByteArray(6), exprAdapter.build( 42 ));
   }

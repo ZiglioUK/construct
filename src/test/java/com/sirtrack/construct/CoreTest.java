@@ -67,11 +67,7 @@ public class CoreTest
 
   @Test
   public void testMetaField(){
-  	MetaField mf = MetaField("metafield", new LengthFunc(){
-  		public int length(Container context){
-  			return 2;
-  		}
-  	});
+  	MetaField mf = MetaField("metafield", ctx -> 2 );
 
   	assertArrayEquals( ByteArray(0xab, 0xcd), (byte[])mf.parse("abcd") );
     assertArrayEquals( ByteArray('a','b'), mf.build("ab") );

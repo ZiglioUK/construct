@@ -29,13 +29,12 @@ public class ipstack {
 			"layer4_tcp",
 	    Rename("header", tcp_header),
 	    HexDumpAdapter(
-	        Field( "next", new LengthFunc(){
-	        	public int length(Container ctx){
-	        		Container tcpheader = ctx.get("_");
-	        		Integer payload_length = tcpheader.get("payload_length");
-	        		Integer header_length = tcpheader.get("header_length");
-	       	 		return payload_length - header_length;
-	       	 	}}
+	        Field( "next", ctx -> {
+		        		Container tcpheader = ctx.get("_");
+		        		Integer payload_length = tcpheader.get("payload_length");
+		        		Integer header_length = tcpheader.get("header_length");
+		       	 	return payload_length - header_length;
+	       	 	}
 	        )
 	    )
 	);
@@ -44,12 +43,11 @@ public class ipstack {
 			"layer4_udp",
 	    Rename("header", udp_header),
 	    HexDumpAdapter(
-	        Field( "next", new LengthFunc(){
-	        	public int length(Container ctx){
-	        		Container header = ctx.get("header");
-	        		Integer payload_length = header.get("payload_length");
-	       	 		return payload_length;
-	       	 	}}
+	        Field( "next", ctx -> {
+		        		Container header = ctx.get("header");
+		        		Integer payload_length = header.get("payload_length");
+		       	 	return payload_length;
+	       	 	}
 	        )
 	    )
 	);

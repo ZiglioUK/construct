@@ -27,13 +27,13 @@ public class ConstructTest {
     assertEquals(ListContainer(1, 2, 3), range.parse(ByteArray(1, 2, 3)));
     assertEquals(ListContainer(1, 2, 3, 4), range.parse(ByteArray(1, 2, 3, 4)));
     assertEquals(ListContainer(1, 2, 3, 4, 5),
-        range.parse(ByteArray(1, 2, 3, 4, 5)));
+    range.parse(ByteArray(1, 2, 3, 4, 5)));
 
     assertArrayEquals(ByteArray(1, 2, 3), range.build(ListContainer(1, 2, 3)));
     assertArrayEquals(ByteArray(1, 2, 3, 4),
-        range.build(ListContainer(1, 2, 3, 4)));
+    range.build(ListContainer(1, 2, 3, 4)));
     assertArrayEquals(ByteArray(1, 2, 3, 4, 5),
-        range.build(ListContainer(1, 2, 3, 4, 5)));
+    range.build(ListContainer(1, 2, 3, 4, 5)));
 
     exception.expect(RangeError.class);
     range.build(ListContainer(1, 2, 3, 4, 5, 6));
@@ -61,7 +61,7 @@ public class ConstructTest {
     assertTrue(ca.equals(cb));
 
     struct = Struct("struct", UBInt8("a"), UBInt16("b"),
-        Struct("foo", UBInt8("c"), UBInt8("d")));
+             Struct("foo", UBInt8("c"), UBInt8("d")));
     ca = struct.parse(ByteArray(1, 0, 2, 3, 4));
     cb = Container("a", 1, "b", 2, "foo", Container("c", 3, "d", 4));
     assertTrue(ca.equals(cb));
@@ -230,14 +230,8 @@ public class ConstructTest {
 
   @Test
   public void sizeofTest() {
-    LengthFunc foo = new LengthFunc() {
-
-      @Override
-      public int length(Container ctx) {
-        return (Integer) ((Container) ctx.get("_")).get("length")
-            + (Integer) ctx.get("inner_length");
-      }
-    };
+    LengthFunc foo = ctx -> (Integer) ((Container) ctx.get("_")).get("length")
+                          + (Integer) ctx.get("inner_length");
 
     Struct pstring = Struct("pstring", UBInt8("length"),
         Struct("inner", UBInt8("inner_length"), Field("data", foo)));

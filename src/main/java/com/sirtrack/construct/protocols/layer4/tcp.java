@@ -31,17 +31,9 @@ public class tcp {
       UBInt32("ack"),
       EmbeddedBitStruct(
   	    ExprAdapter( Nibble("header_length"),
-  	    		new AdapterEncoder() {
-  	    		  public Object encode(Object obj, Container context) {
-  	    		  	return (Integer)obj / 4;
-  						}
-  					},
-  					new AdapterDecoder() {
-  						public Object decode(Object obj, Container context) {
-  							return (Integer)obj * 4;
-  						}
-  					}
-  	    	),
+  	    		(obj, context)-> (Integer)obj / 4,
+  	    		(obj, context)->  (Integer)obj * 4
+  	    		),
           Padding(3),
           Struct("flags",
               Flag("ns"),
@@ -58,11 +50,7 @@ public class tcp {
       UBInt16("window"),
       UBInt16("checksum"),
       UBInt16("urgent"),
-      Field( "options", new LengthFunc(){
-      	public int length(Container ctx){
-     	 		return (Integer)ctx.get("header_length") - 20;
-     	 	}}
-      )
+      Field( "options", ctx -> (Integer)ctx.get("header_length") - 20)
    );
 
   public static void main(String[] args) {
