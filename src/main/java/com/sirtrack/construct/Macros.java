@@ -151,14 +151,15 @@ public class Macros {
    * @return a padding field (value is discarded)
    */
   public static PaddingAdapter Padding( int length, byte pattern, boolean strict ){
-  	return PaddingAdapter( Field( null, length ), pattern, strict ); 
+  		return PaddingAdapter( Field( null, length ), pattern, strict ); 
   }
+  
   public static PaddingAdapter Padding( int length  ){
-  	return Padding( length, (byte)0x00, false );
+  		return Padding( length, (byte)0x00, false );
   }
 
   public static Adapter Flag( String name ){
-  	return Flag( name, (byte)1, (byte)0, false );
+  		return Flag( name, (byte)1, (byte)0, false );
   }
   
   /**
@@ -180,7 +181,7 @@ public class Macros {
    */
   public static Adapter Flag( String name, byte truth, byte falsehood, Object defaultmapping ){
 
-  	return SymmetricMapping(Field(name, 1),
+  		return SymmetricMapping(Field(name, 1),
   													Container( true, truth, false, falsehood ),
   													defaultmapping );
   }
@@ -216,20 +217,26 @@ public class Macros {
   /**
   * @return unsigned, big endian 8-bit integer
   */
-  public static FormatField<Integer> UBInt8(String name){
-   	return new FormatField<Integer>( name, '>', 'B' );
+  public static UBInt8 UBInt8(String name){
+   	return new UBInt8( name );
   }
-  /**
-	  * @return unsigned, big endian 16-bit integer
-	  */
-	  public static FormatField<Integer> UBInt16(String name){
-	   	return new UBInt16( name );
+	public static class UBInt8 extends FormatField<Integer> {
+	  public UBInt8(String name) {
+	    super(name, '>', 'B');
 	  }
-    public static class UBInt16 extends FormatField<Integer> {
-      public UBInt16(String name) {
-        super(name, '>', 'H');
-      }
-    }
+	}
+
+  /**
+  * @return unsigned, big endian 16-bit integer
+  */
+  public static UBInt16 UBInt16(String name){
+   	return new UBInt16( name );
+  }
+	public static class UBInt16 extends FormatField<Integer> {
+	  public UBInt16(String name) {
+	    super(name, '>', 'H');
+	  }
+	}
 	  
   /**
 	  * @return unsigned, big endian 32-bit integer
@@ -248,11 +255,11 @@ public class Macros {
   /**
 	  * @return signed, big endian 8-bit integer
 	  */
-	  public static UBInt8 SBInt8(String name){
-	   	return new UBInt8( name );
+	  public static SBInt8 SBInt8(String name){
+	   	return new SBInt8( name );
 	  }
-	  static class UBInt8 extends FormatField<Integer> {
-	    public UBInt8(String name) {
+	  public static class SBInt8 extends FormatField<Integer> {
+	    public SBInt8(String name) {
 	      super(name, '>', 'b');
 	    }
 	  }
@@ -750,12 +757,12 @@ public static class CRC extends Subconstruct {
       return the value "as is" (unmapped)
  * @return a symmetrical mapping: a->b, b->a.
  */
-public static <T> SymmetricMapping<T> SymmetricMapping( Construct subcon, final Container mapping, T mappingdefault ){
-	return new SymmetricMapping<T>( subcon, mapping, mappingdefault );
+public static <T> SymmetricMapping SymmetricMapping( Construct subcon, final Container mapping, T mappingdefault ){
+	return new SymmetricMapping( subcon, mapping, mappingdefault );
 }
 
-public static class SymmetricMapping<T> extends MappingAdapter<T>{
-  public SymmetricMapping( Construct subcon, final Container mapping, T mappingdefault ){
+public static class SymmetricMapping extends MappingAdapter{
+  public SymmetricMapping( Construct subcon, final Container mapping, Object mappingdefault ){
     super( subcon, mapping.reverse(), mapping, mappingdefault, mappingdefault );
   }
 }
@@ -773,7 +780,7 @@ public static Enum Enum( Construct subcon, Object... pairs ){
 	return new Enum( subcon, pairs );
 }
 
-public static class Enum extends SymmetricMapping<String> {
+public static class Enum extends SymmetricMapping {
   
   // we could do some static type checks, making sure that names are String
   // and that the size of values matches the size of subcon

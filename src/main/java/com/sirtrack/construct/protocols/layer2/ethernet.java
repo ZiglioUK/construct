@@ -9,35 +9,37 @@ import static com.sirtrack.construct.lib.Containers.*;
 import java.util.Arrays;
 
 import com.sirtrack.construct.Adapter;
+import com.sirtrack.construct.lib.Containers.Container;
 
 /**
  * Ethernet (TCP/IP protocol stack) 
 */
 public class ethernet {
 
-    public static Adapter MacAddress( String name ) {
-    	return MacAddressAdapter( Field( name, 6));
+    public static Adapter<byte[], String> MacAddress( String name ) {
+    		return MacAddressAdapter( Field( name, 6));
     }
   
-    public static Adapter MacAddressAdapter( Construct field ) {
-  	return new Adapter( field ){
-      public Object encode(Object obj, Container context) {
-				String hexStr = (String)obj;
-				hexStr = hexStr.replace("-", "");
-				return hexStringToByteArray(hexStr);
-      }
-      public Object decode( Object obj, Container context) {
-      	StringBuilder sb = new StringBuilder();
-      	for( byte b : (byte[])obj ){
-      		if (sb.length() > 0)
-            sb.append('-');
-      		sb.append(String.format("%02x", b));
-      	}
-      	return sb.toString();
-      }
+    public static Adapter<byte[], String> MacAddressAdapter( Construct field ) {
 
-  	};
+    		return new ExprAdapter<byte[], String>( field, 
+	      
+    		  ( hexStr, ctx ) -> {
+    		    hexStr = hexStr.replace("-", "");
+    		    return hexStringToByteArray(hexStr);
+	      },
+	      
+	      ( ba, context) -> {
+	      	StringBuilder sb = new StringBuilder();
+	      	for( byte b : ba ){
+	      		if (sb.length() > 0)
+	            sb.append('-');
+	      		sb.append(String.format("%02x", b));
+	      	}
+	      	return sb.toString();
+	      });
   }
+  
 	
   public static Construct ethernet_header = Struct("ethernet_header",
       MacAddress("destination"),

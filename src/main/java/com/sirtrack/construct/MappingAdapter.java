@@ -6,15 +6,15 @@ import com.sirtrack.construct.Adapters.MappingError;
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.lib.Containers.Container;
 
-public class MappingAdapter<T> extends Adapter<Construct, T> {
+public class MappingAdapter extends Adapter<Object, Object> {
 
   Container decoding;
   Container encoding;
-  T decdefault;
+  Object decdefault;
   Object encdefault;
 
   public MappingAdapter(Construct subcon, Container decoding,
-      Container encoding, T decdefault, Object encdefault) {
+      Container encoding, Object decdefault, Object encdefault) {
     super(subcon);
     this.decoding = decoding;
     this.encoding = encoding;
@@ -35,7 +35,7 @@ public class MappingAdapter<T> extends Adapter<Construct, T> {
     }
   }
 
-  public T decode(Object obj, Container context) {
+  public Object decode(Object obj, Container context) {
     if (obj instanceof byte[])
       obj = ((byte[]) obj)[0];
 
@@ -45,7 +45,7 @@ public class MappingAdapter<T> extends Adapter<Construct, T> {
       if (decdefault == null)
         throw new MappingError("no encoding mapping for " + obj);
       if (decdefault == Pass)
-        return (T) obj;
+        return obj;
       return decdefault;
     }
   }

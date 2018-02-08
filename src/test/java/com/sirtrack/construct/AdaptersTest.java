@@ -118,11 +118,11 @@ public class AdaptersTest
   
   @Test
   public void ExprAdapterTest(){
-  	Adapter exprAdapter = ExprAdapter( UBInt8("expradapter"),
-  									  (obj, context)-> (Integer)obj / 7,
-  									  (obj, context)-> (Integer)obj * 7 );
-  	assertEquals( 42, (int)exprAdapter.parse( ByteArray( 6 )));
-  	assertArrayEquals( ByteArray(6), exprAdapter.build( 42 ));
+	  	Adapter exprAdapter = ExprAdapter( UBInt8("expradapter"),
+	  									  (obj, context)-> (Integer)obj / 7,
+	  									  (obj, context)-> (Integer)obj * 7 );
+	  	assertEquals( 42, (int)exprAdapter.parse( ByteArray( 6 )));
+	  	assertArrayEquals( ByteArray(6), exprAdapter.build( 42 ));
   }
 
   @Test 

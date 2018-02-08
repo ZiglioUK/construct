@@ -129,10 +129,9 @@ public class Adapters {
    * @return Adapter that maps objects to other objects. See SymmetricMapping
    *         and Enum.
    */
-  static public <T> MappingAdapter<T> MappingAdapter(Construct subcon,
-      Container decoding, Container encoding, T decdefault,
-      T encdefault) {
-    return new MappingAdapter<T>(subcon, decoding, encoding, decdefault,
+  static public MappingAdapter MappingAdapter(Construct subcon,
+      Container decoding, Container encoding, Object decdefault, Object encdefault) {
+    return new MappingAdapter(subcon, decoding, encoding, decdefault,
         encdefault);
   }
 
@@ -294,27 +293,27 @@ public class Adapters {
    *          a function that takes (obj, context) and returns an decoded
    *          version of obj
    */
-  public static <T,V> ExprAdapter<T,V> ExprAdapter(Construct subcon, AdapterEncoder<V> encoder, AdapterDecoder<V> decoder) {
+  public static <T,V> ExprAdapter<T,V> ExprAdapter(Construct subcon, AdapterEncoder<T,V> encoder, AdapterDecoder<T,V> decoder) {
     return new ExprAdapter<T,V>(subcon, encoder, decoder);
   };
 
   public static class ExprAdapter<T, V> extends Adapter<T, V> {
-    AdapterEncoder<V> encoder;
-    AdapterDecoder<V> decoder;
+    AdapterEncoder<T,V> encoder;
+    AdapterDecoder<T,V> decoder;
 
-    public ExprAdapter(Construct subcon, final AdapterEncoder<V> encoder, final AdapterDecoder<V> decoder) {
+    public ExprAdapter(Construct subcon, final AdapterEncoder<T,V> encoder, final AdapterDecoder<T,V> decoder) {
       super(subcon);
       this.encoder = encoder;
       this.decoder = decoder;
     }
 
     @Override
-    public V decode(Object obj, Container context) {
+    public V decode(T obj, Container context) {
       return decoder.decode(obj, context);
     }
 
     @Override
-    public Object encode(V obj, Container context) {
+    public T encode(V obj, Container context) {
       return encoder.encode(obj, context);
     }
   };
@@ -381,7 +380,7 @@ public class Adapters {
    * @param name
    * @return an IPv4 Address Adapter
    */
-  public static Adapter IpAddress(String name) {
+  public static Adapter<byte[],InetAddress> IpAddress(String name) {
     return IpAddressAdapter(Field(name, 4));
   }
 
@@ -389,31 +388,27 @@ public class Adapters {
    * @param name
    * @return an IPv6 Address Adapter
    */
-  public static Adapter Ipv6Address(String name) {
+  public static Adapter<byte[],InetAddress> Ipv6Address(String name) {
     return IpAddressAdapter(Field(name, 16));
   }
 
-  public static Adapter IpAddressAdapter(Construct field) {
-    return new Adapter(field) {
-      public Object encode(Object obj, Container context) {
-        return ((InetAddress) obj).getAddress();
-      }
-
-      public Object decode(Object obj, Container context) {
+  public static Adapter<byte[],InetAddress> IpAddressAdapter(Construct field) {
+    return new ExprAdapter<byte[], InetAddress>( field,
+	    	(obj, context) -> obj.getAddress(),
+	    (obj, context) ->  {
         try {
-          return InetAddress.getByAddress((byte[]) obj);
+          return InetAddress.getByAddress(obj);
         } catch (UnknownHostException e) {
           throw new RuntimeException(e);
         }
-      }
-    };
+        });
   };
 
   public static <T> BeanAdapter<T> BeanAdapter(Class<T> clazz, Construct subcon) {
     return new BeanAdapter<T>(clazz, subcon);
   }
 
-  public static class BeanAdapter<V> extends Adapter<Construct,V> {
+  public static class BeanAdapter<V> extends Adapter<Container,V> {
 	Class<V> clazz;
 	  
 	public BeanAdapter(Class<V> clazz, Construct subcon) {
@@ -422,7 +417,7 @@ public class Adapters {
 	}
 	
     @Override
-    public Object encode(Object obj, Container context) {
+    public Container encode(V obj, Container context) {
       Container c = new Container();
 
       for (Field f : clazz.getFields()) {
@@ -438,8 +433,7 @@ public class Adapters {
     }
 
     @Override
-    public V decode(Object obj, Container context) {
-      Container c = (Container) obj;
+    public V decode(Container c, Container context) {
       V t = newV( clazz );
 
       for (String name : c.<String> keys()) {

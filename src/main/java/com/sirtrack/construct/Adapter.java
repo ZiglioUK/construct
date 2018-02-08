@@ -11,7 +11,7 @@ import com.sirtrack.construct.lib.Containers.Container;
  * """ Abstract adapter: calls _decode for parsing and _encode for building. """
  * 
  */
-public abstract class Adapter<T, V> extends Subconstruct implements AdapterEncoder<V>, AdapterDecoder<V> {
+public abstract class Adapter<T, V> extends Subconstruct implements AdapterEncoder<T,V>, AdapterDecoder<T,V> {
 
 	/**
    * @param name
@@ -24,13 +24,13 @@ public abstract class Adapter<T, V> extends Subconstruct implements AdapterEncod
 
 @Override
   public Object _parse( ByteBufferWrapper stream, Container context) {
-    val = decode(subcon._parse( stream, context ), context);
+    val = decode( (T) subcon._parse( stream, context ), context);
     return val;
   }
 
   @Override
   public void _build( Object obj, ByteArrayOutputStream stream, Container context) {
-    subcon._build(encode((V) obj, context), stream, context);
+    subcon._build(encode( (V) obj, context), stream, context);
   }
 
   @Override
