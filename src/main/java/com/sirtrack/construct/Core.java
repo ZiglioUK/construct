@@ -6,7 +6,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -15,7 +14,6 @@ import com.sirtrack.construct.lib.BitStream.BitStreamReader;
 import com.sirtrack.construct.lib.BitStream.BitStreamWriter;
 import com.sirtrack.construct.lib.Containers.Container;
 
-import static com.sirtrack.construct.Macros.Field;
 import static com.sirtrack.construct.lib.Binary.hexStringToByteArray;
 import static com.sirtrack.construct.lib.Containers.*;
 
@@ -128,14 +126,15 @@ public class Core {
   public static byte[] _read_stream(ByteBufferWrapper stream, int length) {
     if (length < 0)
       throw new FieldError("length must be >= 0 " + length);
-    {
-      int len = stream.remaining();
-      if (len < length)
-        throw new FieldError("expected " + length + " found " + len);
-      byte[] out = new byte[length];
-      stream.get(out, 0, length);
-      return out;
-    }
+
+    int len = stream.remaining();
+    if (len < length)
+      throw new FieldError("expected " + length + " found " + len);
+    
+    byte[] out = new byte[length];
+    stream.get(out, 0, length);
+    
+    return out;
   }
 
 /**
@@ -349,7 +348,19 @@ public class Core {
      * @param data
      */
     public <T> T parse(byte[] data) {
-      return (T) parse_stream(new ByteBufferWrapper().wrap(data));
+      return parse( data, false );
+    }
+
+    /**
+     * Parse an in-memory buffer.
+     * 
+     * Strings, buffers, memoryviews, and other complete buffers can be parsed
+     * with this method.
+     * 
+     * @param data
+     */
+    public <T> T parse(byte[] data, boolean debug ) {
+      return (T) parse_stream(new ByteBufferWrapper().wrap(data), debug );
     }
 
     /**
@@ -358,8 +369,17 @@ public class Core {
      * @return
      */
     public <T> T parse(String hex) {
+      return (T) parse( hex, false);
+    }
+
+    /**
+     * @param hex
+     *          a string representation of hex bytes: 65535 = "FFFF"
+     * @return
+     */
+    public <T> T parse(String hex, boolean debug ) {
       byte[] data = hexStringToByteArray(hex);
-      return (T) parse(data);
+      return (T) parse(data, debug );
     }
 
     /**
@@ -386,7 +406,18 @@ public class Core {
      * this method.
      */
     public Object parse_stream(ByteBufferWrapper stream) {
-      return _parse(stream, new Container());
+      return parse_stream( stream, false );
+    }
+
+    /**
+     * Parse a stream.
+     * 
+     * Files, pipes, sockets, and other streaming sources of data are handled by
+     * this method.
+     */
+    public Object parse_stream(ByteBufferWrapper stream, boolean debug ) {
+      Container c = Container( "debug", debug );
+      return _parse(stream, c );
     }
 
     abstract public Object _parse(ByteBufferWrapper stream, Container context);
@@ -583,6 +614,7 @@ public Construct clone() {
       try {
         return packer.unpack(stream.bb);
       } catch (Exception e) {
+//        e.printStackTrace();
         throw new FieldError(e.getMessage(), e);
       }
     }
@@ -745,7 +777,7 @@ public Construct clone() {
           }
         }
       } catch (Exception e) {
-        throw new ArrayError("expected " + count + ", found " + c, e);
+        throw new ArrayError( this.toString() + ": expected " + count + ", found " + c, e );
       }
       val = obj;
       return obj;
@@ -1100,6 +1132,7 @@ public Construct clone() {
           if (sc.name != null) {
             obj.set(sc.name, val);
             context.set(sc.name, val);
+//            System.out.println( " (" + sc.name + ") = " + val );
           }
         }
       }
@@ -1525,9 +1558,26 @@ public Construct clone() {
 
     @Override
     public Object _parse(ByteBufferWrapper stream, Container context) {
+      Boolean debug = context.get("debug");
       byte[] data = _read_stream(stream, _sizeof(context));
+      if( debug != null && debug==true) {
+        for( byte b : data ){
+          System.out.print( String.format("%02x ", b ));
+        }
+        System.out.print( ": " );
+      }
+      
       byte[] stream2 = decoder.decode(data);
-      return subcon._parse(new ByteBufferWrapper().wrap(stream2), context);
+//      if( debug ){
+//      System.out.print( Arrays.toString(stream2) + ": ");
+//      }
+
+      Object val = subcon._parse(new ByteBufferWrapper().wrap(stream2), context);
+
+      if( debug != null && debug ){
+        System.out.println(val);
+      }
+      return val;
     }
 
     @Override
