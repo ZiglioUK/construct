@@ -12,16 +12,17 @@ import com.sirtrack.construct.lib.Containers.Container;
  * 
  */
 public abstract class Adapter<T extends Construct, V> extends Subconstruct<T> implements AdapterEncoder<V>, AdapterDecoder<V> {
-  /**
+
+	/**
    * @param name
    * @param subcon
    *          the construct to wrap
    */
-  public Adapter(T subcon) {
+  public Adapter(T subcon ) {
     super(subcon);
   }
 
-  @Override
+@Override
   public Object _parse( ByteBufferWrapper stream, Container context) {
     val = decode(subcon._parse( stream, context ), context);
     return val;
@@ -42,7 +43,4 @@ public abstract class Adapter<T extends Construct, V> extends Subconstruct<T> im
 //    set(val);
 //  }
   
-  abstract public V decode(Object obj, Container context);
-  abstract public Object encode(V obj, Container context);
-
 }

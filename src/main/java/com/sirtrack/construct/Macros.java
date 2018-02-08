@@ -519,14 +519,12 @@ public static class BitwiseBuffered<T extends Construct> extends Buffered<T> {
     super( subcon,
         BinaryEncoder(),
         BinaryDecoder(),
-        new Resizer(){
-        @Override
-        public int resize(int length) {
+        length -> {
             if( (length & 7) != 0 )
               throw new SizeofError("size must be a multiple of 8, size = " + length );
           return length >> 3;
         }
-      });
+      );
   }
   
   @Override

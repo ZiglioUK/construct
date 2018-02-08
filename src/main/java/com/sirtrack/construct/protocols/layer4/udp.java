@@ -10,10 +10,7 @@ import static com.sirtrack.construct.Macros.UBInt16;
 import static com.sirtrack.construct.lib.Binary.byteArrayToHexString;
 import static com.sirtrack.construct.lib.Binary.hexStringToByteArray;
 
-import com.sirtrack.construct.AdapterDecoder;
-import com.sirtrack.construct.AdapterEncoder;
 import com.sirtrack.construct.Core.Construct;
-import com.sirtrack.construct.Core.ValueFunc;
 import com.sirtrack.construct.lib.Containers.Container;
 
 

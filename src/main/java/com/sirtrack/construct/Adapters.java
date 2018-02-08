@@ -103,13 +103,12 @@ public class Adapters {
     }
 
     public Object decode(Object obj, Container context) {
-      byte[] ba = (byte[]) obj;
-      if (swapped) {
-        ba = swap_bytes(ba, bytesize);
-      }
-      return bin_to_int(ba, signed);
-    }
-
+	    byte[] ba = (byte[]) obj;
+	    if (swapped) {
+	      ba = swap_bytes(ba, bytesize);
+	    }
+	    return bin_to_int(ba, signed);
+	  }
   }
 
   /**
@@ -330,18 +329,21 @@ public class Adapters {
    * validates a condition on the encoded/decoded object. Override
    * _validate(obj, context) in deriving classes.
    */
-  public static abstract class Validator extends Adapter {
+  public static class ValidatorAdapter extends Adapter {
+	Validator v;
+	
     /**
      * @param subcon
      *          the subcon to validate
      */
-    public Validator(Construct subcon) {
-      super(subcon);
+    public ValidatorAdapter(Construct subcon, Validator v ) {
+      super(subcon); 
+      this.v = v;
     }
 
     @Override
     public Object decode(Object obj, Container context) {
-      if (!validate(obj, context))
+      if (!v.validate(obj, context))
         throw new ValidationError("invalid object" + obj);
       return obj;
     }
@@ -350,9 +352,6 @@ public class Adapters {
     public Object encode(Object obj, Container context) {
       return decode(obj, context);
     }
-
-    abstract public boolean validate(Object obj, Container context);
-
   }
 
   /**
@@ -369,13 +368,9 @@ public class Adapters {
    * @param valids
    *          a set of valid values
    */
-  public static Validator OneOf(Construct subcon, final List valids) {
-    return new Validator(subcon) {
-      @Override
-      public boolean validate(Object obj, Container context) {
-        return valids.contains(obj);
-      }
-    };
+  public static ValidatorAdapter OneOf(Construct subcon, final List valids) {
+    return new ValidatorAdapter( subcon, 
+    		(Object obj, Container context) -> valids.contains(obj));
   }
 
   /***************************************************************
@@ -414,51 +409,22 @@ public class Adapters {
     };
   };
 
-  public static <T> BeanAdapter BeanAdapter(Class<T> clazz, Construct subcon) {
-    return new BeanAdapter(clazz, subcon);
+  public static <T> BeanAdapter<T> BeanAdapter(Class<T> clazz, Construct subcon) {
+    return new BeanAdapter<T>(clazz, subcon);
   }
 
-  public static class BeanAdapter extends Adapter {
-    Class clazz;
-
-    public BeanAdapter(Class clazz, Construct subcon) {
-      super(subcon);
+//  public class Adapter<T extends Construct, V> extends Subconstruct<T> {
+//		Encoder<T> e;
+//		Decoder<V> d;
+  
+  public static class BeanAdapter<V> extends Adapter<Construct,V> {
+	Class<V> clazz;
+	  
+	public BeanAdapter(Class<V> clazz, Construct subcon) {
+      super( subcon );
       this.clazz = clazz;
-    }
-
-    <T> T newT() {
-      try {
-        Constructor<T> c = clazz.getDeclaredConstructor();
-        c.setAccessible(true);
-        return c.newInstance();
-      } catch (NoSuchMethodException ex) {
-        try {
-          return (T) clazz.newInstance();
-        } catch (Exception e) {
-          throw new RuntimeException(e);
-        }
-      } catch (Exception e) {
-        throw new RuntimeException(e);
-      }
-    }
-
-    @Override
-    public Object decode(Object obj, Container context) {
-      Container c = (Container) obj;
-      Object t = newT();
-
-      for (String name : c.<String> keys()) {
-        try {
-          Field f = clazz.getField((String) name);
-          f.set(t, c.get(name));
-        } catch (Exception e) {
-          throw new RuntimeException(e);
-        }
-      }
-
-      return t;
-    }
-
+	}
+	
     @Override
     public Object encode(Object obj, Container context) {
       Container c = new Container();
@@ -475,5 +441,37 @@ public class Adapters {
       return c;
     }
 
+    @Override
+    public V decode(Object obj, Container context) {
+      Container c = (Container) obj;
+      V t = newV( clazz );
+
+      for (String name : c.<String> keys()) {
+        try {
+          Field f = clazz.getField((String) name);
+          f.set(t, c.get(name));
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+      }
+
+      return t;
+	 }
+
+     static <V>V newV( Class<V> clazz ) {
+      try {
+        Constructor<V> c = clazz.getDeclaredConstructor();
+        c.setAccessible(true);
+        return c.newInstance();
+      } catch (NoSuchMethodException ex) {
+        try {
+          return clazz.newInstance();
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    }
   }
 }

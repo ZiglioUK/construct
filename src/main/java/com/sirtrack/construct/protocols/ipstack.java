@@ -7,18 +7,12 @@ import static com.sirtrack.construct.Adapters.*;
 import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.Macros.*;
 import static com.sirtrack.construct.lib.Binary.*;
-import static com.sirtrack.construct.lib.Containers.*;
 import static com.sirtrack.construct.protocols.layer2.ethernet.*;
 import static com.sirtrack.construct.protocols.layer3.ipv4.*;
 import static com.sirtrack.construct.protocols.layer3.ipv6.*;
 import static com.sirtrack.construct.protocols.layer4.tcp.*;
 import static com.sirtrack.construct.protocols.layer4.udp.*;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-
-import com.sirtrack.construct.Core.KeyFunc;
 import com.sirtrack.construct.lib.Containers.Container;
 
 
