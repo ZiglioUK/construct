@@ -116,8 +116,15 @@ public class Packer<T extends Number> {
       		  else 
       		  	obj = new Integer(i);
      		break;
-     		default:
+     
+      	case 'q':
+      			obj = buf.getLong();
+     		break;
+      	case 'Q':
+      			throw new RuntimeException("Java doesn't have 64 bit unsigned types (or 128 signed...)");
+      	default:
       			throw new StructError( "unrecognized fmt " + fmt);
+
       }
      return (T)obj;
   }
@@ -146,14 +153,21 @@ public class Packer<T extends Number> {
 
   static public int getInt( Object obj ){
     if( obj instanceof Integer ){
-    	return( (Integer)obj );
+      return( (Integer)obj );
     }
     else if( obj instanceof Long && (Long)obj < 4294967296L ){
-    	return (int)((Long)obj - 4294967296L );
+    	  return (int)((Long)obj - 4294967296L );
     }
   	throw new RuntimeException( "type not supported " + obj );
   }
-  
+
+  static public long getLong( Object obj ){
+    if( obj instanceof Integer ){
+      return( (long)((int)obj) );
+    }
+  	throw new RuntimeException( "type not supported " + obj );
+  }
+
   /*
    * @return  Return byte[] containing value v  packed according to fmt.
    */
@@ -196,8 +210,14 @@ public class Packer<T extends Number> {
   //      if( obj instanceof Integer )
         	b.putInt( getInt(obj) );
    		break;
-   		default:
-    			throw new StructError( "unrecognized fmt " + fmt);
+  	case 'q':
+		b.putLong( getLong(obj) );
+ 		break;
+  	case 'Q':
+  		throw new RuntimeException("Java doesn't have 64 bit unsigned types (or 128 signed...)");
+   		
+	default:
+			throw new StructError( "unrecognized fmt " + fmt);
     }
     return Arrays.copyOf( b.array(), b.position() );
   }
@@ -224,6 +244,12 @@ public class Packer<T extends Number> {
     	case 'L':
     		len = 4;
     	break;
+    	
+    	case 'q':
+    	case 'Q':
+    		len = 8;
+    	break;
+    	
     	default:
     		throw new StructError( "unrecognized fmt " + fmt );
     }
