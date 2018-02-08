@@ -24,10 +24,7 @@ public class RepeatersTest
 
   @Test
   public void MetaArrayTest(){
-  	MetaArray ma = MetaArray( new CountFunc(){ public int count(Container context){
-  			return 3;
-  		}
-  	},	UBInt8("metaarray"));
+  	MetaArray ma = MetaArray( ctx->3, UBInt8("metaarray"));
   	
   	assertEquals( ListContainer(1,2,3), ma.parse(ByteArray(1,2,3)));
 
