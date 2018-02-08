@@ -162,6 +162,9 @@ public class Packer<T extends Number> {
   }
 
   static public long getLong( Object obj ){
+    if( obj instanceof Long ){
+        return( (long)obj );
+      }
     if( obj instanceof Integer ){
       return( (long)((int)obj) );
     }
