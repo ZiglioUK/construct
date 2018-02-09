@@ -148,7 +148,7 @@ public class Adapters {
    *         pair, and calculates the length based on the value. See
    *         PrefixedArray and PascalString.
    */
-  public static Adapter<List, Object> LengthValueAdapter(Construct subcon) {
+  public static Adapter<Object, List> LengthValueAdapter(Construct subcon) {
     return ExprAdapter(subcon,
         (obj, context) ->{
           List l = new ArrayList();
@@ -177,11 +177,11 @@ public class Adapters {
   /**
    * Adapter for hex-dumping strings. It returns a HexString, which is a string
    */
-  static public Adapter<byte[], String> HexDumpAdapter(Construct subcon) {
+  static public Adapter<String, byte[]> HexDumpAdapter(Construct subcon) {
     return HexDumpAdapter(subcon, 16);
   }
 
-  static public Adapter<byte[], String> HexDumpAdapter(Construct subcon, final int linesize) {
+  static public Adapter<String, byte[]> HexDumpAdapter(Construct subcon, final int linesize) {
     return ExprAdapter(subcon,
       (str,context)->{
         str = str.replaceAll("[\n ]", "");
@@ -285,18 +285,23 @@ public class Adapters {
    *          a function that takes (obj, context) and returns an decoded
    *          version of obj
    */
-  public static <T,V> Adapter<T,V> ExprAdapter(Construct subcon, AdapterEncoder<T,V> encoder, AdapterDecoder<T,V> decoder) {
-    return new ExprAdapter<T,V>(subcon, encoder, decoder);
+  public static <V,T> Adapter<V,T> ExprAdapter(Construct subcon, AdapterEncoder<V,T> encoder, AdapterDecoder<T,V> decoder) {
+    return new ExprAdapter<V,T>(subcon, encoder, decoder);
   };
 
-  public static class ExprAdapter<T, V> extends Adapter<T, V> {
-    AdapterEncoder<T,V> encoder;
+  public static class ExprAdapter<V, T> extends Adapter<V, T> {
+    AdapterEncoder<V,T> encoder;
     AdapterDecoder<T,V> decoder;
 
-    public ExprAdapter(Construct subcon, final AdapterEncoder<T,V> encoder, final AdapterDecoder<T,V> decoder) {
+    public ExprAdapter(Construct subcon, final AdapterEncoder<V,T> encoder, final AdapterDecoder<T,V> decoder) {
       super(subcon);
       this.encoder = encoder;
       this.decoder = decoder;
+    }
+
+    @Override
+    public T encode(V obj, Container context) {
+      return encoder.encode(obj, context);
     }
 
     @Override
@@ -304,10 +309,6 @@ public class Adapters {
       return decoder.decode(obj, context);
     }
 
-    @Override
-    public T encode(V obj, Container context) {
-      return encoder.encode(obj, context);
-    }
   };
 
   /*
@@ -372,7 +373,7 @@ public class Adapters {
    * @param name
    * @return an IPv4 Address Adapter
    */
-  public static Adapter<byte[],InetAddress> IpAddress(String name) {
+  public static Adapter<InetAddress, byte[]> IpAddress(String name) {
     return IpAddressAdapter(Field(name, 4));
   }
 
@@ -380,12 +381,12 @@ public class Adapters {
    * @param name
    * @return an IPv6 Address Adapter
    */
-  public static Adapter<byte[],InetAddress> Ipv6Address(String name) {
+  public static Adapter<InetAddress, byte[]> Ipv6Address(String name) {
     return IpAddressAdapter(Field(name, 16));
   }
 
-  public static Adapter<byte[],InetAddress> IpAddressAdapter(Construct field) {
-    return new ExprAdapter<byte[], InetAddress>( field,
+  public static Adapter<InetAddress, byte[]> IpAddressAdapter(Construct field) {
+    return new ExprAdapter<InetAddress, byte[]>( field,
 	    	(obj, context) -> obj.getAddress(),
 	    (obj, context) ->  {
         try {
@@ -400,7 +401,7 @@ public class Adapters {
     return new BeanAdapter<T>(clazz, subcon);
   }
 
-  public static class BeanAdapter<V> extends Adapter<Container,V> {
+  public static class BeanAdapter<V> extends Adapter<V, Container> {
 	Class<V> clazz;
 	  
 	public BeanAdapter(Class<V> clazz, Construct subcon) {

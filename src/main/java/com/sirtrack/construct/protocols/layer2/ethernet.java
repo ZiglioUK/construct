@@ -16,13 +16,13 @@ import com.sirtrack.construct.lib.Containers.Container;
 */
 public class ethernet {
 
-    public static Adapter<byte[], String> MacAddress( String name ) {
+    public static Adapter<String, byte[]> MacAddress( String name ) {
     		return MacAddressAdapter( Field( name, 6));
     }
   
-    public static Adapter<byte[], String> MacAddressAdapter( Construct field ) {
+    public static Adapter<String, byte[]> MacAddressAdapter( Construct field ) {
 
-    		return new ExprAdapter<byte[], String>( field, 
+      return new ExprAdapter<String, byte[]>( field, 
 	      
     		  ( hexStr, ctx ) -> {
     		    hexStr = hexStr.replace("-", "");
