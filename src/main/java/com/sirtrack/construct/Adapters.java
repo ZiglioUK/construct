@@ -148,20 +148,17 @@ public class Adapters {
    *         pair, and calculates the length based on the value. See
    *         PrefixedArray and PascalString.
    */
-  public static Adapter LengthValueAdapter(Construct subcon) {
-    return new Adapter(subcon) {
-      public Object encode(Object obj, Container context) {
-        List l = new ArrayList();
-        l.add(getDataLength(obj));
-        l.add(obj);
-        return l;
-      }
-
-      public Object decode(Object obj, Container context) {
-        List l = (List) obj;
+  public static Adapter<List, Object> LengthValueAdapter(Construct subcon) {
+    return ExprAdapter(subcon,
+        (obj, context) ->{
+          List l = new ArrayList();
+          l.add( Construct.getDataLength(obj));
+          l.add(obj);
+          return l;
+        },
+      (l, context) -> {
         return l.get(1);
-      }
-    };
+      });
   }
 
   /**
@@ -180,22 +177,18 @@ public class Adapters {
   /**
    * Adapter for hex-dumping strings. It returns a HexString, which is a string
    */
-  static public Adapter HexDumpAdapter(Construct subcon) {
+  static public Adapter<byte[], String> HexDumpAdapter(Construct subcon) {
     return HexDumpAdapter(subcon, 16);
   }
 
-  static public Adapter HexDumpAdapter(Construct subcon, final int linesize) {
-    return new Adapter(subcon) {
-      public Object encode(Object obj, Container context) {
-        String str = (String) obj;
+  static public Adapter<byte[], String> HexDumpAdapter(Construct subcon, final int linesize) {
+    return ExprAdapter(subcon,
+      (str,context)->{
         str = str.replaceAll("[\n ]", "");
         return hexStringToByteArray(str);
-      }
-
-      public Object decode(Object obj, Container context) {
-        return byteArrayToHexString((byte[]) obj, 16);
-      }
-    };
+      },
+      (ba,context) -> byteArrayToHexString( ba, 16 )
+    );
   }
 
   /**
@@ -208,20 +201,19 @@ public class Adapters {
    *         substituted in. Example: Const(Field("signature", 2), "MZ")
    */
   static public Adapter ConstAdapter(Construct subcon, final Object value) {
-    return new Adapter(subcon) {
-      public Object encode(Object obj, Container context) {
+    return ExprAdapter(subcon, 
+      (obj, context) ->{
         if (obj == null || obj.equals(value))
           return value;
         else
           throw new ConstError("expected " + value + " found " + obj);
-      }
+      },
 
-      public Object decode(Object obj, Container context) {
+      (obj, context)->{
         if (!obj.equals(value))
           throw new ConstError("expected " + value + " found " + obj);
         return obj;
-      }
-    };
+      });
   }
 
   /*
@@ -293,7 +285,7 @@ public class Adapters {
    *          a function that takes (obj, context) and returns an decoded
    *          version of obj
    */
-  public static <T,V> ExprAdapter<T,V> ExprAdapter(Construct subcon, AdapterEncoder<T,V> encoder, AdapterDecoder<T,V> decoder) {
+  public static <T,V> Adapter<T,V> ExprAdapter(Construct subcon, AdapterEncoder<T,V> encoder, AdapterDecoder<T,V> decoder) {
     return new ExprAdapter<T,V>(subcon, encoder, decoder);
   };
 

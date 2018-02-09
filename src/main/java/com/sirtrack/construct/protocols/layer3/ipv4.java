@@ -51,8 +51,8 @@ public class ipv4 {
         
           ExprAdapter( 
             Nibble("header_length"), 
-            ( obj, context ) -> (Integer) obj / 4,
-            ( obj, context ) -> (Integer) obj * 4 )
+            ( obj, context ) -> (int) obj / 4,
+            ( obj, context ) -> (int) obj * 4 )
         ),
   
         BitStruct( "tos", 
