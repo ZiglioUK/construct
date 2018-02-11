@@ -4,9 +4,6 @@ import static com.sirtrack.construct.Adapters.*;
 import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.Macros.*;
 import static com.sirtrack.construct.lib.Binary.*;
-import static com.sirtrack.construct.lib.Containers.*;
-
-import java.util.Arrays;
 
 import com.sirtrack.construct.Adapter;
 import com.sirtrack.construct.lib.Containers.Container;
@@ -16,20 +13,19 @@ import com.sirtrack.construct.lib.Containers.Container;
 */
 public class ethernet {
 
-    public static Adapter<String, byte[]> MacAddress( String name ) {
-    		return MacAddressAdapter( Field( name, 6));
-    }
+  public static Adapter<String, byte[]> MacAddress( String name ) {
+      return MacAddressAdapter( Field( name, 6));
+  }
   
-    public static Adapter<String, byte[]> MacAddressAdapter( Construct field ) {
-
-      return new ExprAdapter<String, byte[]>( field, 
+  public static Adapter<String, byte[]> MacAddressAdapter( Construct field ) {
+    return ExprAdapter( field,
 	      
-    		  ( hexStr, ctx ) -> {
-    		    hexStr = hexStr.replace("-", "");
+        ( hexStr, ctx ) -> {
+  		    hexStr = hexStr.replace("-", "");
     		    return hexStringToByteArray(hexStr);
 	      },
 	      
-	      ( ba, context) -> {
+	      ( ba, ctx ) -> {
 	      	StringBuilder sb = new StringBuilder();
 	      	for( byte b : ba ){
 	      		if (sb.length() > 0)
@@ -37,7 +33,7 @@ public class ethernet {
 	      		sb.append(String.format("%02x", b));
 	      	}
 	      	return sb.toString();
-	      });
+	     });
   }
   
 	
