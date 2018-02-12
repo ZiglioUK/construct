@@ -9,6 +9,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import com.sirtrack.construct.fields.FormatField;
+import com.sirtrack.construct.fields.MetaField;
 import com.sirtrack.construct.fields.StaticField;
 import com.sirtrack.construct.lib.Containers.Container;
 

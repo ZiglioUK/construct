@@ -8,6 +8,7 @@ import org.junit.Ignore;
 import org.junit.rules.ExpectedException;
 
 import com.sirtrack.construct.Core.RangeError;
+import com.sirtrack.construct.fields.LengthFunc;
 import com.sirtrack.construct.lib.Containers.Container;
 
 import static com.sirtrack.construct.Core.*;

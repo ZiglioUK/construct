@@ -18,6 +18,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.sirtrack.construct.fields.FormatField;
+
 import static com.sirtrack.construct.fields.Fields.*;
 
 
