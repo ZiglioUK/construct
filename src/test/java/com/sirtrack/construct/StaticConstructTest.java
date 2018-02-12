@@ -1,7 +1,9 @@
 package com.sirtrack.construct;
 
+import static com.sirtrack.construct.Adapters.PaddingAdapter;
 import static com.sirtrack.construct.Core.ByteArray;
 import static com.sirtrack.construct.Core.Container;
+import static com.sirtrack.construct.Macros.Field;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -9,6 +11,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.sirtrack.construct.Core.StaticField;
+import com.sirtrack.construct.Core.StaticField.len;
 import com.sirtrack.construct.Core.Struct;
 import com.sirtrack.construct.Macros.Embedded;
 import com.sirtrack.construct.Macros.UBInt16;
@@ -17,6 +21,22 @@ import com.sirtrack.construct.lib.Containers.Container;
 
 public class StaticConstructTest {
 
+  @Test 
+  public void lenAnnotationTest() {
+//    assertArrayEquals( ByteArray(0xab, 0xcd), (byte[])PaddingAdapter( Field("paddingadapter", 2) ).parse("abcd"));
+
+    class S extends Struct {
+      
+      @len(2)
+      public StaticField a;
+    }
+
+    S s = new S();
+    Container ca = s.parse("abcd");
+    byte[] a = (byte[])s.a.get();
+    assertArrayEquals( ByteArray(0xab, 0xcd), a );
+  }
+  
   @Test
   public void fieldStructTest1() {
     Container ca, cb;

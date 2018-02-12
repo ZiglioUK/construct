@@ -2,13 +2,15 @@ package com.sirtrack.construct;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import com.sirtrack.construct.Core.StaticField.len;
 import com.sirtrack.construct.lib.*;
 import com.sirtrack.construct.lib.BitStream.BitStreamReader;
 import com.sirtrack.construct.lib.BitStream.BitStreamWriter;
@@ -540,7 +542,22 @@ public class Core {
    * A fixed-size byte field.
    */
   public static class StaticField extends Construct {
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface len {
+        int value();
+    }
+    
     int length;
+
+    public StaticField(String name ) {
+      super(name);
+      
+//      if (!StaticField.class.isAnnotationPresent(len.class)) 
+//        throw new RuntimeException("@len is missing");
+//        
+//        // getAnnotation returns Annotation type
+//        this.length = StaticField.class.getAnnotation(len.class).value();  
+    }
 
     /**
      * @param name
@@ -606,7 +623,6 @@ public Construct clone() {
 
       packer = new Packer<T>(endianity, format);
       super.length = packer.length();
-
     }
 
     @Override
@@ -1052,22 +1068,8 @@ public Construct clone() {
           Construct inst;
           Object enclosingInst;
           switch (fctor.getParameterTypes().length) {
-          // TODO should check that the first instance is of the right type: enclosing type or String
-          case 2: // inner classes
-            try{
-              // static class case
-              enclosingInst = getClass().getDeclaredField("this$0").get(this);
-            } catch( NoSuchFieldException nsfe ){
-              // private nested class case
-              enclosingInst = this;
-            }
-            inst = (Construct) fctor.newInstance(enclosingInst, fname);
-            break;
-          case 1:
-            if( String.class.isAssignableFrom( fctor.getParameterTypes()[0] )){
-              inst = (Construct) fctor.newInstance(fname);
-            } else {
-              // no arguments constructor
+            // TODO should check that the first instance is of the right type: enclosing type or String
+            case 2: // inner classes
               try{
                 // static class case
                 enclosingInst = getClass().getDeclaredField("this$0").get(this);
@@ -1075,18 +1077,38 @@ public Construct clone() {
                 // private nested class case
                 enclosingInst = this;
               }
-              inst = (Construct) fctor.newInstance(enclosingInst);
-              
-              // now call name setter with fname
-              inst.setName(fname); 
-            }
-            break;
-          case 0:
-            inst = (Construct) fctor.newInstance();
-            break;
-          default:
-            throw new Exception("No default case: " + fctor);
+              inst = (Construct) fctor.newInstance(enclosingInst, fname);
+              break;
+            case 1:
+              if( String.class.isAssignableFrom( fctor.getParameterTypes()[0] )){
+                inst = (Construct) fctor.newInstance(fname);
+              } else {
+                // no arguments constructor
+                try{
+                  // static class case
+                  enclosingInst = getClass().getDeclaredField("this$0").get(this);
+                } catch( NoSuchFieldException nsfe ){
+                  // private nested class case
+                  enclosingInst = this;
+                }
+                inst = (Construct) fctor.newInstance(enclosingInst);
+                
+                // now call name setter with fname
+                inst.setName(fname); 
+              }
+              break;
+            case 0:
+              inst = (Construct) fctor.newInstance();
+              break;
+            default:
+              throw new Exception("No default case: " + fctor);
+          
           }
+          // process annotations
+          if( field.isAnnotationPresent(len.class) ) {
+            ((StaticField)inst).length = field.getAnnotation(len.class).value();
+           }
+
           field.set(this, inst);
           subconf.add(inst);
         }
