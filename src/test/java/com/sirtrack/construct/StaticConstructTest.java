@@ -12,7 +12,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.sirtrack.construct.Core.StaticField;
-import com.sirtrack.construct.Core.StaticField.len;
 import com.sirtrack.construct.Core.Struct;
 import com.sirtrack.construct.Macros.Embedded;
 import com.sirtrack.construct.Macros.UBInt16;

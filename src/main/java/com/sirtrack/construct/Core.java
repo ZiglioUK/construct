@@ -2,15 +2,12 @@ package com.sirtrack.construct;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import com.sirtrack.construct.Core.StaticField.len;
 import com.sirtrack.construct.lib.*;
 import com.sirtrack.construct.lib.BitStream.BitStreamReader;
 import com.sirtrack.construct.lib.BitStream.BitStreamWriter;
@@ -542,11 +539,6 @@ public class Core {
    * A fixed-size byte field.
    */
   public static class StaticField extends Construct {
-    @Retention(RetentionPolicy.RUNTIME)
-    public @interface len {
-        int value();
-    }
-    
     int length;
 
     public StaticField(String name ) {
