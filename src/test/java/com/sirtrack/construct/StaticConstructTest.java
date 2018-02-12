@@ -16,6 +16,7 @@ import com.sirtrack.construct.Core.Struct;
 import com.sirtrack.construct.Macros.Embedded;
 import com.sirtrack.construct.Macros.UBInt16;
 import com.sirtrack.construct.Macros.UBInt8;
+import com.sirtrack.construct.annotations.len;
 import com.sirtrack.construct.lib.Containers.Container;
 
 public class StaticConstructTest {
