@@ -51,6 +51,11 @@ public class Macros {
       return new StaticField(name, length);
   }
 
+  /** Use @len */
+  public static Construct Field( String name ){
+    return new StaticField(name);
+}
+ 
 	/**
 	    """
 	    BitFields, as the name suggests, are fields that operate on raw, unaligned
