@@ -13,6 +13,7 @@ import com.sirtrack.construct.lib.Containers.Container;
 import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.Macros.*;
 import static com.sirtrack.construct.lib.Containers.*;
+import static com.sirtrack.construct.fields.Fields.*;
 
 
 public class ConstructTest {

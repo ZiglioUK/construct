@@ -1,11 +1,11 @@
 package com.sirtrack.construct.lib;
 
-import static com.sirtrack.construct.Core._read_stream;
 import static com.sirtrack.construct.lib.Binary.encode_bin;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
+import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.ValueError;
 
 public class BitStream {
@@ -72,7 +72,7 @@ public class BitStream {
       if(( length  & 7 ) != 0 ){
           bytes += 1;
       }
-    	bb = ByteBuffer.wrap(encode_bin(_read_stream( substream, bytes )));
+    	bb = ByteBuffer.wrap(encode_bin(Construct._read_stream( substream, bytes )));
       bb.get( dst, 0, length );  
       total_size += length;
     }
@@ -91,7 +91,7 @@ public class BitStream {
         if(( length  & 7 ) != 0 ){
             bytes += 1;
         }
-      	bb = ByteBuffer.wrap(encode_bin(_read_stream( substream, bytes )));
+      	bb = ByteBuffer.wrap(encode_bin(Construct._read_stream( substream, bytes )));
         bb.get( dst, l, length );  
         total_size += length;
       }

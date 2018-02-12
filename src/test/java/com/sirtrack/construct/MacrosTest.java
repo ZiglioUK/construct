@@ -31,9 +31,9 @@ import com.sirtrack.construct.Core.ArrayError;
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.CountFunc;
 import com.sirtrack.construct.Core.KeyFunc;
-import com.sirtrack.construct.Core.LengthFunc;
 import com.sirtrack.construct.Core.Switch;
 import com.sirtrack.construct.lib.Containers.Container;
+import static com.sirtrack.construct.fields.Fields.*;
 
 public class MacrosTest  
 {

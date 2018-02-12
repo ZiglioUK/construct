@@ -9,17 +9,17 @@ import java.io.ByteArrayOutputStream;
 import com.sirtrack.construct.Core.Buffered;
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.CountFunc;
-import com.sirtrack.construct.Core.FormatField;
 import com.sirtrack.construct.Core.KeyFunc;
-import com.sirtrack.construct.Core.StaticField;
 import com.sirtrack.construct.Core.Struct;
 import com.sirtrack.construct.Core.Subconstruct;
 import com.sirtrack.construct.Core.ValueFunc;
+import com.sirtrack.construct.fields.Fields.LengthFunc;
 import com.sirtrack.construct.lib.BitStream.BitStreamReader;
 import com.sirtrack.construct.lib.BitStream.BitStreamWriter;
 import com.sirtrack.construct.lib.ByteBufferWrapper;
 import com.sirtrack.construct.lib.Resizer;
 import com.sirtrack.construct.lib.Containers.Container;
+import static com.sirtrack.construct.fields.Fields.*;
 
 public class Macros {
 

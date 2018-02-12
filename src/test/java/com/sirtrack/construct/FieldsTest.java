@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.sirtrack.construct.Core.FormatField;
+import static com.sirtrack.construct.fields.Fields.*;
 
 
 

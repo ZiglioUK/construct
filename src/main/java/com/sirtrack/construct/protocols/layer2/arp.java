@@ -2,7 +2,6 @@ package com.sirtrack.construct.protocols.layer2;
 
 import static com.sirtrack.construct.Adapters.IpAddressAdapter;
 import static com.sirtrack.construct.Core.Equals;
-import static com.sirtrack.construct.Core.LengthField;
 import static com.sirtrack.construct.Core.Struct;
 import static com.sirtrack.construct.Macros.Enum;
 import static com.sirtrack.construct.Macros.Field;
@@ -17,6 +16,8 @@ import static com.sirtrack.construct.protocols.layer2.ethernet.MacAddressAdapter
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.Switch;
 import com.sirtrack.construct.lib.Containers.Container;
+
+import static com.sirtrack.construct.fields.Fields.*;
 
 /**
  * Ethernet (TCP/IP protocol stack)

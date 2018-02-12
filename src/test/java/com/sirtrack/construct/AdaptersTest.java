@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.sirtrack.construct.lib.Containers.Container;
+import static com.sirtrack.construct.fields.Fields.*;
 
 
 public class AdaptersTest  
