@@ -29,7 +29,6 @@ import org.junit.rules.ExpectedException;
 import com.sirtrack.construct.Adapters.MappingError;
 import com.sirtrack.construct.Core.ArrayError;
 import com.sirtrack.construct.Core.Construct;
-import com.sirtrack.construct.Core.CountFunc;
 import com.sirtrack.construct.Core.KeyFunc;
 import com.sirtrack.construct.Core.Switch;
 import com.sirtrack.construct.lib.Containers.Container;

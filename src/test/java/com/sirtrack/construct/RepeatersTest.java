@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.sirtrack.construct.Core.Construct;
-import com.sirtrack.construct.Core.CountFunc;
 import com.sirtrack.construct.lib.Containers.Container;
 
 public class RepeatersTest  

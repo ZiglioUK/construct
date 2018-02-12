@@ -8,7 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.annotations.len;
+import com.sirtrack.construct.interfaces.CountFunc;
+import com.sirtrack.construct.interfaces.LengthConstruct;
+import com.sirtrack.construct.interfaces.ValueFunc;
 import com.sirtrack.construct.lib.*;
 import com.sirtrack.construct.lib.BitStream.BitStreamReader;
 import com.sirtrack.construct.lib.BitStream.BitStreamWriter;
@@ -537,13 +541,6 @@ public class Core {
    */
 
   /**
-   * callable that takes a context and returns length as an int
-   */
-  static public interface CountFunc {
-    abstract int count(Container context);
-  }
-
-  /**
    * Example: MetaArray(lambda ctx: 5, UBInt8("foo")) See also Array, Range and
    * RepeatUntil.
    * 
@@ -556,8 +553,8 @@ public class Core {
    *         `countfunc()` times. Will raise ArrayError if less elements are
    *         found.
    */
-  public static MetaArray MetaArray(CountFunc countfunc, Construct subcon) {
-    return new MetaArray(countfunc, subcon);
+  public static MetaArray<Construct> MetaArray(CountFunc countfunc, Construct subcon) {
+    return new MetaArray<Construct>(countfunc, subcon);
   }
 
   /**
@@ -589,7 +586,7 @@ public class Core {
 
     @Override
     public Object _parse(ByteBufferWrapper stream, Container context) {
-      List obj = ListContainer();
+      List<Object> obj = ListContainer();
       int c = 0;
       int count = countfunc.count(context);
       try {
@@ -1042,7 +1039,7 @@ public class Core {
 
     @Override
     public Object _parse(ByteBufferWrapper stream, Container context) {
-      List obj;
+      List<Object> obj;
       if (context.contains("<obj>")) {
         obj = context.get("<obj>");
         context.del("<obj>");
@@ -1594,8 +1591,8 @@ public class Core {
    * @param clearflags
    *          the flags to clear (default is 0)
    */
-  static public Reconfig Reconfig(String name, Construct subcon) {
-    return new Reconfig(name, subcon);
+  static public Reconfig<Construct> Reconfig(String name, Construct subcon) {
+    return new Reconfig<Construct>(name, subcon);
   }
 
   /**
@@ -1608,9 +1605,9 @@ public class Core {
    * @param clearflags
    *          the flags to clear (default is 0)
    */
-  static public Reconfig Reconfig(String name, Construct subcon, int setflags,
+  static public Reconfig<Construct> Reconfig(String name, Construct subcon, int setflags,
       int clearflags) {
-    return new Reconfig(name, subcon, setflags, clearflags);
+    return new Reconfig<Construct>(name, subcon, setflags, clearflags);
   }
 
   /**
@@ -1653,13 +1650,6 @@ public class Core {
   }
 
   /**
-   * a function that takes the context and return the computed value
-   */
-  public static interface ValueFunc<T> {
-    T get(Container ctx);
-  }
-
-  /**
    * A computed value. Example: Struct("foo", UBInt8("width"), UBInt8("height"),
    * Value("total_pixels", lambda ctx: ctx.width * ctx.height), )
    * 
@@ -1668,7 +1658,7 @@ public class Core {
    * @param func
    *          a function that takes the context and return the computed value
    */
-  public static <T>Value Value(String name, ValueFunc<T> func) {
+  public static <T>Value<T> Value(String name, ValueFunc<T> func) {
     return new Value<T>(name, func);
   };
 

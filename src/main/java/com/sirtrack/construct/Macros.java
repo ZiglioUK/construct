@@ -7,14 +7,14 @@ import java.io.ByteArrayOutputStream;
 
 import com.sirtrack.construct.Core.Buffered;
 import com.sirtrack.construct.Core.Construct;
-import com.sirtrack.construct.Core.CountFunc;
 import com.sirtrack.construct.Core.KeyFunc;
 import com.sirtrack.construct.Core.Struct;
 import com.sirtrack.construct.Core.Subconstruct;
-import com.sirtrack.construct.Core.ValueFunc;
 import com.sirtrack.construct.fields.FormatField;
-import com.sirtrack.construct.fields.LengthFunc;
 import com.sirtrack.construct.fields.StaticField;
+import com.sirtrack.construct.interfaces.CountFunc;
+import com.sirtrack.construct.interfaces.LengthFunc;
+import com.sirtrack.construct.interfaces.ValueFunc;
 import com.sirtrack.construct.lib.BitStream.BitStreamReader;
 import com.sirtrack.construct.lib.BitStream.BitStreamWriter;
 import com.sirtrack.construct.lib.ByteBufferWrapper;

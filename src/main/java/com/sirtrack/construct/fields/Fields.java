@@ -2,11 +2,12 @@ package com.sirtrack.construct.fields;
 
 import java.io.ByteArrayOutputStream;
 
-import com.sirtrack.construct.LengthConstruct;
 import com.sirtrack.construct.Packer;
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.FieldError;
 import com.sirtrack.construct.Core.ValueError;
+import com.sirtrack.construct.interfaces.LengthConstruct;
+import com.sirtrack.construct.interfaces.LengthFunc;
 import com.sirtrack.construct.lib.ByteBufferWrapper;
 
 public class Fields {

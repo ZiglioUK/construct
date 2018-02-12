@@ -3,6 +3,7 @@ package com.sirtrack.construct.fields;
 import java.io.ByteArrayOutputStream;
 
 import com.sirtrack.construct.Core.Construct;
+import com.sirtrack.construct.interfaces.LengthFunc;
 import com.sirtrack.construct.lib.ByteBufferWrapper;
 import com.sirtrack.construct.lib.Containers.Container;
 

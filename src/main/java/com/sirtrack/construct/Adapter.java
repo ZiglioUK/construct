@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.Subconstruct;
+import com.sirtrack.construct.interfaces.AdapterDecoder;
+import com.sirtrack.construct.interfaces.AdapterEncoder;
 import com.sirtrack.construct.lib.ByteBufferWrapper;
 import com.sirtrack.construct.lib.Containers.Container;
 

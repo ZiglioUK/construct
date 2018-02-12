@@ -9,6 +9,9 @@ import static com.sirtrack.construct.lib.Binary.*;
 
 import com.sirtrack.construct.Core.Construct;
 import com.sirtrack.construct.Core.Subconstruct;
+import com.sirtrack.construct.interfaces.AdapterDecoder;
+import com.sirtrack.construct.interfaces.AdapterEncoder;
+import com.sirtrack.construct.interfaces.Validator;
 
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Constructor;
