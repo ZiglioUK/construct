@@ -2,7 +2,6 @@ package com.sirtrack.construct;
 import static com.sirtrack.construct.Adapters.*;
 import static com.sirtrack.construct.Core.*;
 import static com.sirtrack.construct.lib.Binary.*;
-import static com.sirtrack.construct.lib.Containers.*;
 
 import java.io.ByteArrayOutputStream;
 
@@ -14,6 +13,7 @@ import com.sirtrack.construct.Core.Struct;
 import com.sirtrack.construct.Core.Subconstruct;
 import com.sirtrack.construct.Core.ValueFunc;
 import com.sirtrack.construct.fields.Fields.LengthFunc;
+import com.sirtrack.construct.fields.StaticField;
 import com.sirtrack.construct.lib.BitStream.BitStreamReader;
 import com.sirtrack.construct.lib.BitStream.BitStreamWriter;
 import com.sirtrack.construct.lib.ByteBufferWrapper;
