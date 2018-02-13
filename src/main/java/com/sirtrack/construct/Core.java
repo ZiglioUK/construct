@@ -609,9 +609,11 @@ public class Core {
     }
 
     @Override
-    public void _build(Object object, ByteArrayOutputStream stream,
-        Container context) {
+    public void _build(Object object, ByteArrayOutputStream stream, Container context) {
 
+      if( !(object instanceof List ))
+        throw new RuntimeException("Must build a List");
+ 
       List<Object> obj = (List<Object>) object;
 
       int count = countfunc.count(context);
@@ -760,6 +762,7 @@ public class Core {
           }
         }
       } catch (Exception e) {
+        e.printStackTrace();
         throw new RangeError(e.getMessage());
       }
     }
@@ -971,8 +974,7 @@ public class Core {
     }
 
     @Override
-    public void _build(Object obj, ByteArrayOutputStream stream,
-        Container context) {
+    public void _build(Object obj, ByteArrayOutputStream stream, Container context) {
       if (context.contains("<unnested>")) {
         context.del("<unnested>");
       } else if (nested) {
