@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Adapters {
@@ -178,6 +179,22 @@ public class Adapters {
   }
 
   /**
+   * A 'magic number' construct. it is used for file signatures, etc., 
+   * to validate that the given pattern exists.
+    
+    Example::
+    
+    elf_header = Struct("elf_header",
+    Magic("\x7fELF"),
+   * 
+   * @param data
+   * @return
+   */
+  public static Adapter Magic(String data) {
+    return ConstAdapter(Field(null, data.length()), data.getBytes());
+  }
+
+  /**
    * Adapter for hex-dumping strings. It returns a HexString, which is a string
    */
   static public Adapter<String, byte[]> HexDumpAdapter(Construct subcon) {
@@ -213,7 +230,9 @@ public class Adapters {
       },
 
       (obj, context)->{
-        if (!obj.equals(value))
+        if( value instanceof byte[] && Arrays.equals((byte[])obj, (byte[])value))
+            return obj;
+        else if(!obj.equals(value))
           throw new ConstError("expected " + value + " found " + obj);
         return obj;
       });
