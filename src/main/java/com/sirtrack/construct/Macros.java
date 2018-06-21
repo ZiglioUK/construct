@@ -715,7 +715,12 @@ public static class CRC extends Subconstruct {
 		 ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
 		 subcon._build(obj, stream2, context);
 		 byte[] data = stream2.toByteArray();
-		 int size = _sizeof(context);
+		 int size;
+		 if (obj instanceof Container){
+			 size = _sizeof((Container) obj) - crcfield.sizeof();
+		 } else {
+			 size = _sizeof(context);
+		 }
 		 if( data.length != size )
 		 throw new RuntimeException( "Wrong data length: " + data.length );
 		

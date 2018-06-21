@@ -161,7 +161,7 @@ public class MacrosTest
 
     @Test
     public void CrcWithArrayEncodeTest() {
-        Container inputTestContainer = Container("packet_type", 0, "payload_size", 2, "packet_data", ListContainer(0x06, 0x00), "checksum", true);
+        Container inputTestContainer = Container("packet_type", 0, "payload_size", 2, "packet_data", ListContainer(0x06, 0x00));
         byte[] result = crcArrayStruct.build(inputTestContainer);
         assertEquals(crcInputByteString, byteArrayToHexString(result));
     }
