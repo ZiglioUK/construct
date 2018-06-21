@@ -21,6 +21,7 @@ import static com.sirtrack.construct.Macros.ULInt16;
 import static com.sirtrack.construct.Macros.ULInt8;
 import static com.sirtrack.construct.Macros.CRC;
 import static com.sirtrack.construct.Macros.CRCFunc;
+import static com.sirtrack.construct.lib.Binary.byteArrayToHexString;
 import static com.sirtrack.construct.lib.Binary.hexStringToByteArray;
 import static com.sirtrack.construct.lib.Checksum.calculateChecksum;
 import static com.sirtrack.construct.lib.Containers.ListContainer;
@@ -127,33 +128,42 @@ public class MacrosTest
   	assertEquals( ListContainer(1,1,1), PrefixedArray(UBInt8("array"), UBInt8("count")).parse(ByteArray(3,1,1)));
   }
 
+  private String crcInputByteString = "000002000600FFF7";
+
+    private CRCFunc CRC16 = new CRCFunc() {
+        public boolean check(byte[] bytes, int crc_val) {
+            int cs = compute(bytes);
+            return crc_val == cs;
+        }
+
+        @Override
+        public int compute(byte[] bytes) {
+            return (int) calculateChecksum(bytes);
+        }
+    };
+
+    private Construct crcArrayStruct =
+            CRC(Struct(
+                    ULInt16("packet_type"),
+                    ULInt16("payload_size"),
+                    Array(ctx -> ctx.get("payload_size"), ULInt8("packet_data"))
+                    ),
+                    ULInt16("checksum"),
+                    CRC16
+            );
+
     @Test
-    public void PrefixedArrayWithCrcTest() {
-        byte[] inputByteArray = hexStringToByteArray("000002000600FFF7");
+    public void CrcWithArrayDecodeTest() {
+        byte[] crcInputByteArray = hexStringToByteArray(crcInputByteString);
+        Container c = crcArrayStruct.parse(crcInputByteArray);
+        assertEquals(Container("packet_type", 0, "payload_size", 2, "packet_data", ListContainer(0x06, 0x00), "checksum", true), c);
+    }
 
-        CRCFunc CRC16 = new CRCFunc() {
-            public boolean check(byte[] bytes, int crc_val) {
-                int cs = compute(bytes);
-                return crc_val == cs;
-            }
-
-            @Override
-            public int compute(byte[] bytes) {
-                return (int) calculateChecksum(bytes);
-            }
-        };
-
-        Construct struct =
-                CRC(Struct(
-                        ULInt16("packet_type"),
-                        PrefixedArray(ULInt8("packet_data"), ULInt16("payload_size"))
-                        ),
-                        ULInt16("checksum"),
-                        CRC16
-                );
-
-        Container c = struct.parse(inputByteArray);
-        assertEquals(Container("packet_type", 0, Container("payload_size", 2, "packet_data", ListContainer(0x06, 0x00))), c);
+    @Test
+    public void CrcWithArrayEncodeTest() {
+        Container inputTestContainer = Container("packet_type", 0, "payload_size", 2, "packet_data", ListContainer(0x06, 0x00), "checksum", true);
+        byte[] result = crcArrayStruct.build(inputTestContainer);
+        assertEquals(crcInputByteString, byteArrayToHexString(result));
     }
 
   @Test

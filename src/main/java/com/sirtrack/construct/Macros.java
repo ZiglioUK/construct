@@ -673,13 +673,16 @@ public static class CRC extends Subconstruct {
 
 	@Override
 	public Object _parse(ByteBufferWrapper stream, Container context) {
-		byte[] data = _read_stream(stream, subcon._sizeof(context));
-		Container c = (Container)(subcon._parse(new ByteBufferWrapper().wrap( data ), context));
-		
+		byte[] allData= new byte[stream.remaining()];
+		stream.get(allData, 0, stream.remaining());
+		Container c = (Container)(subcon._parse(new ByteBufferWrapper().wrap(allData), context));
+		ByteBufferWrapper crcStream = new ByteBufferWrapper().wrap(allData);
+		byte[] data = _read_stream(crcStream, subcon._sizeof(c));
+
 		int crcval;
 		String name;
 		if( crcfield != null ){
-			crcval = (Integer) crcfield._parse(stream, context);
+			crcval = (Integer) crcfield._parse(crcStream, context);
 			name = crcfield.name;
 		}
 		else{
