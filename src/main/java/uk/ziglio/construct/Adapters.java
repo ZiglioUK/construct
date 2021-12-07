@@ -1,10 +1,12 @@
 package uk.ziglio.construct;
 
-import static uk.ziglio.construct.Core.*;
 import static uk.ziglio.construct.Macros.Field;
-import static uk.ziglio.construct.lib.Binary.*;
+import static uk.ziglio.construct.lib.Binary.bin_to_int;
+import static uk.ziglio.construct.lib.Binary.byteArrayToHexString;
+import static uk.ziglio.construct.lib.Binary.hexStringToByteArray;
+import static uk.ziglio.construct.lib.Binary.int_to_bin;
+import static uk.ziglio.construct.lib.Binary.swap_bytes;
 
-import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
@@ -13,13 +15,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import uk.ziglio.construct.Core.Construct;
-import uk.ziglio.construct.Core.Subconstruct;
+import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.interfaces.AdapterDecoder;
 import uk.ziglio.construct.interfaces.AdapterEncoder;
 import uk.ziglio.construct.interfaces.Validator;
-import uk.ziglio.construct.lib.*;
-import uk.ziglio.construct.lib.Containers.*;
+import uk.ziglio.construct.lib.Containers.Container;
 
 public class Adapters {
   public static class BitIntegerError extends RuntimeException {

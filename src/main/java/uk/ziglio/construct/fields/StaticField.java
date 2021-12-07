@@ -2,7 +2,7 @@ package uk.ziglio.construct.fields;
 
 import java.io.ByteArrayOutputStream;
 
-import uk.ziglio.construct.Core.Construct;
+import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.interfaces.LengthConstruct;
 import uk.ziglio.construct.lib.ByteBufferWrapper;
 import uk.ziglio.construct.lib.Containers.Container;
@@ -54,14 +54,5 @@ public class StaticField extends Construct implements LengthConstruct {
     return length;
   }
 
-
-  /*
-   * public int _sizeof( Container context ){
-@Override
-public Construct clone() {
-// TODO Auto-generated method stub
-return null;
-} return length; }
-   */
 }
 

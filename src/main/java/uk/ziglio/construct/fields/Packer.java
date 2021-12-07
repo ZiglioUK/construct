@@ -3,7 +3,7 @@
  * @author ZiglioUK
  *
  */
-package uk.ziglio.construct;
+package uk.ziglio.construct.fields;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

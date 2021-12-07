@@ -7,6 +7,7 @@ import static uk.ziglio.construct.lib.Binary.*;
 import static uk.ziglio.construct.lib.Checksum.calculateChecksum;
 
 import uk.ziglio.construct.*;
+import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.lib.Containers.*;
 
 /**

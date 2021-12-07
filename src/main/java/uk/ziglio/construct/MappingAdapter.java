@@ -3,7 +3,7 @@ package uk.ziglio.construct;
 import static uk.ziglio.construct.Core.Pass;
 
 import uk.ziglio.construct.Adapters.MappingError;
-import uk.ziglio.construct.Core.Construct;
+import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.lib.Containers.Container;
 
 public class MappingAdapter extends Adapter<Object, Object> {

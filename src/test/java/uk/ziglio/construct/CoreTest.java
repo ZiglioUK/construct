@@ -13,6 +13,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import uk.ziglio.construct.core.Construct;
+import uk.ziglio.construct.errors.FieldError;
+import uk.ziglio.construct.errors.SizeofError;
 import uk.ziglio.construct.fields.FormatField;
 import uk.ziglio.construct.fields.MetaField;
 import uk.ziglio.construct.fields.StaticField;

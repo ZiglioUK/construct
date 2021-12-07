@@ -7,6 +7,8 @@ import static uk.ziglio.construct.lib.Binary.*;
 import static uk.ziglio.construct.lib.Containers.*;
 import static uk.ziglio.construct.protocols.layer3.ipv4.*;
 
+import uk.ziglio.construct.core.Construct;
+
 /**
  * Ethernet (TCP/IP protocol stack) 
 */

@@ -2,8 +2,8 @@ package uk.ziglio.construct;
 
 import java.io.ByteArrayOutputStream;
 
-import uk.ziglio.construct.Core.Construct;
-import uk.ziglio.construct.Core.Subconstruct;
+import uk.ziglio.construct.core.Construct;
+import uk.ziglio.construct.core.Subconstruct;
 import uk.ziglio.construct.interfaces.AdapterDecoder;
 import uk.ziglio.construct.interfaces.AdapterEncoder;
 import uk.ziglio.construct.lib.ByteBufferWrapper;

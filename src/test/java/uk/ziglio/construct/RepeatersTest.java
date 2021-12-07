@@ -13,7 +13,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import uk.ziglio.construct.Core.Construct;
+import uk.ziglio.construct.core.MetaArray;
+import uk.ziglio.construct.core.Range;
+import uk.ziglio.construct.errors.RangeError;
 import uk.ziglio.construct.lib.Containers.Container;
 
 public class RepeatersTest  

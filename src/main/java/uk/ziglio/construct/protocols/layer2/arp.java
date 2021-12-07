@@ -14,8 +14,8 @@ import static uk.ziglio.construct.lib.Binary.byteArrayToHexString;
 import static uk.ziglio.construct.lib.Binary.hexStringToByteArray;
 import static uk.ziglio.construct.protocols.layer2.ethernet.MacAddressAdapter;
 
-import uk.ziglio.construct.Core.Construct;
-import uk.ziglio.construct.Core.Switch;
+import uk.ziglio.construct.core.Construct;
+import uk.ziglio.construct.core.Switch;
 import uk.ziglio.construct.lib.Containers.Container;
 
 /**

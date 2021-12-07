@@ -9,7 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import uk.ziglio.construct.Core.ValueError;
+import uk.ziglio.construct.errors.ValueError;
 
 
 public class LibTest  

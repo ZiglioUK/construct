@@ -1,5 +1,5 @@
 package uk.ziglio.construct.lib;
-import uk.ziglio.construct.Core.ValueError;
+import uk.ziglio.construct.errors.ValueError;
 import uk.ziglio.construct.lib.*;
 
 /**

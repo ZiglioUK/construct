@@ -13,6 +13,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import uk.ziglio.construct.core.Construct;
+
 public class BitTest  
 {
   @Rule

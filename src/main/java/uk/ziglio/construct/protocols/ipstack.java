@@ -13,6 +13,7 @@ import static uk.ziglio.construct.protocols.layer3.ipv6.*;
 import static uk.ziglio.construct.protocols.layer4.tcp.*;
 import static uk.ziglio.construct.protocols.layer4.udp.*;
 
+import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.lib.Containers.Container;
 
 

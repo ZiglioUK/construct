@@ -1,14 +1,6 @@
 package uk.ziglio.construct.fields;
 
-import java.io.ByteArrayOutputStream;
-
-import uk.ziglio.construct.Packer;
-import uk.ziglio.construct.Core.Construct;
-import uk.ziglio.construct.Core.FieldError;
-import uk.ziglio.construct.Core.ValueError;
-import uk.ziglio.construct.interfaces.LengthConstruct;
 import uk.ziglio.construct.interfaces.LengthFunc;
-import uk.ziglio.construct.lib.ByteBufferWrapper;
 
 public class Fields {
 

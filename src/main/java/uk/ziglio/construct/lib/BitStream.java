@@ -5,8 +5,8 @@ import static uk.ziglio.construct.lib.Binary.encode_bin;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 
-import uk.ziglio.construct.Core.Construct;
-import uk.ziglio.construct.Core.ValueError;
+import uk.ziglio.construct.core.Construct;
+import uk.ziglio.construct.errors.ValueError;
 
 public class BitStream {
 

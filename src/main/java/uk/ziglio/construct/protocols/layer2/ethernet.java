@@ -6,6 +6,7 @@ import static uk.ziglio.construct.Macros.*;
 import static uk.ziglio.construct.lib.Binary.*;
 
 import uk.ziglio.construct.Adapter;
+import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.lib.Containers.Container;
 
 /**

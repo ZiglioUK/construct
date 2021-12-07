@@ -16,6 +16,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import uk.ziglio.construct.Adapter;
+import uk.ziglio.construct.core.Construct;
+import uk.ziglio.construct.core.Sequence;
 import uk.ziglio.construct.lib.Containers.Container;
 
 

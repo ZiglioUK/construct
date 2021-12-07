@@ -30,10 +30,9 @@ import org.junit.rules.ExpectedException;
 
 import uk.ziglio.construct.Adapter;
 import uk.ziglio.construct.Adapters.MappingError;
-import uk.ziglio.construct.Core.ArrayError;
-import uk.ziglio.construct.Core.Construct;
-import uk.ziglio.construct.Core.KeyFunc;
-import uk.ziglio.construct.Core.Switch;
+import uk.ziglio.construct.core.Construct;
+import uk.ziglio.construct.core.KeyFunc;
+import uk.ziglio.construct.core.Switch;
 import uk.ziglio.construct.lib.Containers.Container;
 
 public class MacrosTest

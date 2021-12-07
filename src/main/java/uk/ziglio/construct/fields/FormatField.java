@@ -2,9 +2,8 @@ package uk.ziglio.construct.fields;
 
 import java.io.ByteArrayOutputStream;
 
-import uk.ziglio.construct.Packer;
-import uk.ziglio.construct.Core.FieldError;
-import uk.ziglio.construct.Core.ValueError;
+import uk.ziglio.construct.errors.FieldError;
+import uk.ziglio.construct.errors.ValueError;
 import uk.ziglio.construct.lib.ByteBufferWrapper;
 import uk.ziglio.construct.lib.Containers.Container;
 

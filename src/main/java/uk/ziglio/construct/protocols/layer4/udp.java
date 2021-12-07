@@ -10,7 +10,7 @@ import static uk.ziglio.construct.Macros.UBInt16;
 import static uk.ziglio.construct.lib.Binary.byteArrayToHexString;
 import static uk.ziglio.construct.lib.Binary.hexStringToByteArray;
 
-import uk.ziglio.construct.Core.Construct;
+import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.lib.Containers.Container;
 
 

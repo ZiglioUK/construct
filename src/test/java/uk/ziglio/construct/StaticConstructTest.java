@@ -11,15 +11,27 @@ import static uk.ziglio.construct.Macros.Field;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import uk.ziglio.construct.Core.Struct;
 import uk.ziglio.construct.Macros.Embedded;
 import uk.ziglio.construct.Macros.UBInt16;
 import uk.ziglio.construct.Macros.UBInt8;
 import uk.ziglio.construct.annotations.len;
+import uk.ziglio.construct.core.Struct;
 import uk.ziglio.construct.fields.StaticField;
 import uk.ziglio.construct.lib.Containers.Container;
 
 public class StaticConstructTest {
+
+  public static class Foo extends Struct {
+    public Foo(String name ){super(name);}
+    public UBInt8 c;
+    public UBInt8 d;
+  }
+
+  public static class S extends Struct {
+    public UBInt8 a;
+    public UBInt16 b;
+    public Foo foo;
+  }
 
   @Test 
   public void lenAnnotationTest() {
@@ -72,18 +84,6 @@ public class StaticConstructTest {
     // struct = Struct( "struct", UBInt8("a"), UBInt16("b"),
     // Struct( "foo", UBInt8("c"), UBInt8("d") ));
     
-    class Foo extends Struct {
-      public Foo(String name ){super(name);}
-      public UBInt8 c;
-      public UBInt8 d;
-    }
-
-    class S extends Struct {
-      public UBInt8 a;
-      public UBInt16 b;
-      public Foo foo;
-    }
-
     S s = new S();
     
     ca = s.parse(ByteArray(1, 0, 2, 3, 4));
@@ -123,18 +123,6 @@ public class StaticConstructTest {
 
     // foo = Struct( "foo", UBInt8("c"), UBInt8("d") );
     // struct = Struct( "struct", UBInt8("a"), UBInt16("b"), foo );
-
-    class Foo extends Struct {
-      public Foo(String name ){super(name);}
-      public UBInt8 c;
-      public UBInt8 d;
-    }
-
-    class S extends Struct {
-      public UBInt8 a;
-      public UBInt16 b;
-      public Foo foo;
-    }
 
      ba = new S().build( Container( "a",1, "b", 2, "foo", Container("c", 3,"d",4)));
      assertArrayEquals( ByteArray(1,0,2,3,4), ba );

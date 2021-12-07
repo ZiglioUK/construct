@@ -11,7 +11,14 @@ import org.junit.Test;
 import org.junit.Ignore;
 import org.junit.rules.ExpectedException;
 
-import uk.ziglio.construct.Core.RangeError;
+import uk.ziglio.construct.core.KeyFunc;
+import uk.ziglio.construct.core.Range;
+import uk.ziglio.construct.core.Sequence;
+import uk.ziglio.construct.core.Struct;
+import uk.ziglio.construct.core.Switch;
+import uk.ziglio.construct.core.Value;
+import uk.ziglio.construct.errors.RangeError;
+import uk.ziglio.construct.errors.SwitchError;
 import uk.ziglio.construct.interfaces.LengthFunc;
 import uk.ziglio.construct.interfaces.ValueFunc;
 import uk.ziglio.construct.lib.Containers.Container;
