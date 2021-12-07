@@ -33,6 +33,7 @@ import uk.ziglio.construct.Adapters.MappingError;
 import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.core.KeyFunc;
 import uk.ziglio.construct.core.Switch;
+import uk.ziglio.construct.errors.ArrayError;
 import uk.ziglio.construct.lib.Containers.Container;
 
 public class MacrosTest

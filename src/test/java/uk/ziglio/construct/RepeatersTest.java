@@ -15,6 +15,7 @@ import org.junit.rules.ExpectedException;
 
 import uk.ziglio.construct.core.MetaArray;
 import uk.ziglio.construct.core.Range;
+import uk.ziglio.construct.errors.ArrayError;
 import uk.ziglio.construct.errors.RangeError;
 import uk.ziglio.construct.lib.Containers.Container;
 
