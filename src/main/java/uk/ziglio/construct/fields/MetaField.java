@@ -9,7 +9,7 @@ import uk.ziglio.construct.lib.Containers.Container;
 
 public class MetaField extends Construct {
 
-  LengthFunc lengthfunc;
+  public LengthFunc lengthfunc;
 
   /**
    * @param name
