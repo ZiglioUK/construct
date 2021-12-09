@@ -12,14 +12,10 @@ import static uk.ziglio.construct.lib.Binary.hexStringToByteArray;
 
 import uk.ziglio.construct.Adapters.ExprAdapter;
 import uk.ziglio.construct.Macros.BitField;
-import uk.ziglio.construct.Macros.Bitwise;
 import uk.ziglio.construct.Macros.BitStruct;
 import uk.ziglio.construct.annotations.len;
-import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.core.Struct;
-import uk.ziglio.construct.core.Subconstruct;
 import uk.ziglio.construct.fields.MetaField;
-import uk.ziglio.construct.interfaces.LengthFunc;
 import uk.ziglio.construct.lib.Containers.Container;
 
 
