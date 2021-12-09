@@ -113,7 +113,7 @@ public class Struct extends Construct {
             continue;
 
           fname = field.getName();
-          Constructor[] ctors = clazz.getConstructors();
+          Constructor[] ctors = clazz.getDeclaredConstructors();
           if( ctors.length == 0 )
           	throw new ConstructError("Constructor for class " + clazz.getName() + " must be public");
           
@@ -239,6 +239,7 @@ public class Struct extends Construct {
         _inherit_flags(subcons);
         _clear_flag(FLAG_EMBED);
       } catch (Exception e) {
+      	e.printStackTrace();
         throw new RuntimeException("Error constructing field " + field + "\r\n" + e.toString(), e);
       }
     }
