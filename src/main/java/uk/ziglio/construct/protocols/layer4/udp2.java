@@ -15,27 +15,28 @@ import uk.ziglio.construct.lib.Containers.Container;
 
 public class udp2 {
   public static class udp_header extends Struct{ 
-  	  public HeaderLength header_length;
+	    public class HeaderLength extends Value<Integer> {
+	    	public HeaderLength( String name ) {
+	    		super( name, ctx->8 );
+	    	}
+	    }
+
+	  	public class PayloadLength extends ExprAdapter<Integer, Integer> {
+	  		public PayloadLength( String name) { 
+	  			super( new UBInt16(name),
+	    	    		(obj, context)-> obj + 8,
+	    	    		(obj, context)-> obj - 8
+	    	    		);
+	  		}
+	  	}
+	    
+	    public HeaderLength header_length;
 	    public UBInt16 source;
   		public UBInt16 destination; 
   		public PayloadLength payload_length;
 	    public UBInt16 checksum;
   }
 
-  public static class HeaderLength extends Value<Integer> {
-  	public HeaderLength( String name ) {
-  		super( name, ctx->8 );
-  	}
-  }
-  
-	public static class PayloadLength extends ExprAdapter<Integer, Integer> {
-		public PayloadLength( String name) { 
-			super( new UBInt16(name),
-  	    		(obj, context)-> obj + 8,
-  	    		(obj, context)-> obj - 8
-  	    		);
-		}
-	}
   
   public static void main(String[] args) {
   	String in = "0bcc003500280689";
@@ -47,6 +48,11 @@ public class udp2 {
   	String out = byteArrayToHexString(ba);
   	System.out.println( out );
   	System.out.println(out.equals(in.toUpperCase())? "OK": "ERROR");
+
+//  	byte[] ba2 = udph.build();
+//  	String out2 = byteArrayToHexString(ba);
+//  	System.out.println( out2 );
+//  	System.out.println(out2.equals(in.toUpperCase())? "OK": "ERROR");
   }
   
 }
