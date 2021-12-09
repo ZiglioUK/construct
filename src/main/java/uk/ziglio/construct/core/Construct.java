@@ -125,7 +125,7 @@ import uk.ziglio.construct.lib.Containers.Container;
      * @param flag
      *          flag to set; may be OR'd combination of flags
      */
-    protected void _set_flag(int flag) {
+    public void _set_flag(int flag) {
       conflags |= flag;
     }
 

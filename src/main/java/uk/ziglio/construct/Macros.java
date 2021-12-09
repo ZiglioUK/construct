@@ -7,6 +7,7 @@ import static uk.ziglio.construct.lib.Binary.*;
 import java.io.ByteArrayOutputStream;
 
 import uk.ziglio.construct.Core.Buffered;
+import uk.ziglio.construct.annotations.len;
 import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.core.KeyFunc;
 import uk.ziglio.construct.core.MetaArray;
@@ -46,6 +47,7 @@ public class Macros {
   public static Construct Field( String name, LengthFunc length ){
     return MetaField(name, length);
   }
+  
   /**
   A field consisting of a specified number of bytes.
    * @param name the name of the field
@@ -165,13 +167,31 @@ public class Macros {
   public static PaddingAdapter Padding( int length, byte pattern, boolean strict ){
   		return PaddingAdapter( Field( null, length ), pattern, strict ); 
   }
-  
+
   public static PaddingAdapter Padding( int length  ){
   		return Padding( length, (byte)0x00, false );
   }
 
+  public static class Padding extends PaddingAdapter{
+  	public Padding( int length, byte pattern, boolean strict ) {
+  		super( Field( null, length ), pattern, strict );
+  	}
+  	
+  	public Padding( String name, int length ) {
+  		this( length, (byte)0x00, false );
+  	}
+
+  	public Padding( int length ) {
+  		this( null, length );
+  	}
+  	
+  	public Padding() {
+			this( Padding.class.getAnnotation(len.class).value() );
+		}
+  }
+  
   public static Adapter Flag( String name ){
-  		return Flag( name, (byte)1, (byte)0, false );
+  		return new Flag( name );
   }
   
   /**
@@ -192,10 +212,20 @@ public class Macros {
 
    */
   public static Adapter Flag( String name, byte truth, byte falsehood, Object defaultmapping ){
+  		return new Flag( name, truth, falsehood, defaultmapping );
+  }
+  
+  public static class Flag extends SymmetricMapping {
+  	
+  	public Flag(String name, byte truth, byte falsehood, Object defaultmapping ){
+	  	super( Field(name,1),
+	  			Container( true, truth, false, falsehood ),
+					defaultmapping );
+  	}
 
-  		return SymmetricMapping(Field(name, 1),
-  													Container( true, truth, false, falsehood ),
-  													defaultmapping );
+  	public Flag(String name) {
+  		this(name, (byte)1, (byte)0, false );
+  	}
   }
 /*
   #===============================================================================
@@ -254,8 +284,13 @@ public class Macros {
 	  * @return unsigned, big endian 32-bit integer
 	  */
 	  public static FormatField<Integer> UBInt32(String name){
-	   	return new FormatField<Integer>( name, '>', 'L' );
+	   	return new UBInt32(name);
 	  }
+		public static class UBInt32 extends FormatField<Integer> {
+		  public UBInt32(String name) {
+		    super(name, '>', 'L');
+		  }
+		}
 
   /**
 	  * @return unsigned, big endian 64-bit integer
@@ -558,6 +593,37 @@ public static class BitwiseBuffered extends Buffered {
  * @param subcon a bitwise construct (usually BitField)
  * @return
  */
+public static class Bitwise extends Buffered {
+	public Bitwise(Construct subcon ) {
+    super( subcon,
+				BinaryEncoder(),
+				BinaryDecoder(),
+				length -> {
+		      if( (length & 7) != 0 )
+		        throw new SizeofError("size must be a multiple of 8, size = " + length );
+		    return length >> 3; });
+	}
+	
+	public Bitwise( Construct... subcons ) {
+		this( new Struct( null, subcons ));
+	}
+}
+
+public static class BitStruct extends Struct {
+	public BitStruct() {
+			super(null);
+			Construct subcon = new Bitwise(subcons);
+			this._set_flag( Construct.FLAG_EMBED );
+			subcon._set_flag( Construct.FLAG_EMBED );
+			subcons = new Construct[]{subcon};
+	}
+}
+
+/**
+ * converts the stream to bits, and passes the bitstream to subcon
+ * @param subcon a bitwise construct (usually BitField)
+ * @return
+ */
 public static Subconstruct Bitwise(Construct subcon) {
 	/*
     # subcons larger than MAX_BUFFER will be wrapped by Restream instead
@@ -851,7 +917,7 @@ public static Construct BitStruct( String name, Construct... subcons ){
  * @return
  */
 public static Embedded<Struct> EmbeddedStruct(Construct... subcons){
-    return Embedded( Struct( null, subcons ));
+    return new Embedded<Struct>( new Struct( null, subcons ));
 }
 
 /**

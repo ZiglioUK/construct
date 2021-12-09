@@ -1,15 +1,22 @@
 package uk.ziglio.construct.core;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.invoke.LambdaMetafactory;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import uk.ziglio.construct.Core;
 import uk.ziglio.construct.annotations.len;
+import uk.ziglio.construct.errors.ConstructError;
 import uk.ziglio.construct.errors.FieldError;
 import uk.ziglio.construct.interfaces.LengthConstruct;
+import uk.ziglio.construct.interfaces.LengthFunc;
 import uk.ziglio.construct.lib.ByteBufferWrapper;
 import uk.ziglio.construct.lib.Containers.Container;
 
@@ -83,13 +90,20 @@ public class Struct extends Construct {
      */
     public Struct(String name) {
       super(name);
-      Constructor fctor;
+      populateSubCons();
+    }
+    
+    protected void populateSubCons() {
       Field field = null;
+      Constructor fctor = null;
       String fname;
       try {
         Field[] fields = getClass().getFields();
         List<Construct> subconf = new ArrayList<Construct>();
 
+        if( fields.length == 0 )
+        	throw new ConstructError("Fields for class " + getClass().getName() + " must be declared public");
+        	
         for( int i = 0; i < fields.length; i++ ) {
           field = fields[i];
           field.setAccessible(true);
@@ -99,49 +113,121 @@ public class Struct extends Construct {
             continue;
 
           fname = field.getName();
-          fctor = clazz.getConstructors()[0];
-          fctor.setAccessible(true);
-          Construct inst;
-          Object enclosingInst;
-          switch (fctor.getParameterTypes().length) {
-            // TODO should check that the first instance is of the right type: enclosing type or String
-            case 2: // inner classes
-              try{
-                // static class case
-                enclosingInst = getClass().getDeclaredField("this$0").get(this);
-              } catch( NoSuchFieldException nsfe ){
-                // private nested class case
-                enclosingInst = this;
-              }
-              inst = (Construct) fctor.newInstance(enclosingInst, fname);
-              break;
-            case 1:
-              if( String.class.isAssignableFrom( fctor.getParameterTypes()[0] )){
-                inst = (Construct) fctor.newInstance(fname);
-              } else {
-                // no arguments constructor
-                try{
-                  // static class case
-                  enclosingInst = getClass().getDeclaredField("this$0").get(this);
-                } catch( NoSuchFieldException nsfe ){
-                  // private nested class case
-                  enclosingInst = this;
-                }
-                inst = (Construct) fctor.newInstance(enclosingInst);
-                
-                // now call name setter with fname
-                inst.setName(fname); 
-              }
-              break;
-            case 0:
-              inst = (Construct) fctor.newInstance();
-              break;
-            default:
-              throw new Exception("No default case: " + fctor);
+          Constructor[] ctors = clazz.getConstructors();
+          if( ctors.length == 0 )
+          	throw new ConstructError("Constructor for class " + clazz.getName() + " must be public");
           
+          Construct inst = null;
+          for( int j = 0; j<ctors.length; j++ ) {
+          	fctor = ctors[j];
+            fctor.setAccessible(true);
+            Object enclosingInst;
+            Class[] pcs = fctor.getParameterTypes();
+            
+	          switch (pcs.length) {
+	            case 2: // inner classes
+		            // check that the first instance is of the right type: enclosing type or String
+	            	if( String.class.isAssignableFrom( pcs[0] )) {
+	            		if( Integer.class.isAssignableFrom(pcs[1])) {
+
+	            			// process public annotations
+		                if( field.isAnnotationPresent(len.class) ) {
+		                  int val = field.getAnnotation(len.class).value();
+			                inst = (Construct) fctor.newInstance(fname, val);
+		                 }
+	            		}
+	            		else {
+//		                enclosingInst = getClass().getDeclaredField("this$0").get(this);
+//		              } catch( NoSuchFieldException nsfe ){
+//		                // private nested class case
+//		                enclosingInst = this;
+//		              }
+	            			// process public annotations
+		                if( field.isAnnotationPresent(len.class) ) {
+		                  int val = field.getAnnotation(len.class).value();
+			                inst = (Construct) fctor.newInstance(fname, val);
+			                break;
+		                 }
+
+		                enclosingInst = this;
+//		                inst = (Construct) fctor.newInstance(enclosingInst, fname);
+		                inst = (Construct) fctor.newInstance(enclosingInst, fname);
+
+		            		// https://stackoverflow.com/a/27574046/809536
+	//            		public interface LengthFunc { int length(Container context); }
+	//	            		 Method[] methods = fctor.getClass().getSuperclass().getMethods();
+		            		 Method[] methods = LengthFunc.class.getMethods();
+	
+		            		 MethodType type = MethodType.methodType(Container.class, int.class);
+		            		 MethodHandles.Lookup l = MethodHandles.lookup();
+		                 MethodHandle target = l.findStatic( LengthFunc.class, "lambda", type);
+		                 Object lambda;
+										try {
+											lambda = LambdaMetafactory.metafactory(l, "test",
+											     MethodType.methodType( pcs[0].getClass()), type, target, type)
+											     .getTarget().invoke();
+	
+											inst = (Construct) fctor.newInstance(fname, lambda);
+										}
+									catch (Throwable e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+	            	 }
+	            	}
+	            	else {
+		              try{
+		                // static class case
+		                enclosingInst = getClass().getDeclaredField("this$0").get(this);
+		              } catch( NoSuchFieldException nsfe ){
+		                // private nested class case
+		                enclosingInst = this;
+		              }
+	            		inst = (Construct) fctor.newInstance(enclosingInst, fname);
+	            	}
+	              break;
+	            case 1:
+	              if( String.class.isAssignableFrom( pcs[0] )){
+	                inst = (Construct) fctor.newInstance(fname);
+	              } else {
+	                // no arguments constructor
+	                try{
+	                  // static class case
+	                  enclosingInst = getClass().getDeclaredField("this$0").get(this);
+	                } catch( NoSuchFieldException nsfe ){
+	                  // private nested class case
+	                  enclosingInst = this;
+	                }
+            			// process annotations
+	                if( field.isAnnotationPresent(len.class) ) {
+	                  int val = field.getAnnotation(len.class).value();
+		                inst = (Construct) fctor.newInstance(fname, val);
+		                break;
+	                 }
+	                else
+	                	inst = (Construct) fctor.newInstance(enclosingInst);
+	                
+	                // now call name setter with fname
+	                inst.setName(fname); 
+	              }
+	              break;
+	            case 0:
+	              inst = (Construct) fctor.newInstance();
+	              ((Construct)inst).setName(field.getName());
+	              break;
+	            default:
+	            	break;
+	          }
+	          
+	          if( inst != null )
+	          	break;
           }
-          // process annotations
-          if( field.isAnnotationPresent(len.class) ) {
+          
+          if( inst == null)
+            throw new Exception("Found no valid public constructor for: " + fctor.getName() + " with " + fctor.getParameterCount() + " paramters");
+
+          // process annotations for LengthConstruct constructs
+          if( field.isAnnotationPresent(len.class) && inst instanceof LengthConstruct ) {
             ((LengthConstruct)inst).setLength( field.getAnnotation(len.class).value() );
            }
 
@@ -176,18 +262,23 @@ public class Struct extends Construct {
       }
 
       for (Construct sc : subcons) {
-        if ((sc.conflags & FLAG_EMBED) != 0) {
-          context.set("<obj>", obj);
-          Object val = sc._parse(stream, context);
-          sc.set( val );
+        Object val = sc._parse(stream, context);
+        sc.set( val );
+
+        if ((sc.conflags & FLAG_EMBED) != 0 || sc.name == null) {
+          //context.set( "<obj>", val );
+          
+          if( val instanceof Container ) {
+          	Container c = (Container)val;
+          	for(Object k: c.keys()) {
+          		((Container)obj).set(k, c.get(k));
+          		context.set( k, c.get(k) );
+          	}
+          }
         } else {
-          Object val = sc._parse(stream, context);
-          sc.set( val );
-          if (sc.name != null) {
             obj.set(sc.name, val);
             context.set(sc.name, val);
 //            System.out.println( " (" + sc.name + ") = " + val );
-          }
         }
       }
       return obj;
