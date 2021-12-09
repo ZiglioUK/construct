@@ -23,14 +23,14 @@ public class StaticConstructTest {
 
   public static class Foo extends Struct {
     public Foo(String name ){super(name);}
-    public UBInt8 c;
-    public UBInt8 d;
+    UBInt8 c;
+    UBInt8 d;
   }
 
   public static class S extends Struct {
-    public UBInt8 a;
-    public UBInt16 b;
-    public Foo foo;
+    UBInt8 a;
+    UBInt16 b;
+    Foo foo;
   }
 
   @Test 
@@ -38,9 +38,7 @@ public class StaticConstructTest {
 //    assertArrayEquals( ByteArray(0xab, 0xcd), (byte[])PaddingAdapter( Field("paddingadapter", 2) ).parse("abcd"));
 
     class S extends Struct {
-      
-      @len(2)
-      public StaticField a;
+      @len(2) StaticField a;
     }
 
     S s = new S();
@@ -63,8 +61,8 @@ public class StaticConstructTest {
 
     // struct = Struct( "struct", UBInt8("a"), UBInt16("b") );
     class S extends Struct {
-      public UBInt8 a;
-      public UBInt16 b;
+      UBInt8 a;
+      UBInt16 b;
     }
 
     S s = new S();
@@ -112,8 +110,8 @@ public class StaticConstructTest {
     // struct = Struct( "struct", UBInt8("a"), UBInt16("b"));
     
     class S extends Struct {
-      public UBInt8 a;
-      public UBInt16 b;
+      UBInt8 a;
+      UBInt16 b;
     }
 
     S s = new S();
@@ -146,8 +144,9 @@ public class StaticConstructTest {
 
     class Foo extends Struct {
       public Foo(String name){super(name);}
-      public UBInt8 c;
-      public UBInt16 d;
+      
+      UBInt8 c;
+      UBInt16 d;
     }
     
     class Emb extends Embedded {
@@ -158,9 +157,9 @@ public class StaticConstructTest {
     }
     
     class S extends Struct {
-      public UBInt8 a;
-      public UBInt16 b;
-      public Emb e;
+      UBInt8 a;
+      UBInt16 b;
+      Emb e;
     }
 
      ca = new S().parse( ByteArray(1,0,2,3,4) );

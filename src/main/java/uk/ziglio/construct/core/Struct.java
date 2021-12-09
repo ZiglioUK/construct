@@ -98,7 +98,7 @@ public class Struct extends Construct {
       Constructor fctor = null;
       String fname;
       try {
-        Field[] fields = getClass().getFields();
+        Field[] fields = getClass().getDeclaredFields();
         List<Construct> subconf = new ArrayList<Construct>();
 
         if( fields.length == 0 )
@@ -155,8 +155,8 @@ public class Struct extends Construct {
 
 		            		// https://stackoverflow.com/a/27574046/809536
 	//            		public interface LengthFunc { int length(Container context); }
-	//	            		 Method[] methods = fctor.getClass().getSuperclass().getMethods();
-		            		 Method[] methods = LengthFunc.class.getMethods();
+	//	            		 Method[] methods = fctor.getClass().getSuperclass().getDeclaredMethods();
+		            		 Method[] methods = LengthFunc.class.getDeclaredMethods();
 	
 		            		 MethodType type = MethodType.methodType(Container.class, int.class);
 		            		 MethodHandles.Lookup l = MethodHandles.lookup();
@@ -200,7 +200,7 @@ public class Struct extends Construct {
 	                }
             			// process annotations
 	                if( field.isAnnotationPresent(len.class) ) {
-	                  int val = field.getAnnotation(len.class).value();
+	                  int val = field.getDeclaredAnnotation(len.class).value();
 		                inst = (Construct) fctor.newInstance(fname, val);
 		                break;
 	                 }

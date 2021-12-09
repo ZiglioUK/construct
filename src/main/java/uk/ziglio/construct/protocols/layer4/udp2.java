@@ -30,11 +30,11 @@ public class udp2 {
 	  		}
 	  	}
 	    
-	    public HeaderLength header_length;
-	    public UBInt16 source;
-  		public UBInt16 destination; 
-  		public PayloadLength payload_length;
-	    public UBInt16 checksum;
+	    HeaderLength header_length;
+	    UBInt16 source;
+  		UBInt16 destination; 
+  		PayloadLength payload_length;
+	    UBInt16 checksum;
   }
 
   
