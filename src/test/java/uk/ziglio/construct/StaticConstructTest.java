@@ -44,9 +44,13 @@ public class StaticConstructTest {
     }
 
     S s = new S();
+    byte[] in = ByteArray(0xab, 0xcd);
     Container ca = s.parse("abcd");
     byte[] a = (byte[])s.a.get();
     assertArrayEquals( ByteArray(0xab, 0xcd), a );
+    
+    byte[] out = s.build(ca);
+    assertArrayEquals( in, out );
   }
   
   @Test
@@ -149,6 +153,7 @@ public class StaticConstructTest {
           new Foo("foo"));
       } 
     }
+    
     class S extends Struct {
       public UBInt8 a;
       public UBInt16 b;
