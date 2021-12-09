@@ -27,6 +27,4 @@ public class Fields {
   public static MetaField MetaField(String name, LengthFunc lengthfunc) {
     return new MetaField(name, lengthfunc);
   }
-
-  
 }
