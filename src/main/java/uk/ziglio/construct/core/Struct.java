@@ -306,9 +306,13 @@ public class Struct extends Construct {
             throw new FieldError("No field found: " + sc.name + " in " + subobj);
 
           context.set(sc.name, subobj);
-        } else
-          continue;
-
+        } else if (obj instanceof Construct){
+        	subobj = (Construct) obj;
+          context.set(sc.name, subobj);
+        }
+        else
+        	continue;
+        
         sc._build(subobj, stream, context);
       }
     }

@@ -35,13 +35,19 @@ public class StaticField extends Construct implements LengthConstruct {
   }
 
   @Override
+  public int getLength() {
+    return length;
+  }
+
+  @Override
   public void setLength(int length) {
     this.length = length;
   }
   
   @Override
   public Object _parse(ByteBufferWrapper stream, Container context) {
-    return _read_stream(stream, length);
+    val = _read_stream(stream, length);
+    return val;
   }
 
   @Override

@@ -67,12 +67,14 @@ public class tcp2 {
 	}
 
   public static void main(String[] args) {
-  	byte[] cap = hexStringToByteArray("0db5005062303fb21836e9e650184470c9bc0000"); 
+  	String in = "0db5005062303fb21836e9e650184470c9bc0000";
+  	byte[] cap = hexStringToByteArray(in); 
   	tcp_header tcph = new tcp_header();
   	Container c = tcph.parse(cap);
   	System.out.println(c);
   	byte[] ba = tcph.build(c);
-  	System.out.println( byteArrayToHexString(ba) );
+  	String out = "byteArrayToHexString(ba)";
+  	System.out.println(out.equals(in.toUpperCase())? "OK": "ERROR");
   }
   
 }

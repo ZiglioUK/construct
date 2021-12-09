@@ -7,9 +7,13 @@ import java.io.IOException;
 import java.util.List;
 
 import uk.ziglio.construct.Core;
+import uk.ziglio.construct.Macros.Padding;
+import uk.ziglio.construct.annotations.len;
 import uk.ziglio.construct.errors.FieldError;
 import uk.ziglio.construct.errors.SizeofError;
 import uk.ziglio.construct.errors.ValueError;
+import uk.ziglio.construct.fields.StaticField;
+import uk.ziglio.construct.interfaces.LengthConstruct;
 import uk.ziglio.construct.lib.ByteBufferWrapper;
 import uk.ziglio.construct.lib.Containers.Container;
 
@@ -157,7 +161,7 @@ import uk.ziglio.construct.lib.Containers.Container;
       return (conflags & flag) == flag;
     }
 
-    static public int getDataLength(Object data) {
+    public int getDataLength(Object data) {
       if (data instanceof String)
         return ((String) data).length();
       else if (data instanceof Byte || data instanceof Character)
@@ -175,8 +179,20 @@ import uk.ziglio.construct.lib.Containers.Container;
         return ((byte[]) data).length;
       else if (data instanceof List)
         return ((List) data).size();
-      else
-        throw new RuntimeException("Data length unknown for " + data);
+      else if( data instanceof LengthConstruct) {
+      	return ((LengthConstruct)data).getLength();
+      }
+      else if( data instanceof Construct) {
+      	return ((Construct)data).sizeof(null);
+      }
+      else {
+      	len l = this.getClass().getAnnotation(len.class);
+
+      	if( l!=null )
+      		return l.value();
+	      else
+	        throw new RuntimeException("Data length unknown for " + data);
+      }
     }
 
     /*
@@ -219,8 +235,24 @@ import uk.ziglio.construct.lib.Containers.Container;
           throw new ValueError("Can't append data " + data + " "
               + e.getMessage());
         }
+      else if( data instanceof Struct) {
+      	Struct s = (Struct)data;
+      	for( Construct sc: s.subcons ) {
+        	appendDataStream(stream, sc);
+      	}
+      }
+      else if( data instanceof Subconstruct) {
+      	appendDataStream(stream, ((Construct)data).get());
+      }
+      else if( data instanceof Construct) {
+      	Object val =((Construct)data).get();
+      	if( val == null )
+          throw new ValueError("Can't append data " + data + " " + data.getClass());
+      		
+      	appendDataStream(stream, val);
+      }
       else
-        throw new ValueError("Can't append data " + data);
+        throw new ValueError("Can't append data " + data + " " + data.getClass());
     }
 
     public void _write_stream(ByteArrayOutputStream stream, int length,
@@ -331,6 +363,13 @@ import uk.ziglio.construct.lib.Containers.Container;
       return stream.toByteArray();
     }
 
+    public byte[] build() {
+      ByteArrayOutputStream stream = new ByteArrayOutputStream();
+      build_stream(this, stream);
+
+      return stream.toByteArray();
+    }
+    
     /**
      * Build an object directly into a stream.
      * 

@@ -51,6 +51,9 @@ public class StaticConstructTest {
     
     byte[] out = s.build(ca);
     assertArrayEquals( in, out );
+    
+    byte[] out2 = s.build();
+    assertArrayEquals( in, out2 );
   }
   
   @Test
