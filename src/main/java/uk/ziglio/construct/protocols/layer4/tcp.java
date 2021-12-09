@@ -29,7 +29,7 @@ public class tcp {
       EmbeddedBitStruct(
   	    ExprAdapter( Nibble("header_length"),
   	    		(obj, context)-> (Integer)obj / 4,
-  	    		(obj, context)->  (Integer)obj * 4
+  	    		(obj, context)-> (Integer)obj * 4
   	    		),
           Padding(3),
           Struct("flags",

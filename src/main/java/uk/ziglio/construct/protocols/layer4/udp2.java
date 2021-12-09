@@ -3,16 +3,11 @@
 */
 package uk.ziglio.construct.protocols.layer4;
 
-import static uk.ziglio.construct.Adapters.ExprAdapter;
-import static uk.ziglio.construct.Core.Struct;
-import static uk.ziglio.construct.Core.Value;
 import static uk.ziglio.construct.Macros.UBInt16;
 import static uk.ziglio.construct.lib.Binary.byteArrayToHexString;
 import static uk.ziglio.construct.lib.Binary.hexStringToByteArray;
 
 import uk.ziglio.construct.Adapters.ExprAdapter;
-import uk.ziglio.construct.Macros.BitField;
-import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.core.Struct;
 import uk.ziglio.construct.core.Value;
 import uk.ziglio.construct.lib.Containers.Container;
