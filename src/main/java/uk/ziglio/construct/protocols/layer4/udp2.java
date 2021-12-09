@@ -15,7 +15,7 @@ import uk.ziglio.construct.lib.Containers.Container;
 
 public class udp2 {
 	
-  	static class udp_header extends Struct{ 
+  static class udp_header extends Struct{ 
 	    class HeaderLength extends Value<Integer> {
 	    	HeaderLength( String name ) {
 	    		super( name, ctx->8 );
@@ -37,7 +37,6 @@ public class udp2 {
   		PayloadLength payload_length;
 	    UBInt16 checksum;
   }
-
   
   public static void main(String[] args) {
   	String in = "0bcc003500280689";
