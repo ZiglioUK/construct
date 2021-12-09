@@ -235,11 +235,8 @@ public class ConstructTest {
 
   @Test
   public void valueTest() {
-    Value val = Value("value", new ValueFunc() {
-      public Object get(Container ctx) {
-        return "moo";
-      }
-    });
+    Value<String> val = Value("value", ctx -> "moo");
+    
     assertEquals("moo", val.parse(""));
     assertArrayEquals(new byte[0], val.build(null));
   }

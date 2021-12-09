@@ -690,10 +690,7 @@ public static Subconstruct Rename( String newname, Construct subcon ){
  * @param oldname the name of an existing element
  */
 public static Construct Alias(String newname, final String oldname){
-  return Value( newname, new ValueFunc(){
-  	public Object get(Container ctx) {
-  		return ctx.get(oldname);
-  }});
+  return Value( newname, ctx -> ctx.get(oldname));
 }
 
 /**
@@ -959,10 +956,7 @@ public static Construct EmbeddedBitStruct(Construct... subcons){
     subcon will be used; otherwise, `elsevalue` will be returned instead.
    */
   public static Switch If( KeyFunc keyfunc, Construct subcon, final Object elsevalue ){
-  	return IfThenElse( subcon.name, keyfunc, subcon, Value("elsevalue", new ValueFunc(){
-      public Object get(Container ctx) {
-	      return elsevalue;
-      }}));
+  	return IfThenElse( subcon.name, keyfunc, subcon, Value("elsevalue", ctx -> elsevalue));
   }
 
   /**
