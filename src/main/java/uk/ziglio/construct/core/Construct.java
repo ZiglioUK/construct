@@ -161,7 +161,7 @@ import uk.ziglio.construct.lib.Containers.Container;
       return (conflags & flag) == flag;
     }
 
-    public int getDataLength(Object data) {
+    public static int getDataLength(Object data) {
       if (data instanceof String)
         return ((String) data).length();
       else if (data instanceof Byte || data instanceof Character)
@@ -186,7 +186,7 @@ import uk.ziglio.construct.lib.Containers.Container;
       	return ((Construct)data).sizeof(null);
       }
       else {
-      	len l = this.getClass().getAnnotation(len.class);
+      	len l = data.getClass().getAnnotation(len.class);
 
       	if( l!=null )
       		return l.value();
