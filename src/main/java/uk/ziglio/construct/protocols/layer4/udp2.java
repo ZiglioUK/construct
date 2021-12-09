@@ -14,15 +14,16 @@ import uk.ziglio.construct.lib.Containers.Container;
 
 
 public class udp2 {
-  public static class udp_header extends Struct{ 
-	    public class HeaderLength extends Value<Integer> {
-	    	public HeaderLength( String name ) {
+	
+  	static class udp_header extends Struct{ 
+	    class HeaderLength extends Value<Integer> {
+	    	HeaderLength( String name ) {
 	    		super( name, ctx->8 );
 	    	}
 	    }
 
-	  	public class PayloadLength extends ExprAdapter<Integer, Integer> {
-	  		public PayloadLength( String name) { 
+	  	class PayloadLength extends ExprAdapter<Integer, Integer> {
+	  		PayloadLength( String name) { 
 	  			super( new UBInt16(name),
 	    	    		(obj, context)-> obj + 8,
 	    	    		(obj, context)-> obj - 8
