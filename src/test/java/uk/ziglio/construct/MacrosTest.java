@@ -29,11 +29,11 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import uk.ziglio.construct.Adapter;
-import uk.ziglio.construct.adapters.Adapters.MappingError;
 import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.core.KeyFunc;
 import uk.ziglio.construct.core.Switch;
 import uk.ziglio.construct.errors.ArrayError;
+import uk.ziglio.construct.errors.MappingError;
 import uk.ziglio.construct.lib.Containers.Container;
 
 public class MacrosTest

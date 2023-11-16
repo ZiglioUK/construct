@@ -13,41 +13,12 @@ import java.util.List;
 
 import uk.ziglio.construct.Adapter;
 import uk.ziglio.construct.core.Construct;
+import uk.ziglio.construct.errors.ConstError;
 import uk.ziglio.construct.interfaces.AdapterDecoder;
 import uk.ziglio.construct.interfaces.AdapterEncoder;
 import uk.ziglio.construct.lib.Containers.Container;
 
 public class Adapters {
-  public static class BitIntegerError extends RuntimeException {
-    public BitIntegerError(String string) {
-      super(string);
-    }
-  }
-
-  public static class PaddingError extends RuntimeException {
-    public PaddingError(String string) {
-      super(string);
-    }
-  }
-
-  public static class MappingError extends RuntimeException {
-    public MappingError(String string) {
-      super(string);
-    }
-  }
-
-  public static class ConstError extends RuntimeException {
-    public ConstError(String string) {
-      super(string);
-    }
-  }
-
-  public static class ValidationError extends RuntimeException {
-    public ValidationError(String string) {
-      super(string);
-    }
-  }
-
   /**
    * """ Adapter for bit-integers (converts bitstrings to integers, and vice
    * versa). See BitField.

@@ -1,8 +1,8 @@
 package uk.ziglio.construct.adapters;
 
 import uk.ziglio.construct.Adapter;
-import uk.ziglio.construct.adapters.Adapters.PaddingError;
 import uk.ziglio.construct.core.Construct;
+import uk.ziglio.construct.errors.PaddingError;
 import uk.ziglio.construct.lib.Containers.Container;
 
 /**

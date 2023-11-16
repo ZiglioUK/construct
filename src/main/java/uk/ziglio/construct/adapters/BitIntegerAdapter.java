@@ -5,7 +5,6 @@ import static uk.ziglio.construct.lib.Binary.int_to_bin;
 import static uk.ziglio.construct.lib.Binary.swap_bytes;
 
 import uk.ziglio.construct.Adapter;
-import uk.ziglio.construct.adapters.Adapters.BitIntegerError;
 import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.lib.Containers.Container;
 

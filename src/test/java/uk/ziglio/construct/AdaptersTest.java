@@ -16,8 +16,12 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import uk.ziglio.construct.Adapter;
+import uk.ziglio.construct.adapters.BitIntegerError;
 import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.core.Sequence;
+import uk.ziglio.construct.errors.MappingError;
+import uk.ziglio.construct.errors.PaddingError;
+import uk.ziglio.construct.errors.ValidationError;
 import uk.ziglio.construct.lib.Containers.Container;
 
 
