@@ -1,6 +1,5 @@
 package uk.ziglio.construct.adapters;
 
-import uk.ziglio.construct.Adapter;
 import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.interfaces.AdapterDecoder;
 import uk.ziglio.construct.interfaces.AdapterEncoder;

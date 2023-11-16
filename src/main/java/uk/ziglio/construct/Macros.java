@@ -1,19 +1,14 @@
-package uk.ziglio.construct.macros;
+package uk.ziglio.construct;
+import static uk.ziglio.construct.Adapters.*;
 import static uk.ziglio.construct.Core.*;
-import static uk.ziglio.construct.adapters.Adapters.*;
 import static uk.ziglio.construct.fields.Fields.*;
 import static uk.ziglio.construct.lib.Binary.*;
 
-import java.io.ByteArrayOutputStream;
-
-import uk.ziglio.construct.Adapter;
-import uk.ziglio.construct.Core;
-import uk.ziglio.construct.Core.Buffered;
+import uk.ziglio.construct.adapters.Adapter;
 import uk.ziglio.construct.adapters.BitField;
 import uk.ziglio.construct.adapters.Bits;
-import uk.ziglio.construct.adapters.MappingAdapter;
 import uk.ziglio.construct.adapters.PaddingAdapter;
-import uk.ziglio.construct.annotations.len;
+import uk.ziglio.construct.core.Buffered;
 import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.core.KeyFunc;
 import uk.ziglio.construct.core.MetaArray;
@@ -29,11 +24,23 @@ import uk.ziglio.construct.fields.StaticField;
 import uk.ziglio.construct.interfaces.CountFunc;
 import uk.ziglio.construct.interfaces.LengthFunc;
 import uk.ziglio.construct.interfaces.ValueFunc;
-import uk.ziglio.construct.lib.ByteBufferWrapper;
 import uk.ziglio.construct.lib.Resizer;
 import uk.ziglio.construct.lib.BitStream.BitStreamReader;
 import uk.ziglio.construct.lib.BitStream.BitStreamWriter;
 import uk.ziglio.construct.lib.Containers.Container;
+import uk.ziglio.construct.macros.CRC;
+import uk.ziglio.construct.macros.Embedded;
+import uk.ziglio.construct.macros.Enum;
+import uk.ziglio.construct.macros.Flag;
+import uk.ziglio.construct.macros.IfThenElse;
+import uk.ziglio.construct.macros.SBInt16;
+import uk.ziglio.construct.macros.SBInt8;
+import uk.ziglio.construct.macros.SymmetricMapping;
+import uk.ziglio.construct.macros.UBInt16;
+import uk.ziglio.construct.macros.UBInt32;
+import uk.ziglio.construct.macros.UBInt8;
+import uk.ziglio.construct.macros.ULInt16;
+import uk.ziglio.construct.macros.ULInt8;
 
 public class Macros {
 
@@ -101,24 +108,6 @@ public class Macros {
   		return Padding( length, (byte)0x00, false );
   }
 
-  public static class Padding extends PaddingAdapter{
-  	public Padding( int length, byte pattern, boolean strict ) {
-  		super( Field( null, length ), pattern, strict );
-  	}
-  	
-  	public Padding( String name, int length ) {
-  		this( length, (byte)0x00, false );
-  	}
-
-  	public Padding( int length ) {
-  		this( null, length );
-  	}
-  	
-  	public Padding() {
-			this( Padding.class.getAnnotation(len.class).value() );
-		}
-  }
-  
   public static Adapter Flag( String name ){
   		return new Flag( name );
   }
@@ -144,55 +133,25 @@ public class Macros {
   		return new Flag( name, truth, falsehood, defaultmapping );
   }
   
-  public static class Flag extends SymmetricMapping {
-  	
-  	public Flag(String name, byte truth, byte falsehood, Object defaultmapping ){
-	  	super( Field(name,1),
-	  			Container( true, truth, false, falsehood ),
-					defaultmapping );
-  	}
-
-  	public Flag(String name) {
-  		this(name, (byte)1, (byte)0, false );
-  	}
-  }
-/**
+  /**
   * @return unsigned, big endian 8-bit integer
   */
   public static UBInt8 UBInt8(String name){
    	return new UBInt8( name );
   }
-	public static class UBInt8 extends FormatField<Integer> {
-	  public UBInt8(String name) {
-	    super(name, '>', 'B');
-	  }
-	}
-
-  /**
+	/**
   * @return unsigned, big endian 16-bit integer
   */
   public static UBInt16 UBInt16(String name){
    	return new UBInt16( name );
   }
-	public static class UBInt16 extends FormatField<Integer> {
-	  public UBInt16(String name) {
-	    super(name, '>', 'H');
-	  }
-	}
-	  
-  /**
+	/**
 	  * @return unsigned, big endian 32-bit integer
 	  */
 	  public static FormatField<Integer> UBInt32(String name){
 	   	return new UBInt32(name);
 	  }
-		public static class UBInt32 extends FormatField<Integer> {
-		  public UBInt32(String name) {
-		    super(name, '>', 'L');
-		  }
-		}
-
-  /**
+		/**
 	  * @return unsigned, big endian 64-bit integer
 	  */
 	  public static FormatField<Integer> UBInt64(String name){
@@ -205,25 +164,13 @@ public class Macros {
 	  public static SBInt8 SBInt8(String name){
 	   	return new SBInt8( name );
 	  }
-	  public static class SBInt8 extends FormatField<Integer> {
-	    public SBInt8(String name) {
-	      super(name, '>', 'b');
-	    }
-	  }
-
-  /**
+	  /**
 	  * @return signed, big endian 16-bit integer
 	  */
 	  public static SBInt16 SBInt16(String name){
 	   	return new SBInt16( name );
 	  }
-    public static class SBInt16 extends FormatField<Integer> {
-      public SBInt16(String name) {
-        super(name, '>', 'h');
-      }
-    }
-	  
-  /**
+    /**
 	  * @return signed, big endian 32-bit integer
 	  */
 	  public static FormatField<Integer> SBInt32(String name){
@@ -243,29 +190,12 @@ public class Macros {
       return new ULInt8( name );
     }
     /**
-     * @return unsigned, little endian 8-bit integer
-     */
-	  public static class ULInt8 extends FormatField<Integer> {
-      public ULInt8(String name){
-        super( name, '<', 'B' );
-      }
-	  }
-
-	  /**
 	  * @return unsigned, little endian 16-bit integer
 	  */
 	  public static ULInt16 ULInt16(String name){
 	   	return new ULInt16( name );
 	  }
     /**
-    * @return unsigned, little endian 16-bit integer
-    */
-	  public static class ULInt16 extends FormatField<Integer>{
-	    public ULInt16(String name){
-	      super( name, '<', 'H' );
-	    }
-	  }
-  /**
 	  * @return unsigned, little endian 32-bit integer
 	  */
 	  public static FormatField<Integer> ULInt32(String name){
@@ -468,57 +398,6 @@ public static Range OptionalGreedyRange(Construct subcon){
 #===============================================================================
 */
 	  
-public static class BitwiseBuffered extends Buffered {
-  public BitwiseBuffered(Construct subcon) {
-    super( subcon,
-        BinaryEncoder(),
-        BinaryDecoder(),
-        length -> {
-            if( (length & 7) != 0 )
-              throw new SizeofError("size must be a multiple of 8, size = " + length );
-          return length >> 3;
-        }
-      );
-  }
-  
-  @Override
-  public Construct get(){
-    return subcon;
-  }
-
-}
-
-/**
- * converts the stream to bits, and passes the bitstream to subcon
- * @param subcon a bitwise construct (usually BitField)
- * @return
- */
-public static class Bitwise extends Buffered {
-	public Bitwise(Construct subcon ) {
-    super( subcon,
-				BinaryEncoder(),
-				BinaryDecoder(),
-				length -> {
-		      if( (length & 7) != 0 )
-		        throw new SizeofError("size must be a multiple of 8, size = " + length );
-		    return length >> 3; });
-	}
-	
-	public Bitwise( Construct... subcons ) {
-		this( new Struct( null, subcons ));
-	}
-}
-
-public static class BitStruct extends Struct {
-	public BitStruct() {
-			super(null);
-			Construct subcon = new Bitwise(subcons);
-			this._set_flag( Construct.FLAG_EMBED );
-			subcon._set_flag( Construct.FLAG_EMBED );
-			subcons = new Construct[]{subcon};
-	}
-}
-
 /**
  * converts the stream to bits, and passes the bitstream to subcon
  * @param subcon a bitwise construct (usually BitField)
@@ -563,18 +442,6 @@ public static <T extends Construct>Embedded<T> Embedded( T subcon ){
 	return new Embedded<T>( subcon );
 }
 
-/**
- * embeds a struct into the enclosing struct.
- */
-public static class Embedded<T extends Construct> extends Reconfig<T> {
-  /*
-  * @param subcon the struct to embed
-  * @return
-  */
-  public Embedded( T subcon ){
-    super( subcon.name, subcon, Construct.FLAG_EMBED, 0 );
-  }
-}
 /**
  * renames an existing construct
  * @param newname the new name
@@ -623,109 +490,6 @@ public static CRC CRC(Construct subcon, KeyFunc keyfunc, CRCFunc crcfunc) {
 	return new CRC(subcon, keyfunc, crcfunc);
 }
 
-public static class CRC extends Subconstruct {
-	CRCFunc crcfunc;
-	KeyFunc keyfunc;
-	StaticField crcfield;
-
-	public CRC(Construct subcon, StaticField crcfield, CRCFunc crcfunc) {
-		super(subcon);
-		this.crcfield = crcfield;
-		this.crcfunc = crcfunc;
-	}
-
-	public CRC(Construct subcon, KeyFunc keyfunc, CRCFunc crcfunc) {
-		super(subcon);
-		this.keyfunc = keyfunc;
-		this.crcfunc = crcfunc;
-	}
-
-	@Override
-	public Object _parse(ByteBufferWrapper stream, Container context) {
-		byte[] allData= new byte[stream.remaining()];
-		stream.get(allData, 0, stream.remaining());
-		Container c = (Container)(subcon._parse(new ByteBufferWrapper().wrap(allData), context));
-		ByteBufferWrapper crcStream = new ByteBufferWrapper().wrap(allData);
-		byte[] data = _read_stream(crcStream, subcon._sizeof(c));
-
-		int crcval;
-		String name;
-		if( crcfield != null ){
-			crcval = (Integer) crcfield._parse(crcStream, context);
-			name = crcfield.name;
-		}
-		else{
-			crcval = (Integer) this.keyfunc.get(c);
-			name = keyfunc.key;
-		}
-		
-		boolean crccheck = crcfunc.check(data, crcval);
-
-		// set CRC value to true/false
-		c.set(name, crccheck); 
-
-	  // also return invalid data
-		if(!crccheck) {
-			c.set( name + "_data", data ); 	
-		}
-		return c;
-	}
-	
-	@Override
-	public void _build(Object obj, ByteArrayOutputStream stream, Container context) {
-		if( crcfield != null )
-			 _buildCrcField(obj, stream, context);
-		else
-			 _buildKeyFuncField(obj, stream, context);
-	}
-	
-	protected void _buildCrcField(Object obj, ByteArrayOutputStream stream, Container context) {
-//		 TODO needs testing
-		 ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
-		 subcon._build(obj, stream2, context);
-		 byte[] data = stream2.toByteArray();
-		 int size;
-		 if (obj instanceof Container){
-			 size = _sizeof((Container) obj) - crcfield.sizeof();
-		 } else {
-			 size = _sizeof(context);
-		 }
-		 if( data.length != size )
-		 throw new RuntimeException( "Wrong data length: " + data.length );
-		
-		 int crcval = crcfunc.compute(data);
-		 _write_stream(stream, size, data);
-		 crcfield.build_stream(crcval, stream);
-	}
-
-	protected void _buildKeyFuncField(Object obj, ByteArrayOutputStream stream, Container context) {
-  	 // set initial CRC to 0 
-	   ((Container)obj).set( keyfunc.key, 0 );
-		
-		 ByteArrayOutputStream stream2 = new ByteArrayOutputStream();
-		 subcon._build(obj, stream2, context);
-		 byte[] data = stream2.toByteArray();
-		 int size = _sizeof(context);
-		 if( data.length != size )
-		   throw new RuntimeException( "Wrong data length: " + data.length );
-
-		 // the compute function will compute the CRC on the byte array
-		 // and will also set the CRC bytes into the array itself
-		 int crcval = crcfunc.compute(data);
-		 _write_stream(stream, size, data);
-	}
-	
-	@Override
-	public int _sizeof(Container context) {
-	  int size = subcon.sizeof(context);
-	  if( this.crcfield != null ){
-	    size += this.crcfield.sizeof();
-	  }
-	    
-		return size;
-	}
-}
-
 /*
 #===============================================================================
 # mapping
@@ -744,12 +508,6 @@ public static <T> SymmetricMapping SymmetricMapping( Construct subcon, final Con
 	return new SymmetricMapping( subcon, mapping, mappingdefault );
 }
 
-public static class SymmetricMapping extends MappingAdapter{
-  public SymmetricMapping( Construct subcon, final Container mapping, Object mappingdefault ){
-    super( subcon, mapping.reverse(), mapping, mappingdefault, mappingdefault );
-  }
-}
-
 /**
  * @param subcon the subcon to map
  * @param mapping keyword arguments which serve as the encoding mapping
@@ -761,21 +519,6 @@ public static class SymmetricMapping extends MappingAdapter{
  */
 public static Enum Enum( Construct subcon, Object... pairs ){
 	return new Enum( subcon, pairs );
-}
-
-public static class Enum extends SymmetricMapping {
-  
-  // we could do some static type checks, making sure that names are String
-  // and that the size of values matches the size of subcon
-  // Let's keep things simple for now
-  // Also don't handle Pass, decided we should always return the same type
-  public Enum( Construct subcon, Container map ){
-    super( subcon, map, (String)map.get("_default_"));
-  }
-  
-  public Enum( Construct subcon, Object... pairs ){
-    this( subcon, Container(pairs) );
-  }
 }
 
 //  return SymmetricMapping(subcon, kw, kw.pop(, NotImplemented));
@@ -841,12 +584,6 @@ public static Construct EmbeddedBitStruct(Construct... subcons){
   public static IfThenElse IfThenElse( String name, KeyFunc keyfunc, Construct then_subcon, Construct else_subcon ){
   	return new IfThenElse( name, keyfunc, then_subcon, else_subcon );
   }
-  public static class IfThenElse extends Switch { 
-    public IfThenElse( String name, KeyFunc keyfunc, Construct then_subcon, Construct else_subcon ){
-      super( name, keyfunc, Container( true, then_subcon, false, else_subcon) );
-    }
-  }
-
   /**
    * @param keyfunc a function taking the context as an argument and returning
       True or False

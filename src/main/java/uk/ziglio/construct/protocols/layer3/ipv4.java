@@ -1,12 +1,13 @@
 package uk.ziglio.construct.protocols.layer3;
 
+import static uk.ziglio.construct.Adapters.*;
 import static uk.ziglio.construct.Core.*;
-import static uk.ziglio.construct.adapters.Adapters.*;
+import static uk.ziglio.construct.Macros.*;
 import static uk.ziglio.construct.lib.Binary.*;
 import static uk.ziglio.construct.lib.Checksum.calculateChecksum;
-import static uk.ziglio.construct.macros.Macros.*;
 
 import uk.ziglio.construct.*;
+import uk.ziglio.construct.adapters.Adapter;
 import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.lib.Containers.*;
 

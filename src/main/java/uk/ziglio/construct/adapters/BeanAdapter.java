@@ -3,7 +3,6 @@ package uk.ziglio.construct.adapters;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
-import uk.ziglio.construct.Adapter;
 import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.lib.Containers.Container;
 

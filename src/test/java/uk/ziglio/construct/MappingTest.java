@@ -4,13 +4,13 @@ package uk.ziglio.construct;
 
 import static org.junit.Assert.*;
 import static uk.ziglio.construct.Core.*;
-import static uk.ziglio.construct.macros.Macros.*;
+import static uk.ziglio.construct.Macros.*;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import uk.ziglio.construct.Adapter;
+import uk.ziglio.construct.adapters.Adapter;
 
 public class MappingTest  
 {

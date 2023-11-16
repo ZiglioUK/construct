@@ -3,14 +3,15 @@
 */
 package uk.ziglio.construct.protocols.layer4;
 
+import static uk.ziglio.construct.Macros.UBInt16;
 import static uk.ziglio.construct.lib.Binary.byteArrayToHexString;
 import static uk.ziglio.construct.lib.Binary.hexStringToByteArray;
-import static uk.ziglio.construct.macros.Macros.UBInt16;
 
 import uk.ziglio.construct.adapters.ExprAdapter;
 import uk.ziglio.construct.core.Struct;
 import uk.ziglio.construct.core.Value;
 import uk.ziglio.construct.lib.Containers.Container;
+import uk.ziglio.construct.macros.UBInt16;
 
 
 public class udp2 {

@@ -1,6 +1,6 @@
 package uk.ziglio.construct.adapters;
 
-import uk.ziglio.construct.macros.Macros;
+import uk.ziglio.construct.Macros;
 
 public class BitField extends BitIntegerAdapter {
 	public BitField(final String name, final int length, boolean swapped, boolean signed, int bytesize) {

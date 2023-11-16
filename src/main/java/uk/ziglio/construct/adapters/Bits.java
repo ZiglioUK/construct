@@ -1,6 +1,6 @@
 package uk.ziglio.construct.adapters;
 
-import uk.ziglio.construct.macros.Macros;
+import uk.ziglio.construct.Macros;
 
 /**
    * Bits is just an alias for BitField

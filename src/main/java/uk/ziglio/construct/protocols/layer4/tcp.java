@@ -3,17 +3,17 @@
 */
 package uk.ziglio.construct.protocols.layer4;
 
+import static uk.ziglio.construct.Adapters.ExprAdapter;
 import static uk.ziglio.construct.Core.Struct;
-import static uk.ziglio.construct.adapters.Adapters.ExprAdapter;
+import static uk.ziglio.construct.Macros.EmbeddedBitStruct;
+import static uk.ziglio.construct.Macros.Field;
+import static uk.ziglio.construct.Macros.Flag;
+import static uk.ziglio.construct.Macros.Nibble;
+import static uk.ziglio.construct.Macros.Padding;
+import static uk.ziglio.construct.Macros.UBInt16;
+import static uk.ziglio.construct.Macros.UBInt32;
 import static uk.ziglio.construct.lib.Binary.byteArrayToHexString;
 import static uk.ziglio.construct.lib.Binary.hexStringToByteArray;
-import static uk.ziglio.construct.macros.Macros.EmbeddedBitStruct;
-import static uk.ziglio.construct.macros.Macros.Field;
-import static uk.ziglio.construct.macros.Macros.Flag;
-import static uk.ziglio.construct.macros.Macros.Nibble;
-import static uk.ziglio.construct.macros.Macros.Padding;
-import static uk.ziglio.construct.macros.Macros.UBInt16;
-import static uk.ziglio.construct.macros.Macros.UBInt32;
 
 import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.lib.Containers.Container;

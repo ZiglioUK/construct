@@ -1,6 +1,5 @@
 package uk.ziglio.construct.adapters;
 
-import uk.ziglio.construct.Adapter;
 import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.errors.ValidationError;
 import uk.ziglio.construct.interfaces.Validator;

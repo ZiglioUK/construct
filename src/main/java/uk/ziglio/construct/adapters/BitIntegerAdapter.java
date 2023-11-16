@@ -4,7 +4,6 @@ import static uk.ziglio.construct.lib.Binary.bin_to_int;
 import static uk.ziglio.construct.lib.Binary.int_to_bin;
 import static uk.ziglio.construct.lib.Binary.swap_bytes;
 
-import uk.ziglio.construct.Adapter;
 import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.lib.Containers.Container;
 

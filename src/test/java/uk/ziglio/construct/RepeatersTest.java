@@ -2,10 +2,10 @@ package uk.ziglio.construct;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static uk.ziglio.construct.Adapters.*;
 import static uk.ziglio.construct.Core.*;
-import static uk.ziglio.construct.adapters.Adapters.*;
+import static uk.ziglio.construct.Macros.*;
 import static uk.ziglio.construct.lib.Containers.*;
-import static uk.ziglio.construct.macros.Macros.*;
 
 import java.util.List;
 

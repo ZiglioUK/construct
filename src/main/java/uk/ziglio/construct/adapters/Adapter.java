@@ -1,4 +1,4 @@
-package uk.ziglio.construct;
+package uk.ziglio.construct.adapters;
 
 import java.io.ByteArrayOutputStream;
 

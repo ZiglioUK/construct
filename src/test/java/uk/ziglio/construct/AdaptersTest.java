@@ -2,11 +2,11 @@ package uk.ziglio.construct;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static uk.ziglio.construct.Adapters.*;
 import static uk.ziglio.construct.Core.*;
-import static uk.ziglio.construct.adapters.Adapters.*;
+import static uk.ziglio.construct.Macros.*;
 import static uk.ziglio.construct.fields.Fields.*;
 import static uk.ziglio.construct.lib.Containers.*;
-import static uk.ziglio.construct.macros.Macros.*;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -15,7 +15,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import uk.ziglio.construct.Adapter;
+import uk.ziglio.construct.adapters.Adapter;
 import uk.ziglio.construct.adapters.BitIntegerError;
 import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.core.Sequence;

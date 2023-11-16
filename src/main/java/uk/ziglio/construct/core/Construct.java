@@ -15,7 +15,6 @@ import uk.ziglio.construct.fields.StaticField;
 import uk.ziglio.construct.interfaces.LengthConstruct;
 import uk.ziglio.construct.lib.ByteBufferWrapper;
 import uk.ziglio.construct.lib.Containers.Container;
-import uk.ziglio.construct.macros.Macros.Padding;
 
 /**
   The mother of all constructs.

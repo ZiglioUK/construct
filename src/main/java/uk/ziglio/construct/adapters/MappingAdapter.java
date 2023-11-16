@@ -2,7 +2,6 @@ package uk.ziglio.construct.adapters;
 
 import static uk.ziglio.construct.Core.Pass;
 
-import uk.ziglio.construct.Adapter;
 import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.errors.MappingError;
 import uk.ziglio.construct.lib.Containers.Container;

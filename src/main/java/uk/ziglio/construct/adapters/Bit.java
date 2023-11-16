@@ -1,7 +1,6 @@
 package uk.ziglio.construct.adapters;
 
-import uk.ziglio.construct.Adapter;
-import static uk.ziglio.construct.macros.Macros.BitField;
+import static uk.ziglio.construct.Macros.BitField;
 
 public class Bit extends BitField {
     public Bit(String name){
