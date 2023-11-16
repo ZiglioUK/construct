@@ -3,19 +3,19 @@
 */
 package uk.ziglio.construct.protocols.layer4;
 
-import static uk.ziglio.construct.Macros.Flag;
-import static uk.ziglio.construct.Macros.Padding;
-import static uk.ziglio.construct.Macros.UBInt16;
-import static uk.ziglio.construct.Macros.UBInt32;
 import static uk.ziglio.construct.lib.Binary.hexStringToByteArray;
+import static uk.ziglio.construct.macros.Macros.Flag;
+import static uk.ziglio.construct.macros.Macros.Padding;
+import static uk.ziglio.construct.macros.Macros.UBInt16;
+import static uk.ziglio.construct.macros.Macros.UBInt32;
 
-import uk.ziglio.construct.Adapters.ExprAdapter;
-import uk.ziglio.construct.Macros.BitField;
-import uk.ziglio.construct.Macros.BitStruct;
+import uk.ziglio.construct.adapters.BitField;
+import uk.ziglio.construct.adapters.ExprAdapter;
 import uk.ziglio.construct.annotations.len;
 import uk.ziglio.construct.core.Struct;
 import uk.ziglio.construct.fields.MetaField;
 import uk.ziglio.construct.lib.Containers.Container;
+import uk.ziglio.construct.macros.Macros.BitStruct;
 
 
 public class tcp2 {

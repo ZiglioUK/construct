@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.List;
 
 import uk.ziglio.construct.Core;
-import uk.ziglio.construct.Macros.Padding;
 import uk.ziglio.construct.annotations.len;
 import uk.ziglio.construct.errors.FieldError;
 import uk.ziglio.construct.errors.SizeofError;
@@ -16,6 +15,7 @@ import uk.ziglio.construct.fields.StaticField;
 import uk.ziglio.construct.interfaces.LengthConstruct;
 import uk.ziglio.construct.lib.ByteBufferWrapper;
 import uk.ziglio.construct.lib.Containers.Container;
+import uk.ziglio.construct.macros.Macros.Padding;
 
 /**
   The mother of all constructs.

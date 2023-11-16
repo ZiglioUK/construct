@@ -1,9 +1,9 @@
 package uk.ziglio.construct.protocols.layer2;
 
-import static uk.ziglio.construct.Adapters.*;
 import static uk.ziglio.construct.Core.*;
-import static uk.ziglio.construct.Macros.*;
+import static uk.ziglio.construct.adapters.Adapters.*;
 import static uk.ziglio.construct.lib.Binary.*;
+import static uk.ziglio.construct.macros.Macros.*;
 
 import uk.ziglio.construct.Adapter;
 import uk.ziglio.construct.core.Construct;

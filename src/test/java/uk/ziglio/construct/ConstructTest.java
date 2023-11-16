@@ -2,9 +2,9 @@ package uk.ziglio.construct;
 
 import static org.junit.Assert.*;
 import static uk.ziglio.construct.Core.*;
-import static uk.ziglio.construct.Macros.*;
 import static uk.ziglio.construct.fields.Fields.*;
 import static uk.ziglio.construct.lib.Containers.*;
+import static uk.ziglio.construct.macros.Macros.*;
 
 import org.junit.Rule;
 import org.junit.Test;

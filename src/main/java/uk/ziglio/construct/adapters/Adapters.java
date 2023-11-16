@@ -1,13 +1,9 @@
-package uk.ziglio.construct;
+package uk.ziglio.construct.adapters;
 
-import static uk.ziglio.construct.Macros.Field;
-import static uk.ziglio.construct.lib.Binary.bin_to_int;
 import static uk.ziglio.construct.lib.Binary.byteArrayToHexString;
 import static uk.ziglio.construct.lib.Binary.hexStringToByteArray;
-import static uk.ziglio.construct.lib.Binary.int_to_bin;
-import static uk.ziglio.construct.lib.Binary.swap_bytes;
+import static uk.ziglio.construct.macros.Macros.Field;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -15,10 +11,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import uk.ziglio.construct.Adapter;
 import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.interfaces.AdapterDecoder;
 import uk.ziglio.construct.interfaces.AdapterEncoder;
-import uk.ziglio.construct.interfaces.Validator;
 import uk.ziglio.construct.lib.Containers.Container;
 
 public class Adapters {
@@ -75,43 +71,6 @@ public class Adapters {
   static public Adapter BitIntegerAdapter(Construct subcon, final int width,
       final boolean swapped, final boolean signed, final int bytesize) {
     return new BitIntegerAdapter(subcon, width, swapped, signed, bytesize);
-  }
-
-  static public class BitIntegerAdapter extends Adapter {
-    final int width;
-    final boolean swapped;
-    final boolean signed;
-    final int bytesize;
-
-    public BitIntegerAdapter(Construct subcon, final int width,
-        final boolean swapped, final boolean signed, final int bytesize) {
-      super(subcon);
-      this.width = width;
-      this.swapped = swapped;
-      this.signed = signed;
-      this.bytesize = bytesize;
-    }
-
-    public Object encode(Object obj, Container context) {
-      int intobj = (Integer) obj;
-      if (intobj < 0 && !signed) {
-        throw new BitIntegerError(
-            "object is negative, but field is not signed " + intobj);
-      }
-      byte[] obj2 = int_to_bin(intobj, width);
-      if (swapped) {
-        obj2 = swap_bytes(obj2, bytesize);
-      }
-      return obj2;
-    }
-
-    public Object decode(Object obj, Container context) {
-	    byte[] ba = (byte[]) obj;
-	    if (swapped) {
-	      ba = swap_bytes(ba, bytesize);
-	    }
-	    return bin_to_int(ba, signed);
-	  }
   }
 
   /**
@@ -248,50 +207,6 @@ public class Adapters {
     return new PaddingAdapter(subcon, pattern, strict);
   }
   /**
-   * @param subcon
-   *          the subcon to pad
-   * @param pattern
-   *          the padding pattern (character). default is "\x00"
-   * @param strict
-   *          whether or not to verify, during parsing, that the given padding
-   *          matches the padding pattern. default is False (unstrict)
-   * @return Adapter for padding.
-   */
-  static public class PaddingAdapter extends Adapter {
-    byte pattern;
-    boolean strict;
-
-    public PaddingAdapter(Construct subcon, byte pattern, boolean strict) {
-      super(subcon);
-      this.pattern = pattern;
-      this.strict = strict;
-    }
-
-    public PaddingAdapter(Construct subcon){
-      this(subcon, (byte) 0x00, false);
-    }
-    
-    public Object encode(Object obj, Container context) {
-      byte[] out = new byte[_sizeof(context)];
-      for (int i = 0; i < out.length; i++)
-        out[i] = pattern;
-      return out;
-    }
-
-    public Object decode(Object obj, Container context) {
-      if (strict) {
-        byte[] expected = new byte[_sizeof(context)];
-        for (int i = 0; i < expected.length; i++)
-          expected[i] = pattern;
-
-        if (!obj.equals(expected))
-          throw new PaddingError("Expected " + expected + " found " + obj);
-      }
-      return obj;
-    }
-  }
-
-  /**
    * A generic adapter that accepts 'encoder' and 'decoder' as parameters. You
    * can use ExprAdapter instead of writing a full-blown class when only a
    * simple expression is needed. Example: ExprAdapter(UBInt8("foo"), encoder =
@@ -309,63 +224,6 @@ public class Adapters {
   public static <V,T> Adapter<V,T> ExprAdapter(Construct subcon, AdapterEncoder<V,T> encoder, AdapterDecoder<T,V> decoder) {
     return new ExprAdapter<V,T>(subcon, encoder, decoder);
   };
-
-  public static class ExprAdapter<V, T> extends Adapter<V, T> {
-    AdapterEncoder<V,T> encoder;
-    AdapterDecoder<T,V> decoder;
-
-    public ExprAdapter(Construct subcon, final AdapterEncoder<V,T> encoder, final AdapterDecoder<T,V> decoder) {
-      super(subcon);
-      this.encoder = encoder;
-      this.decoder = decoder;
-    }
-
-    @Override
-    public T encode(V obj, Container context) {
-      return encoder.encode(obj, context);
-    }
-
-    @Override
-    public V decode(T obj, Container context) {
-      return decoder.decode(obj, context);
-    }
-
-  };
-
-  /*
-   * #============================================================================
-   * === # validators
-   * #==========================================================
-   * =====================
-   */
-  /**
-   * validates a condition on the encoded/decoded object. Override
-   * _validate(obj, context) in deriving classes.
-   */
-  public static class ValidatorAdapter extends Adapter {
-	Validator v;
-	
-    /**
-     * @param subcon
-     *          the subcon to validate
-     */
-    public ValidatorAdapter(Construct subcon, Validator v ) {
-      super(subcon); 
-      this.v = v;
-    }
-
-    @Override
-    public Object decode(Object obj, Container context) {
-      if (!v.validate(obj, context))
-        throw new ValidationError("invalid object" + obj);
-      return obj;
-    }
-
-    @Override
-    public Object encode(Object obj, Container context) {
-      return decode(obj, context);
-    }
-  }
 
   /**
    * >>> OneOf(UBInt8("foo"), [4,5,6,7]).parse("\\x05") 5 >>>
@@ -420,62 +278,5 @@ public class Adapters {
 
   public static <T> BeanAdapter<T> BeanAdapter(Class<T> clazz, Construct subcon) {
     return new BeanAdapter<T>(clazz, subcon);
-  }
-
-  public static class BeanAdapter<V> extends Adapter<V, Container> {
-	Class<V> clazz;
-	  
-	public BeanAdapter(Class<V> clazz, Construct subcon) {
-      super( subcon );
-      this.clazz = clazz;
-	}
-	
-    @Override
-    public Container encode(V obj, Container context) {
-      Container c = new Container();
-
-      for (Field f : clazz.getFields()) {
-        String name = f.getName();
-        try {
-          c.set(name, clazz.getField(name).get(obj));
-        } catch (Exception e) {
-          throw new RuntimeException(e);
-        }
-      }
-
-      return c;
-    }
-
-    @Override
-    public V decode(Container c, Container context) {
-      V t = newV( clazz );
-
-      for (String name : c.<String> keys()) {
-        try {
-          Field f = clazz.getField((String) name);
-          f.set(t, c.get(name));
-        } catch (Exception e) {
-          throw new RuntimeException(e);
-        }
-      }
-
-      return t;
-	 }
-
-     static <V>V newV( Class<V> clazz ) {
-      try {
-        Constructor<V> c = clazz.getDeclaredConstructor();
-        c.setAccessible(true);
-        return c.newInstance();
-      } catch (NoSuchMethodException ex) {
-        try {
-          return clazz.newInstance();
-        } catch (Exception e) {
-          throw new RuntimeException(e);
-        }
-      } catch (Exception e) {
-        throw new RuntimeException(e);
-      }
-    }
   }
 }

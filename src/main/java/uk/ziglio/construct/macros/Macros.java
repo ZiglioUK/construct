@@ -1,12 +1,18 @@
-package uk.ziglio.construct;
-import static uk.ziglio.construct.Adapters.*;
+package uk.ziglio.construct.macros;
 import static uk.ziglio.construct.Core.*;
+import static uk.ziglio.construct.adapters.Adapters.*;
 import static uk.ziglio.construct.fields.Fields.*;
 import static uk.ziglio.construct.lib.Binary.*;
 
 import java.io.ByteArrayOutputStream;
 
+import uk.ziglio.construct.Adapter;
+import uk.ziglio.construct.Core;
 import uk.ziglio.construct.Core.Buffered;
+import uk.ziglio.construct.adapters.BitField;
+import uk.ziglio.construct.adapters.Bits;
+import uk.ziglio.construct.adapters.MappingAdapter;
+import uk.ziglio.construct.adapters.PaddingAdapter;
 import uk.ziglio.construct.annotations.len;
 import uk.ziglio.construct.core.Construct;
 import uk.ziglio.construct.core.KeyFunc;
@@ -65,84 +71,7 @@ public class Macros {
     return new StaticField(name);
 }
  
-	/**
-	    """
-	    BitFields, as the name suggests, are fields that operate on raw, unaligned
-	    bits, and therefore must be enclosed in a BitStruct. Using them is very
-	    similar to all normal fields: they take a name and a length (in bits).
-
-	    >>> foo = BitStruct("foo",
-	    ...     BitField("a", 3),
-	    ...     Flag("b"),
-	    ...     Padding(3),
-	    ...     Nibble("c"),
-	    ...     BitField("d", 5),
-	    ... )
-	    >>> foo.parse("\\xe1\\x1f")
-	    Container(a = 7, b = False, c = 8, d = 31)
-	    >>> foo = BitStruct("foo",
-	    ...     BitField("a", 3),
-	    ...     Flag("b"),
-	    ...     Padding(3),
-	    ...     Nibble("c"),
-	    ...     Struct("bar",
-	    ...             Nibble("d"),
-	    ...             Bit("e"),
-	    ...     )
-	    ... )
-	    >>> foo.parse("\\xe1\\x1f")
-	    Container(a = 7, b = False, bar = Container(d = 15, e = 1), c = 8)
-	    """
-	 * @param name name of the field
-	 * @param length number of bits in the field, or a function that takes
-	                       the context as its argument and returns the length
-	 * @param swapped whether the value is byte-swapped
-	 * @param signed whether the value is signed
-	 * @param bytesize number of bits per byte, for byte-swapping
-	 * @return
-	 */
-  public static BitField BitField( String name, int length, boolean swapped, 
-      boolean signed, int bytesize ) {
-    return new BitField( name, length, swapped, signed, bytesize );
-  }
-
-  public static BitField BitField( final String name, final int length ) {
-    return new BitField( name, length);
- }
-
-  public static class BitField extends BitIntegerAdapter {
-    public BitField( final String name, final int length, boolean swapped, boolean signed, int bytesize ) {
-          super ( Field(name, length),
-        length,
-        swapped,
-        signed,
-        bytesize
-    );
-   }
-    public BitField( final String name, final int length ) {
-      this( name, length, false, false, 8 );
-   }
-  }  
-  /**
-   * Bits is just an alias for BitField
-   */
-  public static class Bits extends BitIntegerAdapter{
-    
-    public Bits( final String name, final int length, boolean swapped, boolean signed, int bytesize ) {
-      super( Field(name, length), length, swapped, signed, bytesize );
-    }
-
-    public Bits( final String name, final int length ) {
-      this( name, length, false, false, 8 );
-    }
-
-    @Override
-    public Integer get() {
-      return (Integer)val;
-    }
-  }
-
-  public static Bits Bits( final String name, final int length, boolean swapped, boolean signed, int bytesize ) {
+	public static Bits Bits( final String name, final int length, boolean swapped, boolean signed, int bytesize ) {
     return new Bits( name,
          length,
          swapped,
@@ -227,36 +156,7 @@ public class Macros {
   		this(name, (byte)1, (byte)0, false );
   	}
   }
-/*
-  #===============================================================================
-	# field shortcuts
-	#===============================================================================
-*/
-  /**
-  * @return a 1-bit BitField; must be enclosed in a BitStruct
-  */
-  public static Adapter Bit(String name){
-  	return BitField( name, 1 );
-  }
-  public static class Bit extends BitField {
-    public Bit(String name){
-      super( name, 1 );
-    }
-  }
-
-  /**
-  * @return a 4-bit BitField; must be enclosed in a BitStruct
-  */
-  public static Adapter Nibble(String name){
-  	return BitField( name, 4 );
-  }
-  /**
-  * @return an 8-bit BitField; must be enclosed in a BitStruct
-  */
-  public static Adapter Octet(String name){
-  	return BitField( name, 8 );
-  }
-  /**
+/**
   * @return unsigned, big endian 8-bit integer
   */
   public static UBInt8 UBInt8(String name){
@@ -968,6 +868,49 @@ public static Construct EmbeddedBitStruct(Construct... subcons){
    */
   public static Switch If( KeyFunc keyfunc, Construct subcon ){
   	return If( keyfunc, subcon, null );
+  }
+
+/**
+ * """ BitFields, as the name suggests, are fields that operate on raw,
+ * unaligned bits, and therefore must be enclosed in a BitStruct. Using them is
+ * very similar to all normal fields: they take a name and a length (in bits).
+ * 
+ * >>> foo = BitStruct("foo", ... BitField("a", 3), ... Flag("b"), ...
+ * Padding(3), ... Nibble("c"), ... BitField("d", 5), ... ) >>>
+ * foo.parse("\\xe1\\x1f") Container(a = 7, b = False, c = 8, d = 31) >>> foo =
+ * BitStruct("foo", ... BitField("a", 3), ... Flag("b"), ... Padding(3), ...
+ * Nibble("c"), ... Struct("bar", ... Nibble("d"), ... Bit("e"), ... ) ... ) >>>
+ * foo.parse("\\xe1\\x1f") Container(a = 7, b = False, bar = Container(d = 15, e
+ * = 1), c = 8) """
+ * 
+ * @param name     name of the field
+ * @param length   number of bits in the field, or a function that takes the
+ *                 context as its argument and returns the length
+ * @param swapped  whether the value is byte-swapped
+ * @param signed   whether the value is signed
+ * @param bytesize number of bits per byte, for byte-swapping
+ * @return
+ */
+public static BitField BitField(String name, int length, boolean swapped, boolean signed, int bytesize) {
+	return new BitField(name, length, swapped, signed, bytesize);
+}
+
+public static BitField BitField(final String name, final int length) {
+	return new BitField(name, length);
+}
+
+/**
+  * @return a 4-bit BitField; must be enclosed in a BitStruct
+  */
+  public static Adapter Nibble(String name){
+  	return BitField( name, 4 );
+  }
+
+/**
+  * @return an 8-bit BitField; must be enclosed in a BitStruct
+  */
+  public static Adapter Octet(String name){
+  	return BitField( name, 8 );
   }
   
 }

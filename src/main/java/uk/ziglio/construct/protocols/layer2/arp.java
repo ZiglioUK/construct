@@ -1,17 +1,17 @@
 package uk.ziglio.construct.protocols.layer2;
 
-import static uk.ziglio.construct.Adapters.IpAddressAdapter;
 import static uk.ziglio.construct.Core.Equals;
 import static uk.ziglio.construct.Core.Struct;
-import static uk.ziglio.construct.Macros.Enum;
-import static uk.ziglio.construct.Macros.Field;
-import static uk.ziglio.construct.Macros.IfThenElse;
-import static uk.ziglio.construct.Macros.Rename;
-import static uk.ziglio.construct.Macros.UBInt16;
-import static uk.ziglio.construct.Macros.UBInt8;
+import static uk.ziglio.construct.adapters.Adapters.IpAddressAdapter;
 import static uk.ziglio.construct.fields.Fields.*;
 import static uk.ziglio.construct.lib.Binary.byteArrayToHexString;
 import static uk.ziglio.construct.lib.Binary.hexStringToByteArray;
+import static uk.ziglio.construct.macros.Macros.Enum;
+import static uk.ziglio.construct.macros.Macros.Field;
+import static uk.ziglio.construct.macros.Macros.IfThenElse;
+import static uk.ziglio.construct.macros.Macros.Rename;
+import static uk.ziglio.construct.macros.Macros.UBInt16;
+import static uk.ziglio.construct.macros.Macros.UBInt8;
 import static uk.ziglio.construct.protocols.layer2.ethernet.MacAddressAdapter;
 
 import uk.ziglio.construct.core.Construct;

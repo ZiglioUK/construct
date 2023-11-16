@@ -3,21 +3,21 @@ package uk.ziglio.construct;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static uk.ziglio.construct.Adapters.PaddingAdapter;
 import static uk.ziglio.construct.Core.ByteArray;
 import static uk.ziglio.construct.Core.Container;
-import static uk.ziglio.construct.Macros.Field;
+import static uk.ziglio.construct.adapters.Adapters.PaddingAdapter;
+import static uk.ziglio.construct.macros.Macros.Field;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
-import uk.ziglio.construct.Macros.Embedded;
-import uk.ziglio.construct.Macros.UBInt16;
-import uk.ziglio.construct.Macros.UBInt8;
 import uk.ziglio.construct.annotations.len;
 import uk.ziglio.construct.core.Struct;
 import uk.ziglio.construct.fields.StaticField;
 import uk.ziglio.construct.lib.Containers.Container;
+import uk.ziglio.construct.macros.Macros.Embedded;
+import uk.ziglio.construct.macros.Macros.UBInt16;
+import uk.ziglio.construct.macros.Macros.UBInt8;
 
 public class StaticConstructTest {
 
