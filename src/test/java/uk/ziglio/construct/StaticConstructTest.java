@@ -162,9 +162,16 @@ public class StaticConstructTest {
       Emb e;
     }
 
-     ca = new S().parse( ByteArray(1,0,2,3,4) );
-     cb = Container( "a", 1, "b", 2, "c", 3, "d", 4 );
-     assertEquals( cb, ca );
+    S s = new S();
+    
+    ca = s.parse( ByteArray(1,0,2,3,4) );
+    cb = Container( "a", 1, "b", 2, "c", 3, "d", 4 );
+    assertEquals( cb, ca );
+    
+    assertEquals( 1, s.a );
+    assertEquals( 2, s.b );
+    assertEquals( 3, s.c );
+    assertEquals( 4, s.d );
     
     // struct = Struct( "struct", UBInt8("a"), UBInt16("b"), Embedded(
     // Struct("foo", UBInt8("c"), UBInt8("d"))));
