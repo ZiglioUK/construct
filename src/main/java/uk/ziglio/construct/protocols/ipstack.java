@@ -51,7 +51,7 @@ public class ipstack {
 				"next", 
 				KeyVal("protocol"), 
 				Container( "TCP", layer4_tcp,
-									 "UDP", layer4_udp ),
+                           "UDP", layer4_udp ),
 			  Pass,
 			  false
    );
@@ -72,7 +72,7 @@ public class ipstack {
 					"next", 
 					KeyVal("type"), 
 					Container( "IPv4", layer3_ipv4,
-										 "IPv6", layer3_ipv6 ),
+	                           "IPv6", layer3_ipv6 ),
 				  Pass,
 				  false
 	   )
