@@ -125,7 +125,7 @@ public class Struct extends Construct {
             Class[] pcs = fctor.getParameterTypes();
             
 	          switch (pcs.length) {
-	            case 2: // inner classes
+	            case 2 -> {// inner classes
 		            // check that the first instance is of the right type: enclosing type or String
 	            	if( String.class.isAssignableFrom( pcs[0] )) {
 	            		if( Integer.class.isAssignableFrom(pcs[1])) {
@@ -185,8 +185,8 @@ public class Struct extends Construct {
 		              }
 	            		inst = (Construct) fctor.newInstance(enclosingInst, fname);
 	            	}
-	              break;
-	            case 1:
+	            }
+	            case 1 -> {
 	              if( String.class.isAssignableFrom( pcs[0] )){
 	                inst = (Construct) fctor.newInstance(fname);
 	              } else {
@@ -210,13 +210,11 @@ public class Struct extends Construct {
 	                // now call name setter with fname
 	                inst.setName(fname); 
 	              }
-	              break;
-	            case 0:
+	            }
+	            case 0 -> {
 	              inst = (Construct) fctor.newInstance();
 	              ((Construct)inst).setName(field.getName());
-	              break;
-	            default:
-	            	break;
+	            }
 	          }
 	          
 	          if( inst != null )
