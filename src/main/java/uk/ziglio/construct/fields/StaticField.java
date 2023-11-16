@@ -13,7 +13,7 @@ import uk.ziglio.construct.lib.Containers.Container;
 public class StaticField extends Construct implements LengthConstruct {
   int length;
 
-  public StaticField(String name ) {
+  public StaticField(String name) {
     super(name);
     
 //    if (!StaticField.class.isAnnotationPresent(len.class)) 

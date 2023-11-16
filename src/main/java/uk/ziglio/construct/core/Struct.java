@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ziglio.construct.Core;
-import uk.ziglio.construct.annotations.len;
+import uk.ziglio.construct.annotations.*;
 import uk.ziglio.construct.errors.ConstructError;
 import uk.ziglio.construct.errors.FieldError;
 import uk.ziglio.construct.interfaces.LengthConstruct;
@@ -86,7 +86,7 @@ public class Struct extends Construct {
      * this constructor inspects the public fields of type Construct for this Struct
      * and invokes each field's constructor by passing the field name.
      * It's assumed that all declared fields have a public constructor: Construct( String name )
-     * @param name
+     * @param name((ValConstruct)
      */
     public Struct(String name) {
       super(name);
@@ -135,6 +135,11 @@ public class Struct extends Construct {
 		                  int val = field.getAnnotation(len.class).value();
 			                inst = (Construct) fctor.newInstance(fname, val);
 		                 }
+		                
+		                if( field.isAnnotationPresent(val.class) ) {
+		                    inst.set( field.getAnnotation(val.class).value() );
+		                 }
+		                
 	            		}
 	            		else {
 //		                enclosingInst = getClass().getDeclaredField("this$0").get(this);
@@ -229,6 +234,10 @@ public class Struct extends Construct {
             ((LengthConstruct)inst).setLength( field.getAnnotation(len.class).value() );
            }
 
+          if( field.isAnnotationPresent(val.class) ) {
+              inst.set( field.getAnnotation(val.class).value() );
+           }
+          
           field.set(this, inst);
           subconf.add(inst);
         }
