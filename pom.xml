@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>uk.ziglio</groupId>
   <artifactId>javaconstruct</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
+  <version>2.1.0-SNAPSHOT</version>
   <name>Java Construct</name>
   <description>A Java version of "Construct" a python library for parsing and building of binary data structures </description>
   <organization>
