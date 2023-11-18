@@ -10,6 +10,21 @@ import uk.ziglio.construct.lib.Containers.Container;
 
 public class ConstAdapter extends ExprAdapter {
 
+    static Object encoder(Object obj, Object value, Container context) {
+		if (obj == null || obj.equals(value))
+			return value;
+		else
+			throw new ConstError("expected " + value + " found " + obj);
+    }
+    
+    static Object decoder(Object obj, Object value, Container context) {
+		if (value instanceof byte[] && Arrays.equals((byte[]) obj, (byte[]) value))
+			return obj;
+		else if (!obj.equals(value))
+			throw new ConstError("expected " + value + " found " + obj);
+		return obj;
+    }
+    
 	/**
 	 * @param subcon the subcon to validate
 	 * @param value  the expected value
@@ -20,18 +35,7 @@ public class ConstAdapter extends ExprAdapter {
 	@SuppressWarnings("unchecked")
 	public ConstAdapter(Construct subcon, final Object value) {
 		super(subcon, 
-				(obj, context) -> {
-			if (obj == null || obj.equals(value))
-				return value;
-			else
-				throw new ConstError("expected " + value + " found " + obj);
-		}, 
-		(obj, context) -> {
-			if (value instanceof byte[] && Arrays.equals((byte[]) obj, (byte[]) value))
-				return obj;
-			else if (!obj.equals(value))
-				throw new ConstError("expected " + value + " found " + obj);
-			return obj;
-		});
+				(obj, context) -> encoder(obj, value, context), 
+				(obj, context) -> decoder(obj, value, context));
 	}
 }
