@@ -4,22 +4,13 @@ import static uk.ziglio.construct.Macros.Field;
 import static uk.ziglio.construct.lib.Binary.byteArrayToHexString;
 import static uk.ziglio.construct.lib.Binary.hexStringToByteArray;
 
-import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import uk.ziglio.construct.adapters.Adapter;
-import uk.ziglio.construct.adapters.BeanAdapter;
-import uk.ziglio.construct.adapters.BitIntegerAdapter;
-import uk.ziglio.construct.adapters.ExprAdapter;
-import uk.ziglio.construct.adapters.MappingAdapter;
-import uk.ziglio.construct.adapters.PaddingAdapter;
-import uk.ziglio.construct.adapters.ValidatorAdapter;
+import uk.ziglio.construct.adapters.*;
 import uk.ziglio.construct.core.Construct;
-import uk.ziglio.construct.errors.ConstError;
 import uk.ziglio.construct.interfaces.AdapterDecoder;
 import uk.ziglio.construct.interfaces.AdapterEncoder;
 import uk.ziglio.construct.lib.Containers.Container;
@@ -100,6 +91,17 @@ public class Adapters {
 	 *         decoding, the return value is checked; when building, the value is
 	 *         substituted in. Example: Const(Field("signature", 2), "MZ")
 	 */
+	static public Adapter ConstAdapter(Construct subcon, final Object value) {
+		return new ConstAdapter(subcon, value);	
+	}
+
+	/**
+	 * @param subcon the subcon to validate
+	 * @param value  the expected value
+	 * @return Adapter for enforcing a constant value ("magic numbers"). When
+	 *         decoding, the return value is checked; when building, the value is
+	 *         substituted in. Example: Const(Field("signature", 2), "MZ")
+	 */
 	static public Adapter Const(Construct subcon, final Object value) {
 		return ConstAdapter(subcon, value);
 	}
@@ -131,30 +133,6 @@ public class Adapters {
 			str = str.replaceAll("[\n ]", "");
 			return hexStringToByteArray(str);
 		}, (ba, context) -> byteArrayToHexString(ba, 16));
-	}
-
-	/**
-	 * @param subcon the subcon to validate
-	 * @param value  the expected value
-	 * @return Adapter for enforcing a constant value ("magic numbers"). When
-	 *         decoding, the return value is checked; when building, the value is
-	 *         substituted in. Example: Const(Field("signature", 2), "MZ")
-	 */
-	static public Adapter ConstAdapter(Construct subcon, final Object value) {
-		return ExprAdapter(subcon, (obj, context) -> {
-			if (obj == null || obj.equals(value))
-				return value;
-			else
-				throw new ConstError("expected " + value + " found " + obj);
-		},
-
-				(obj, context) -> {
-					if (value instanceof byte[] && Arrays.equals((byte[]) obj, (byte[]) value))
-						return obj;
-					else if (!obj.equals(value))
-						throw new ConstError("expected " + value + " found " + obj);
-					return obj;
-				});
 	}
 
 	/*
